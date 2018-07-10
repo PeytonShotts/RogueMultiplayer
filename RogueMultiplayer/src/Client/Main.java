@@ -21,7 +21,7 @@ public class Main extends BasicGame
 	
 	static int offsetX = 0;
 	static int offsetY = 0;
-	a
+
 	int mouseX;
 	int mouseY;
 	float relativeMouseX;
