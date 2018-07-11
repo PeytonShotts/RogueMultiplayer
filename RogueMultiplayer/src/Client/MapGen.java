@@ -1,5 +1,6 @@
 package Client;
 
+import java.util.LinkedList;
 import java.util.Random;
 
 import org.newdawn.slick.Color;
@@ -71,8 +72,10 @@ public class MapGen {
 			}
 		}
 		
+		
 		for(int roomI=0; roomI<newMap.roomList.size()-1; roomI++)
 		{
+			
 			int x1 = newMap.roomList.get(roomI).x;
 			int x2 = newMap.roomList.get(roomI+1).x;
 			int y1 = newMap.roomList.get(roomI).y;
@@ -173,6 +176,52 @@ public class MapGen {
 					}	
 							
 			}
+			
+			//room 1 right of room 2
+			if(x2 + w2 < x1)
+			{
+				//choose point on room 1
+				Point point1 = new Point();
+				point1.x = x1 + w1;
+				point1.y = y1 + rand.nextInt(h1);
+				
+				//choose point on room 2
+				Point point2 = new Point();
+				point2.x = x2;
+				point2.y = y2 + rand.nextInt(h2);
+				
+				//choose random x between the two rooms
+				int joinX = point2.x + rand.nextInt(x1 - (x2+w2));
+				
+				
+				//draw from left room to joinX
+				for (int i=0; i < (joinX - point2.x) + 1; i++)
+				{
+					newMap.tileArray[point2.x+i][point2.y].isRoom = true;
+					x3 = point2.x+i;
+					
+					
+				}
+				
+				//draw from right room to joinX
+				for (int i=0; i < (point1.x - joinX) + 1; i++)
+				{
+					newMap.tileArray[point1.x-i][point1.y].isRoom = true;
+					x4 = point1.x+i;
+					
+				}
+				
+				//connect vertically from point 1 end to point 2 end
+				for (int i = (point1.y - point2.y + 0) ; i != 0; i -= Math.signum((point1.y - point2.y)))
+					{
+						System.out.println(i);
+						newMap.tileArray[x3][point2.y+i].side = -1;
+						newMap.tileArray[x3][point2.y+i].isRoom = true;
+						
+					}	
+				
+			}
+			
 			
 			
 			
