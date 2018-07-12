@@ -65,15 +65,26 @@ public class Player {
 			double m = (int) Math.sqrt((addX*addX) + (addY*addY));
 			if (m == 0) {m = 0.000001;}
 			
+			if (addX > 0.001 | addY > 0.001)
+			{
+				PacketUpdatePlayerPosition packet = new PacketUpdatePlayerPosition();
+				packet.x = (int) this.x;
+				packet.y = (int) this.y;
+				
+				Main.network.client.sendUDP(packet);
+				
+			}
+			
+			
 			this.x += this.addX;
-			if (this.isColliding(Main.testMap))
+			if (this.isColliding(Main.currentMap))
 			{
 				this.x -= this.addX;
 			}
 			this.addX += this.addX*-0.1;
 			
 			this.y += this.addY;
-			if (this.isColliding(Main.testMap))
+			if (this.isColliding(Main.currentMap))
 			{
 				this.y -= this.addY;
 			}
@@ -107,6 +118,13 @@ public class Player {
 				this.spriteX = 0;
 				this.walkTimer = 0;
 			}
+			
+			PacketUpdatePlayerSprite packet = new PacketUpdatePlayerSprite();
+			packet.spriteX = this.spriteX;
+			packet.spriteY = this.spriteY;
+			
+			Main.network.client.sendUDP(packet);
+
 		}
 		
 		if (Main.leftClick)

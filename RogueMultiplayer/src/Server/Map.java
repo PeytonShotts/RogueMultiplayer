@@ -1,4 +1,4 @@
-package Client;
+package Server;
 
 import java.util.LinkedList;
 
@@ -13,21 +13,12 @@ public class Map {
 
 	LinkedList<Room> roomList = new LinkedList<Room>();
 	LinkedList<Projectile> projectileList = new LinkedList<Projectile>();
-	LinkedList<Mob> mobList = new LinkedList<Mob>();
+	//LinkedList<Mob> mobList = new LinkedList<Mob>();
 	
 	
 	public Map(int mapWidth, int mapHeight)
 	{
-		this.tileArray = new Tile[mapWidth][mapHeight];
-		
-		for (int initY = 0; initY < mapHeight; initY++)
-		{
-			for (int initX = 0; initX < mapHeight; initX++)
-			{
-				tileArray[initX][initY] = new Tile();
-			}
-		}
-		
+		tileArray = new Tile[mapWidth][mapHeight];
 		width = mapWidth;
 		height = mapWidth;
 	}

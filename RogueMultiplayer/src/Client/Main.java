@@ -1,5 +1,6 @@
 package Client;
 
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,11 +14,11 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
-import Client.Mobs.Snake;
+import Client.Mobs.*;
 
 public class Main extends BasicGame
 {
-	static Map testMap = MapGen.create(100, 100);
+	static Map currentMap = (Map) new Client.Map(50, 50);
 	
 	static int offsetX = 0;
 	static int offsetY = 0;
@@ -40,8 +41,6 @@ public class Main extends BasicGame
 	double lightDirectionX;
 	double lightDirectionY;
 	
-	float rotate;
-	
 	boolean hasInit = false;
 	
 	String moveDirection;
@@ -53,8 +52,11 @@ public class Main extends BasicGame
 	int spawnY;
 	
 	static Player player = new Player();
+	static java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
 	
 	static boolean leftClick;
+	
+	static Network network = new Network();
 	
 	
 	public Main(String gamename)
@@ -73,7 +75,7 @@ public class Main extends BasicGame
 	{
 		
 		//spawn player
-		if (player.x == 0 && player.y == 0) {player.x = testMap.spawnPoint.x; player.y = testMap.spawnPoint.y;}
+		if (player.x == 0 && player.y == 0) {player.x = currentMap.spawnPoint.x; player.y = currentMap.spawnPoint.y;}
 
 		//get keyboard and mouse input
 		getInput(gc, i);
@@ -95,7 +97,7 @@ public class Main extends BasicGame
 			newProjectile.y = (float) (player.y + 16 + (aimY*12) );
 			newProjectile.directionX = (float) aimX;
 			newProjectile.directionY = (float) aimY;
-			testMap.projectileList.add(newProjectile);
+			currentMap.projectileList.add(newProjectile);
 			
 			player.attackTimer = 50;
 		}
@@ -114,16 +116,16 @@ public class Main extends BasicGame
 
 	private void updateProjectiles() {
 		
-		for(int projectileI=0; projectileI<testMap.projectileList.size(); projectileI++)
+		for(int projectileI=0; projectileI<currentMap.projectileList.size(); projectileI++)
 		{
-			testMap.projectileList.get(projectileI).x += testMap.projectileList.get(projectileI).directionX*2;
-			testMap.projectileList.get(projectileI).y += testMap.projectileList.get(projectileI).directionY*2;
+			currentMap.projectileList.get(projectileI).x += currentMap.projectileList.get(projectileI).directionX*2;
+			currentMap.projectileList.get(projectileI).y += currentMap.projectileList.get(projectileI).directionY*2;
 			
-			testMap.projectileList.get(projectileI).time++;
+			currentMap.projectileList.get(projectileI).time++;
 			
-			if (testMap.projectileList.get(projectileI).time > 20)
+			if (currentMap.projectileList.get(projectileI).time > 20)
 			{
-				testMap.projectileList.remove(projectileI);
+				currentMap.projectileList.remove(projectileI);
 			}
 			
 		}
@@ -132,29 +134,29 @@ public class Main extends BasicGame
 
 	private void updateMobs() {
 		
-		for(int mobI=0; mobI<testMap.mobList.size(); mobI++)
+		for(int mobI=0; mobI<currentMap.mobList.size(); mobI++)
 		{
-			testMap.mobList.get(mobI).update();
+			currentMap.mobList.get(mobI).update();
 			
-			testMap.mobList.get(mobI).isHit = false;
-			for(int projectileI=0; projectileI<testMap.projectileList.size(); projectileI++)
+			currentMap.mobList.get(mobI).isHit = false;
+			for(int projectileI=0; projectileI<currentMap.projectileList.size(); projectileI++)
 			{
-				if (testMap.mobList.get(mobI).x < testMap.projectileList.get(projectileI).x + 8 &&
-					testMap.mobList.get(mobI).x + testMap.mobList.get(mobI).width > testMap.projectileList.get(projectileI).x &&
-					testMap.mobList.get(mobI).y < testMap.projectileList.get(projectileI).y + 8 &&
-					testMap.mobList.get(mobI).height + testMap.mobList.get(mobI).y > testMap.projectileList.get(projectileI).y) 
+				if (currentMap.mobList.get(mobI).x < currentMap.projectileList.get(projectileI).x + 8 &&
+					currentMap.mobList.get(mobI).x + currentMap.mobList.get(mobI).width > currentMap.projectileList.get(projectileI).x &&
+					currentMap.mobList.get(mobI).y < currentMap.projectileList.get(projectileI).y + 8 &&
+					currentMap.mobList.get(mobI).height + currentMap.mobList.get(mobI).y > currentMap.projectileList.get(projectileI).y) 
 						{
-							testMap.mobList.get(mobI).isHit = true;
-							testMap.mobList.get(mobI).health += -1;
+							currentMap.mobList.get(mobI).isHit = true;
+							currentMap.mobList.get(mobI).health += -1;
 							
-							testMap.mobList.get(mobI).addX = testMap.projectileList.get(projectileI).directionX*3;
-							testMap.mobList.get(mobI).addY = testMap.projectileList.get(projectileI).directionY*3;
+							currentMap.mobList.get(mobI).addX = currentMap.projectileList.get(projectileI).directionX*3;
+							currentMap.mobList.get(mobI).addY = currentMap.projectileList.get(projectileI).directionY*3;
 							
-							testMap.projectileList.remove(projectileI);
+							currentMap.projectileList.remove(projectileI);
 							
-							if (testMap.mobList.get(mobI).health <= 0)
+							if (currentMap.mobList.get(mobI).health <= 0)
 							{
-								testMap.mobList.remove(mobI);
+								currentMap.mobList.remove(mobI);
 							}
 						}
 			}
@@ -176,16 +178,16 @@ public class Main extends BasicGame
 				int lightBlockX =  player.tileX + Util.closestInteger((int) ((lightDirectionX*lightR*32)), 32);
 				int lightBlockY =  player.tileY + Util.closestInteger((int) ((lightDirectionY*lightR*32)), 32);
 				
-				if ( (lightBlockX-offsetX)/32 > 0 && (lightBlockX-offsetX)/32 < testMap.width-1 &&
-					 (lightBlockY-offsetY)/32 > 0 && (lightBlockY-offsetY)/32 < testMap.height-1)
+				if ( (lightBlockX-offsetX)/32 > 0 && (lightBlockX-offsetX)/32 < currentMap.width-1 &&
+					 (lightBlockY-offsetY)/32 > 0 && (lightBlockY-offsetY)/32 < currentMap.height-1)
 				{
-					if (testMap.tileArray[ (lightBlockX-offsetX)/32][ (lightBlockY-offsetY)/32].isRoom == true)
+					if (currentMap.tileArray[ (lightBlockX-offsetX)/32][ (lightBlockY-offsetY)/32].isRoom == true)
 					{
-						testMap.tileArray[ (lightBlockX-offsetX)/32][ (lightBlockY-offsetY)/32].isVisible = true;
+						currentMap.tileArray[ (lightBlockX-offsetX)/32][ (lightBlockY-offsetY)/32].isVisible = true;
 					}
 					else
 					{
-						testMap.tileArray[ (lightBlockX-offsetX)/32][ (lightBlockY-offsetY)/32].isVisible = true;
+						currentMap.tileArray[ (lightBlockX-offsetX)/32][ (lightBlockY-offsetY)/32].isVisible = true;
 						break;
 					}
 				}
@@ -281,11 +283,11 @@ public class Main extends BasicGame
 		
 		//draw map around player
 		if (player.x > 0) {
-		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), testMap.height - 1); drawY++)
+		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
 		{
-			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), testMap.width - 1); drawX++)
+			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
-				Tile t = (testMap.tileArray[drawX][drawY]);
+				Tile t = (currentMap.tileArray[drawX][drawY]);
 				int roomX;
 				int roomY;
 				if (t.side == 1) {roomX = 1; roomY = 0;}
@@ -293,7 +295,7 @@ public class Main extends BasicGame
 				else if (t.side == 5) {roomX = 0; roomY = 1;}
 				else if (t.side == 7) {roomX = 4; roomY = 1;}
 				else {roomX = 0; roomY = 4;}
-				if (testMap.tileArray[drawX][drawY].isRoom == true)
+				if (currentMap.tileArray[drawX][drawY].isRoom == true)
 				{
 					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
 					
@@ -304,7 +306,7 @@ public class Main extends BasicGame
 					//nothing above
 					if (drawY-1 >= 0)
 					{
-						if (testMap.tileArray[drawX][drawY-1].isRoom == false)
+						if (currentMap.tileArray[drawX][drawY-1].isRoom == false)
 						{
 							roomX = 1; roomY = 0;
 							g.drawImage(tileset, drawX*32 + offsetX, (drawY-1)*32 + offsetY, (drawX*32) + 32 + offsetX, ((drawY-1)*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
@@ -312,9 +314,9 @@ public class Main extends BasicGame
 						}
 					}
 					//nothing below
-					if (drawY+1 < testMap.height)
+					if (drawY+1 < currentMap.height)
 					{
-						if (testMap.tileArray[drawX][drawY+1].isRoom == false)
+						if (currentMap.tileArray[drawX][drawY+1].isRoom == false)
 						{
 							roomX = 4; roomY = 1;
 							g.drawImage(tileset, drawX*32 + offsetX, (drawY+1)*32 + offsetY, (drawX*32) + 32 + offsetX, ((drawY+1)*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
@@ -323,7 +325,7 @@ public class Main extends BasicGame
 					//nothing to left
 					if (drawX-1 >= 0)
 					{
-						if (testMap.tileArray[drawX-1][drawY].isRoom == false)
+						if (currentMap.tileArray[drawX-1][drawY].isRoom == false)
 						{
 							roomX = 1; roomY = 1;
 							g.drawImage(tileset, (drawX-1)*32 + offsetX, drawY*32 + offsetY, ((drawX-1)*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
@@ -331,9 +333,9 @@ public class Main extends BasicGame
 						}
 					}
 					//nothing to right
-					if (drawX+1 < testMap.width)
+					if (drawX+1 < currentMap.width)
 					{
-						if (testMap.tileArray[drawX+1][drawY].isRoom == false)
+						if (currentMap.tileArray[drawX+1][drawY].isRoom == false)
 						{
 							roomX = 0; roomY = 1;
 							g.drawImage(tileset, (drawX+1)*32 + offsetX, drawY*32 + offsetY, ((drawX+1)*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
@@ -368,30 +370,36 @@ public class Main extends BasicGame
 		//draw player
 		g.drawImage(spriteset, (int)player.x + offsetX, (int)player.y + offsetY, (int)player.x+32 + offsetX, (int)player.y+32 + offsetY, (int)player.spriteX*32, (int)player.spriteY*32, ((int)player.spriteX*32) + 32, ((int)player.spriteY*32) + 32, new Color(255,255,255));
 		
+		//draw other players
+		for(Player mpPlayer : players.values())
+		{
+		g.drawImage(spriteset, (int)mpPlayer.x + offsetX, (int)mpPlayer.y + offsetY, (int)mpPlayer.x+32 + offsetX, (int)mpPlayer.y+32 + offsetY, (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
+		}
+		
 		//draw mobs
-		for(int mobI=0; mobI<testMap.mobList.size(); mobI++)
+		for(int mobI=0; mobI<currentMap.mobList.size(); mobI++)
 		{
 		
-			if (testMap.mobList.get(mobI).isHit)
+			if (currentMap.mobList.get(mobI).isHit)
 			{
 				g.drawImage(tileset, 
-						testMap.mobList.get(mobI).x + offsetX, testMap.mobList.get(mobI).y + offsetY, testMap.mobList.get(mobI).x + offsetX + 32, testMap.mobList.get(mobI).y + offsetY + 32,
-						(testMap.mobList.get(mobI).spriteX)*32, (testMap.mobList.get(mobI).spriteY)*32, ((testMap.mobList.get(mobI).spriteX)*32) + 32, ((testMap.mobList.get(mobI).spriteY)*32) + 32, 
+						currentMap.mobList.get(mobI).x + offsetX, currentMap.mobList.get(mobI).y + offsetY, currentMap.mobList.get(mobI).x + offsetX + 32, currentMap.mobList.get(mobI).y + offsetY + 32,
+						(currentMap.mobList.get(mobI).spriteX)*32, (currentMap.mobList.get(mobI).spriteY)*32, ((currentMap.mobList.get(mobI).spriteX)*32) + 32, ((currentMap.mobList.get(mobI).spriteY)*32) + 32, 
 						new Color(255,0,0));
 			}
 			else
 			{
 				g.drawImage(tileset, 
-						(int) testMap.mobList.get(mobI).x + offsetX, (int) testMap.mobList.get(mobI).y + offsetY, (int) testMap.mobList.get(mobI).x + offsetX + 32, (int) testMap.mobList.get(mobI).y + offsetY + 32,
-						(testMap.mobList.get(mobI).spriteX)*32, (testMap.mobList.get(mobI).spriteY)*32, ((testMap.mobList.get(mobI).spriteX)*32) + 32, ((testMap.mobList.get(mobI).spriteY)*32) + 32, 
+						(int) currentMap.mobList.get(mobI).x + offsetX, (int) currentMap.mobList.get(mobI).y + offsetY, (int) currentMap.mobList.get(mobI).x + offsetX + 32, (int) currentMap.mobList.get(mobI).y + offsetY + 32,
+						(currentMap.mobList.get(mobI).spriteX)*32, (currentMap.mobList.get(mobI).spriteY)*32, ((currentMap.mobList.get(mobI).spriteX)*32) + 32, ((currentMap.mobList.get(mobI).spriteY)*32) + 32, 
 						new Color(255,255,255));
 			}
 					
 			//draw health bar if mob health is under maximum
-			if (testMap.mobList.get(mobI).health < testMap.mobList.get(mobI).maxHealth)
+			if (currentMap.mobList.get(mobI).health < currentMap.mobList.get(mobI).maxHealth)
 			{
 				g.setColor(new Color(50,250,50,180));
-				g.fillRect(testMap.mobList.get(mobI).x + offsetX, testMap.mobList.get(mobI).y + offsetY - 5, 32* ((float)testMap.mobList.get(mobI).health / testMap.mobList.get(mobI).maxHealth), 5);
+				g.fillRect(currentMap.mobList.get(mobI).x + offsetX, currentMap.mobList.get(mobI).y + offsetY - 5, 32* ((float)currentMap.mobList.get(mobI).health / currentMap.mobList.get(mobI).maxHealth), 5);
 			}
 			
 			//draw health bar if player health is under maximum
@@ -412,10 +420,10 @@ public class Main extends BasicGame
 				xDist = Math.abs((float)drawX - (float)player.x/32); 
 				yDist = Math.abs((float)drawY - (float)player.y/32);
 				double blockDist = Math.sqrt((xDist*xDist) + (yDist*yDist));
-				if (drawX >= 0 && drawX < testMap.width-1 &&
-					drawY >= 0 && drawY < testMap.height-1)
+				if (drawX >= 0 && drawX < currentMap.width-1 &&
+					drawY >= 0 && drawY < currentMap.height-1)
 				{
-					if (testMap.tileArray[drawX][drawY].isVisible)
+					if (currentMap.tileArray[drawX][drawY].isVisible)
 					{
 						int tileDarkness;
 						if (blockDist < 4)
@@ -437,40 +445,30 @@ public class Main extends BasicGame
 						g.fillRect(drawX*32 + offsetX, drawY*32 + offsetY, 32, 32);
 					}
 				}
-		
 				
-				/*
-				if (blockDist > 10)
-				{
-					if (drawX > 0 && drawX < testMap.width-1 && 
-							drawY > 0 && drawY < testMap.height-1)
-					{
-						testMap.tileArray[drawX][drawY].isVisible = false;
-					}	
-				}
-				*/
 			}
 		}
 		
 		}
 		
 		//draw minimap
+		/*
 		int minimapSize = 3;
 		int minimapOpacity = 150;
 		
 		g.setColor(new Color(250,250,250, 5));
-		g.drawRect(0, 0, testMap.width*minimapSize, testMap.height*minimapSize);
+		g.drawRect(0, 0, currentMap.width*minimapSize, currentMap.height*minimapSize);
 		
-		for (int drawY=0;drawY<testMap.height;drawY++)
+		for (int drawY=0;drawY<currentMap.height;drawY++)
 		{
-			for (int drawX=0;drawX<testMap.width;drawX++)
+			for (int drawX=0;drawX<currentMap.width;drawX++)
 			{
-				if (testMap.tileArray[drawX][drawY].isRoom == true && testMap.tileArray[drawX][drawY].isVisible == true)
+				if (currentMap.tileArray[drawX][drawY].isRoom == true && currentMap.tileArray[drawX][drawY].isVisible == true)
 				{
 					g.setColor(new Color(80,250,155, minimapOpacity));
 					g.fillRect(drawX*minimapSize, drawY*minimapSize, minimapSize, minimapSize);
 				}
-				else if (testMap.tileArray[drawX][drawY].isRoom == false && testMap.tileArray[drawX][drawY].isVisible == true)
+				else if (currentMap.tileArray[drawX][drawY].isRoom == false && currentMap.tileArray[drawX][drawY].isVisible == true)
 				{
 					g.setColor(new Color(80,80,120, minimapOpacity));
 					g.fillRect(drawX*minimapSize, drawY*minimapSize, minimapSize, minimapSize);
@@ -489,12 +487,12 @@ public class Main extends BasicGame
 		g.setColor(new Color(50,50,50));
 		g.drawRect(((float)player.x/32)*minimapSize, ((float)player.y/32)*minimapSize, minimapSize, minimapSize);
 		
-		
+		*/
 		//draw projectiles
-		for(int projectileI=0; projectileI<testMap.projectileList.size(); projectileI++)
+		for(int projectileI=0; projectileI<currentMap.projectileList.size(); projectileI++)
 		{
-			g.setColor(new Color(180, 170, 180, 550 - (testMap.projectileList.get(projectileI).time)*28 ));
-			g.fillRect(testMap.projectileList.get(projectileI).x - 2 + offsetX, testMap.projectileList.get(projectileI).y - 2 + offsetY, 8, 8);
+			g.setColor(new Color(180, 170, 180, 550 - (currentMap.projectileList.get(projectileI).time)*28 ));
+			g.fillRect(currentMap.projectileList.get(projectileI).x - 2 + offsetX, currentMap.projectileList.get(projectileI).y - 2 + offsetY, 8, 8);
 		}
 		
 		
@@ -502,6 +500,7 @@ public class Main extends BasicGame
 	
 	public static void main(String[] args)
 	{
+		
 		try
 		{
 			AppGameContainer appgc;
@@ -509,7 +508,17 @@ public class Main extends BasicGame
 			appgc.setDisplayMode(1280, 720, false);
 			appgc.setTargetFrameRate(60);
 			appgc.setShowFPS(false);
+			
+			network.connect();
+			
+			System.out.println("Waiting to receive map data from server...");
+			while (currentMap == null)
+			{
+
+			}
+			
 			appgc.start();
+			
 
 		}
 		catch (SlickException ex)

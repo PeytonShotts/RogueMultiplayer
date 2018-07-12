@@ -54,14 +54,14 @@ public class Mob {
 			
 			
 			this.x += this.addX;
-			if (this.isColliding(Main.testMap) | (this.isCollidingWithPlayer(Main.player) && Main.player.hitTimer != 0))
+			if (this.isColliding(Main.currentMap) | (this.isCollidingWithPlayer(Main.player) && Main.player.hitTimer != 0))
 			{
 				this.x -= this.addX;
 			}
 			this.addX += this.addX*-0.1;
 			
 			this.y += this.addY;
-			if (this.isColliding(Main.testMap) | (this.isCollidingWithPlayer(Main.player) && Main.player.hitTimer != 0))
+			if (this.isColliding(Main.currentMap) | (this.isCollidingWithPlayer(Main.player) && Main.player.hitTimer != 0))
 			{
 				this.y -= this.addY;
 			}
