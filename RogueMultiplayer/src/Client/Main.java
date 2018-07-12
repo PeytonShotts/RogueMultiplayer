@@ -18,7 +18,7 @@ import Client.Mobs.*;
 
 public class Main extends BasicGame
 {
-	static Map currentMap = (Map) new Client.Map(50, 50);
+	static Map currentMap;
 	
 	static int offsetX = 0;
 	static int offsetY = 0;
@@ -57,6 +57,8 @@ public class Main extends BasicGame
 	static boolean leftClick;
 	
 	static Network network = new Network();
+
+	public static boolean mapLoaded = false;
 	
 	
 	public Main(String gamename)
@@ -508,11 +510,16 @@ public class Main extends BasicGame
 			appgc.setDisplayMode(1280, 720, false);
 			appgc.setTargetFrameRate(60);
 			appgc.setShowFPS(false);
+			appgc.setUpdateOnlyWhenVisible(false);
+			appgc.setAlwaysRender(true);
+
+
 			
 			network.connect();
 			
 			System.out.println("Waiting to receive map data from server...");
-			while (currentMap == null)
+			
+			while (mapLoaded != true)
 			{
 
 			}

@@ -16,7 +16,7 @@ public class Network extends Listener {
 	int port = 7777;
 	
 	public void connect(){
-		client = new Client(8192, 8192);
+		client = new Client(16384, 16384);
 		client.getKryo().register(PacketMapData.class);
 		client.getKryo().register(PacketAddPlayer.class);
 		client.getKryo().register(PacketUpdatePlayerPosition.class);
@@ -37,10 +37,11 @@ public class Network extends Listener {
 		if(o instanceof PacketMapData){
 			PacketMapData packet = (PacketMapData) o;
 			
+			Main.currentMap = new Map(packet.width, packet.height);
 			//convert int array to map
-			for (int mapY=0; mapY<50; mapY++)
+			for (int mapY=0; mapY<packet.height; mapY++)
 			{
-				for (int mapX=0; mapX<50; mapX++)
+				for (int mapX=0; mapX<packet.width; mapX++)
 				{
 					if (packet.tileArray[mapX][mapY] == 1)
 					{
@@ -53,8 +54,11 @@ public class Network extends Listener {
 				}
 			}
 			
-			Main.currentMap.spawnPoint.x = packet.spawnX;
-			Main.currentMap.spawnPoint.y = packet.spawnY;
+			System.out.println("map loaded");
+			Main.mapLoaded = true;
+			
+			//Main.currentMap.spawnPoint.x = packet.spawnX;
+			//Main.currentMap.spawnPoint.y = packet.spawnY;
 			
 		}
 		else if(o instanceof PacketAddPlayer){

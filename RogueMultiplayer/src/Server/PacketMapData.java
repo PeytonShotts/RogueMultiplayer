@@ -3,8 +3,9 @@ package Server;
 public class PacketMapData {
 	
 	int spawnX; int spawnY;
+	int width; int height;
 	
-	int[][] tileArray = new int[50][50];
+	int[][] tileArray;
 
 }
 

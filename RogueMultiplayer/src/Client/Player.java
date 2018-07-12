@@ -65,7 +65,7 @@ public class Player {
 			double m = (int) Math.sqrt((addX*addX) + (addY*addY));
 			if (m == 0) {m = 0.000001;}
 			
-			if (addX > 0.001 | addY > 0.001)
+			if (Math.abs(addX) > 0.001 | Math.abs(addY) > 0.001)
 			{
 				PacketUpdatePlayerPosition packet = new PacketUpdatePlayerPosition();
 				packet.x = (int) this.x;

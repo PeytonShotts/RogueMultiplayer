@@ -53,9 +53,14 @@ public class Main extends Listener {
 		PacketMapData packet = new PacketMapData();
 		
 		//convert map to int array
-		for (int mapY=0; mapY<50; mapY++)
+		packet.width = newMap.width;
+		packet.height = newMap.height;
+
+		packet.tileArray = new int[packet.width][packet.height];
+		
+		for (int mapY=0; mapY<newMap.height; mapY++)
 		{
-			for (int mapX=0; mapX<50; mapX++)
+			for (int mapX=0; mapX<newMap.width; mapX++)
 			{
 				if (newMap.tileArray[mapX][mapY].isRoom == true)
 				{
