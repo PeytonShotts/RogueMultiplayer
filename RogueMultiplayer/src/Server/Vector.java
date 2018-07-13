@@ -1,6 +1,6 @@
 package Server;
 
-public class Vector {
+public class Vector implements java.io.Serializable{
 	
 	float x;
 	float y;

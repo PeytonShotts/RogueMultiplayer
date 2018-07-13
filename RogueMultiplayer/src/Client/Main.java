@@ -20,6 +20,8 @@ public class Main extends BasicGame
 {
 	static Map currentMap;
 	
+	static byte[] mapData = new byte[1000000];
+	
 	static int offsetX = 0;
 	static int offsetY = 0;
 
@@ -111,7 +113,7 @@ public class Main extends BasicGame
 		updateMobs();
 		
 		//calculate visible blocks
-		calculateVisibleBlocks();
+		//calculateVisibleBlocks();
 	    
 	    
 	}
@@ -166,6 +168,7 @@ public class Main extends BasicGame
 		
 	}
 
+	/*
 	private void calculateVisibleBlocks() {
 		
 		for (double lightI = 0; lightI < Math.PI*2; lightI += Math.PI/100)
@@ -198,6 +201,7 @@ public class Main extends BasicGame
 		}
 		
 	}
+	*/
 
 	private void updateViewOffset() {
 		
@@ -289,83 +293,11 @@ public class Main extends BasicGame
 		{
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
-				Tile t = (currentMap.tileArray[drawX][drawY]);
-				int roomX;
-				int roomY;
-				if (t.side == 1) {roomX = 1; roomY = 0;}
-				else if (t.side == 3) {roomX = 1; roomY = 1;}
-				else if (t.side == 5) {roomX = 0; roomY = 1;}
-				else if (t.side == 7) {roomX = 4; roomY = 1;}
-				else {roomX = 0; roomY = 4;}
-				if (currentMap.tileArray[drawX][drawY].isRoom == true)
-				{
-					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
-					
-					boolean leftWall = false;
-					boolean rightWall = false;
-					boolean topWall = false;
-					
-					//nothing above
-					if (drawY-1 >= 0)
-					{
-						if (currentMap.tileArray[drawX][drawY-1].isRoom == false)
-						{
-							roomX = 1; roomY = 0;
-							g.drawImage(tileset, drawX*32 + offsetX, (drawY-1)*32 + offsetY, (drawX*32) + 32 + offsetX, ((drawY-1)*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
-							topWall = true;
-						}
-					}
-					//nothing below
-					if (drawY+1 < currentMap.height)
-					{
-						if (currentMap.tileArray[drawX][drawY+1].isRoom == false)
-						{
-							roomX = 4; roomY = 1;
-							g.drawImage(tileset, drawX*32 + offsetX, (drawY+1)*32 + offsetY, (drawX*32) + 32 + offsetX, ((drawY+1)*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
-						}
-					}
-					//nothing to left
-					if (drawX-1 >= 0)
-					{
-						if (currentMap.tileArray[drawX-1][drawY].isRoom == false)
-						{
-							roomX = 1; roomY = 1;
-							g.drawImage(tileset, (drawX-1)*32 + offsetX, drawY*32 + offsetY, ((drawX-1)*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
-							leftWall = true;
-						}
-					}
-					//nothing to right
-					if (drawX+1 < currentMap.width)
-					{
-						if (currentMap.tileArray[drawX+1][drawY].isRoom == false)
-						{
-							roomX = 0; roomY = 1;
-							g.drawImage(tileset, (drawX+1)*32 + offsetX, drawY*32 + offsetY, ((drawX+1)*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
-							rightWall = true;
-						}
-					}
-					
-					if (leftWall == true && topWall == true)
-					{
-						roomX = 1; roomY = 1;
-						g.drawImage(tileset, (drawX-1)*32 + offsetX, (drawY-1)*32 + offsetY, ((drawX-1)*32) + 32 + offsetX, ((drawY-1)*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
-					}
-					if (rightWall == true && topWall == true)
-					{
-						roomX = 0; roomY = 1;
-						g.drawImage(tileset, (drawX+1)*32 + offsetX, (drawY-1)*32 + offsetY, ((drawX+1)*32) + 32 + offsetX, ((drawY-1)*32) + 32 + offsetY, roomX*32, roomY*32, (roomX*32) + 32, (roomY*32) + 32);
-					}
-
-				}
-				/*
-				else
-				{
-					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, 22*32, 13*32, (22*32) + 32, (13*32) + 32, new Color(200,200,200));
-				}
-				*/
+				int tile = (currentMap.layers[0].data[drawX][drawY]);
+				int tileX = (int) (tile - Math.floor(currentMap.width / 100));
+				int tileY = (int) (Math.floor(currentMap.width / 100) * 100);
 				
-				g.setColor(new Color (0,0,0, 20));
-				g.drawRect(drawX*32 + offsetX, drawY*32 + offsetY, 32, 32);
+				g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
 			}
 		}
 		
@@ -415,6 +347,7 @@ public class Main extends BasicGame
 				
 		
 		//draw lighting
+		/*
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY<(player.y/32) + 20; drawY++)
 		{
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX<(player.x/32) + 20; drawX++)
@@ -450,47 +383,10 @@ public class Main extends BasicGame
 				
 			}
 		}
-		
-		}
-		
-		//draw minimap
-		/*
-		int minimapSize = 3;
-		int minimapOpacity = 150;
-		
-		g.setColor(new Color(250,250,250, 5));
-		g.drawRect(0, 0, currentMap.width*minimapSize, currentMap.height*minimapSize);
-		
-		for (int drawY=0;drawY<currentMap.height;drawY++)
-		{
-			for (int drawX=0;drawX<currentMap.width;drawX++)
-			{
-				if (currentMap.tileArray[drawX][drawY].isRoom == true && currentMap.tileArray[drawX][drawY].isVisible == true)
-				{
-					g.setColor(new Color(80,250,155, minimapOpacity));
-					g.fillRect(drawX*minimapSize, drawY*minimapSize, minimapSize, minimapSize);
-				}
-				else if (currentMap.tileArray[drawX][drawY].isRoom == false && currentMap.tileArray[drawX][drawY].isVisible == true)
-				{
-					g.setColor(new Color(80,80,120, minimapOpacity));
-					g.fillRect(drawX*minimapSize, drawY*minimapSize, minimapSize, minimapSize);
-				}
-				else
-				{
-					g.setColor(new Color(0,0,0, 30));
-					g.fillRect(drawX*minimapSize, drawY*minimapSize, minimapSize, minimapSize);
-				}
-			}
-		}
-		
-		//draw minimap player icon
-		g.setColor(new Color(238,231,34));
-		g.fillRect( ((float)player.x/32)*minimapSize, ((float)player.y/32)*minimapSize, minimapSize, minimapSize);
-		g.setColor(new Color(50,50,50));
-		g.drawRect(((float)player.x/32)*minimapSize, ((float)player.y/32)*minimapSize, minimapSize, minimapSize);
-		
 		*/
-		//draw projectiles
+		
+		}
+		
 		for(int projectileI=0; projectileI<currentMap.projectileList.size(); projectileI++)
 		{
 			g.setColor(new Color(180, 170, 180, 550 - (currentMap.projectileList.get(projectileI).time)*28 ));
@@ -521,7 +417,7 @@ public class Main extends BasicGame
 			
 			while (mapLoaded == false)
 			{
-				System.out.println(mapLoaded);
+				//System.out.println(mapLoaded);
 			}
 			
 			appgc.start();

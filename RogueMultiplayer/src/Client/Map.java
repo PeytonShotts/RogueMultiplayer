@@ -1,35 +1,30 @@
 package Client;
 
-import Server.Tile;
-import Server.Vector;
-import Server.layer;
+import java.util.List;
 
 public class Map implements java.io.Serializable{
 	
-	int width;
-	int height;
+	public int width;
+	public int height;
 	
-	layer[] layers;
+	public int numLayers;
 	
-	Vector spawnPoint = new Vector();
+	public layer[] layers = new layer[4];
+	public Vector spawnPoint = new Vector(45, 45);
 	
-	Tile[][] tileArray;
+	public List<Projectile> projectileList;
+	public List<Mob> mobList;
 	
-	
-	public Map(int mapWidth, int mapHeight) 
+	public Map(int mapWidth, int mapHeight, int numLayers)
 	{
-		this.tileArray = new Tile[mapWidth][mapHeight];
-		
-		for (int initY = 0; initY < mapHeight; initY++)
-		{
-			for (int initX = 0; initX < mapHeight; initX++)
-			{
-				tileArray[initX][initY] = new Tile();
-			}
-		}
-		
 		width = mapWidth;
-		height = mapWidth;
+		height = mapHeight;
+		this.numLayers = numLayers;
+		
+		for (int i=0; i<numLayers; i++)
+		{
+			layers[i] = new layer(mapWidth, mapHeight);
+		}
 	}
 	
 	

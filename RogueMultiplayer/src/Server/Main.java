@@ -41,13 +41,6 @@ public class Main extends Listener {
 	
 	public void connected(Connection c){
 		
-		System.out.println("Connection received. Sending Map...");
-		
-		PacketMapData packet = new PacketMapData();
-
-		c.sendTCP(packet);
-		
-		
 		Player player = new Player();
 		player.x = newMap.spawnPoint.x;
 		player.y = newMap.spawnPoint.y;
@@ -73,6 +66,39 @@ public class Main extends Listener {
 		players.put(c.getID(), player);
 		
 		System.out.println("Connection received.");
+		
+		//send map data
+		
+		PacketMapData packet = new PacketMapData();
+		
+		
+		try {
+			byte[] mapByteData = ByteArrayConverter.convert(newMap);
+			
+			int remainingData = mapByteData.length;
+			
+			while (remainingData > 0)
+			{
+				for (int i=0; i<remainingData; i++)
+				{
+					packet.data = mapByteData[i];
+					packet.packetIndex = i;
+					
+					c.sendTCP(packet);
+					remainingData += -1;
+					
+					Thread.sleep(10);
+				}
+			}
+			
+			
+			
+		} catch (IOException | InterruptedException e) {
+				e.printStackTrace();}
+		
+
+		
+		
 		
 	}
 	

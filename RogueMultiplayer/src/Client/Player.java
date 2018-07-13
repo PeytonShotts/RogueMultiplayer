@@ -36,27 +36,6 @@ public class Player {
 	
 	public boolean isColliding(Map currentMap)
 	{
-		for (int colX = (int) ((this.x/32) - 1); colX < (this.x/32) + 2; colX++)
-		{
-			for (int colY = (int) ((this.y/32) - 1); colY < (this.y/32) + 2; colY++)
-			{
-				if (colX >= 0 && colY >= 0)
-				{
-					if ( currentMap.tileArray[colX][colY].isRoom == false)
-					{
-					if (this.x < colX*32 + width &&
-						this.x + width > colX*32 &&
-						this.y < colY*32 + height &&
-						height + this.y > colY*32) 
-						{
-							return true;
-						}
-					}
-				}
-				
-			}
-		}
-		
 		return false;
 	}
 	

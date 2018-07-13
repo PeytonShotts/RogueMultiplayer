@@ -2,9 +2,8 @@ package Client;
 
 public class PacketMapData {
 	
-	int spawnX; int spawnY;
-	int width; int height;
+	byte data;
 	
-	int[][] tileArray;
+	int packetIndex;
 
 }

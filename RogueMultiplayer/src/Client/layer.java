@@ -1,7 +1,13 @@
 package Client;
 
+
 public class layer implements java.io.Serializable{
 	
-	int[] data;
+	public int[][] data;
+	
+	public layer(int width, int height)
+	{
+		data = new int[width][height];
+	}
 
 }

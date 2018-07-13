@@ -37,28 +37,13 @@ public class Network extends Listener {
 		if(o instanceof PacketMapData){
 			PacketMapData packet = (PacketMapData) o;
 			
-			Main.currentMap = new Map(packet.width, packet.height);
-			//convert int array to map
-			for (int mapY=0; mapY<packet.height; mapY++)
-			{
-				for (int mapX=0; mapX<packet.width; mapX++)
-				{
-					if (packet.tileArray[mapX][mapY] == 1)
-					{
-						Main.currentMap.tileArray[mapX][mapY].isRoom = true;
-					}
-					else
-					{
-						Main.currentMap.tileArray[mapX][mapY].isRoom = false;
-					}
-				}
-			}
+			System.out.println("map data received: " + packet.packetIndex);
 			
-			System.out.println("map loaded");
+			
+			
+			
 			Main.mapLoaded = true;
 			
-			Main.currentMap.spawnPoint.x = packet.spawnX;
-			Main.currentMap.spawnPoint.y = packet.spawnY;
 			
 		}
 		else if(o instanceof PacketAddPlayer){
