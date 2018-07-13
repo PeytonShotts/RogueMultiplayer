@@ -57,8 +57,8 @@ public class Network extends Listener {
 			System.out.println("map loaded");
 			Main.mapLoaded = true;
 			
-			//Main.currentMap.spawnPoint.x = packet.spawnX;
-			//Main.currentMap.spawnPoint.y = packet.spawnY;
+			Main.currentMap.spawnPoint.x = packet.spawnX;
+			Main.currentMap.spawnPoint.y = packet.spawnY;
 			
 		}
 		else if(o instanceof PacketAddPlayer){

@@ -18,7 +18,7 @@ public class Main extends Listener {
 	static Vector2f ballPosition = new Vector2f();
 	static Vector2f ballDirection = new Vector2f();
 	
-	Map newMap = MapGen.create(50, 50);
+	Map newMap = MapGen.create(100, 100);
 	
 	public static int tick = 0;
 	

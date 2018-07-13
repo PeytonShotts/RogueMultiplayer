@@ -519,9 +519,9 @@ public class Main extends BasicGame
 			
 			System.out.println("Waiting to receive map data from server...");
 			
-			while (mapLoaded != true)
+			while (mapLoaded == false)
 			{
-
+				System.out.println(mapLoaded);
 			}
 			
 			appgc.start();
