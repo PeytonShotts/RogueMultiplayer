@@ -12,7 +12,7 @@ import Server.Tile;
 public class Network extends Listener {
 
 	Client client;
-	String ip = "73.177.127.130";
+	String ip = "localhost";
 	int port = 7777;
 	
 	public void connect(){

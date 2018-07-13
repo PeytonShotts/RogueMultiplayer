@@ -506,7 +506,7 @@ public class Main extends BasicGame
 		try
 		{
 			AppGameContainer appgc;
-			appgc = new AppGameContainer(new Main("RogueMan"));
+			appgc = new AppGameContainer(new Main("Slick2d Window"));
 			appgc.setDisplayMode(1280, 720, false);
 			appgc.setTargetFrameRate(60);
 			appgc.setShowFPS(false);
