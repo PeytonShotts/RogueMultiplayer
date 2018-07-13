@@ -1,22 +1,22 @@
 package Client;
 
-import java.util.LinkedList;
+import Server.Tile;
+import Server.Vector;
+import Server.layer;
 
-public class Map {
+public class Map implements java.io.Serializable{
 	
 	int width;
 	int height;
 	
+	layer[] layers;
+	
 	Vector spawnPoint = new Vector();
 	
 	Tile[][] tileArray;
-
-	LinkedList<Room> roomList = new LinkedList<Room>();
-	LinkedList<Projectile> projectileList = new LinkedList<Projectile>();
-	LinkedList<Mob> mobList = new LinkedList<Mob>();
 	
 	
-	public Map(int mapWidth, int mapHeight)
+	public Map(int mapWidth, int mapHeight) 
 	{
 		this.tileArray = new Tile[mapWidth][mapHeight];
 		
@@ -32,10 +32,6 @@ public class Map {
 		height = mapWidth;
 	}
 	
-	public void addRoom(Room newRoom)
-	{
-		roomList.add(newRoom);
-	}
 	
 	
 }

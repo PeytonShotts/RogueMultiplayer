@@ -15,10 +15,7 @@ public class Main extends Listener {
 	static final int port = 7777;
 	static java.util.Map<Integer, Player> players = new HashMap<Integer, Player>();
 	
-	static Vector2f ballPosition = new Vector2f();
-	static Vector2f ballDirection = new Vector2f();
-	
-	Map newMap = MapGen.create(100, 100);
+	Map newMap = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
 	
 	public static int tick = 0;
 	
@@ -34,11 +31,7 @@ public class Main extends Listener {
 		server.bind(port, port);
 		server.start();
 		server.addListener(new Main());
-		System.out.println("The server is ready");
-		
-		ballPosition.x = 400 - 15; ballPosition.y = 250 - 15;
-		ballDirection.x = 1; ballDirection.y = 1;
-		
+		System.out.println("The server is ready.");	
 		
 		while (true)
 		{
@@ -51,32 +44,7 @@ public class Main extends Listener {
 		System.out.println("Connection received. Sending Map...");
 		
 		PacketMapData packet = new PacketMapData();
-		
-		//convert map to int array
-		packet.width = newMap.width;
-		packet.height = newMap.height;
 
-		packet.tileArray = new int[packet.width][packet.height];
-		
-		for (int mapY=0; mapY<newMap.height; mapY++)
-		{
-			for (int mapX=0; mapX<newMap.width; mapX++)
-			{
-				if (newMap.tileArray[mapX][mapY].isRoom == true)
-				{
-					packet.tileArray[mapX][mapY] = 1;
-				}
-				else
-				{
-					packet.tileArray[mapX][mapY] = 0;
-				}
-			}
-		}
-		
-		packet.spawnX = (int) newMap.spawnPoint.x;
-		packet.spawnY = (int) newMap.spawnPoint.y;
-		
-		//send map data to client
 		c.sendTCP(packet);
 		
 		
@@ -85,6 +53,8 @@ public class Main extends Listener {
 		player.y = newMap.spawnPoint.y;
 		player.c = c;
 		
+		
+		//send new player data to other connected clients
 		PacketAddPlayer newPlayerPacket = new PacketAddPlayer();
 		newPlayerPacket.id = c.getID();
 		newPlayerPacket.x = (int) newMap.spawnPoint.x;
@@ -99,7 +69,9 @@ public class Main extends Listener {
 			c.sendTCP(packet2);
 		}
 		
+		//add new player to server array
 		players.put(c.getID(), player);
+		
 		System.out.println("Connection received.");
 		
 	}

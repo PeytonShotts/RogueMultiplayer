@@ -1,5 +1,7 @@
-package Server;
+package MapCode;
 
+
+import java.util.LinkedList;
 
 
 public class Map implements java.io.Serializable{
@@ -10,7 +12,6 @@ public class Map implements java.io.Serializable{
 	public int numLayers;
 	
 	public layer[] layers = new layer[4];
-	public Vector spawnPoint = new Vector(45, 45);
 	
 	public Map(int mapWidth, int mapHeight, int numLayers)
 	{
