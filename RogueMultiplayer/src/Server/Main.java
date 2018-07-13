@@ -11,11 +11,11 @@ import com.esotericsoftware.kryonet.Server;
 
 public class Main extends Listener {
 
-	static Server server;
+	static Server server = new Server(30000,30000);
 	static final int port = 7777;
 	static java.util.Map<Integer, Player> players = new HashMap<Integer, Player>();
 	
-	Map newMap = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
+	static Map newMap = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
 	
 	public static int tick = 0;
 	
@@ -26,12 +26,16 @@ public class Main extends Listener {
 		server.getKryo().register(PacketAddPlayer.class);
 		server.getKryo().register(PacketUpdatePlayerPosition.class);
 		server.getKryo().register(PacketUpdatePlayerSprite.class);
+		server.getKryo().register(byte[].class);
 		server.getKryo().register(int[].class);
 		server.getKryo().register(int[][].class);
 		server.bind(port, port);
 		server.start();
 		server.addListener(new Main());
 		System.out.println("The server is ready.");	
+		
+		byte[] mapByteData = ByteArrayConverter.convert(newMap);
+		System.out.println(mapByteData.length);
 		
 		while (true)
 		{
@@ -69,7 +73,6 @@ public class Main extends Listener {
 		
 		//send map data
 		
-		PacketMapData packet = new PacketMapData();
 		
 		
 		try {
@@ -77,18 +80,30 @@ public class Main extends Listener {
 			
 			int remainingData = mapByteData.length;
 			
+			
+			int bytePosition = 0;
+			int packetSize = 500;
 			while (remainingData > 0)
 			{
-				for (int i=0; i<remainingData; i++)
-				{
-					packet.data = mapByteData[i];
-					packet.packetIndex = i;
+				
+					PacketMapData packet = new PacketMapData();
+
+					packet.bytePosition = bytePosition;
+					
+					if (remainingData < packetSize)
+					{
+						packetSize = remainingData;
+					}
+					for (int l=0;l<packetSize;l++)
+					{
+						packet.data[l] = mapByteData[bytePosition+l];
+					}
 					
 					c.sendTCP(packet);
-					remainingData += -1;
+					remainingData += -packetSize;
+					bytePosition += packetSize;
 					
-					Thread.sleep(10);
-				}
+					Thread.sleep((long) 3);
 			}
 			
 			

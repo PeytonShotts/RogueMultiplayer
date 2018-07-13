@@ -107,10 +107,10 @@ public class Main extends BasicGame
 		}
 		
 		//update projectiles
-		updateProjectiles();
+		//updateProjectiles();
 		
 		//update mobs
-		updateMobs();
+		//updateMobs();
 		
 		//calculate visible blocks
 		//calculateVisibleBlocks();

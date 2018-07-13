@@ -16,11 +16,12 @@ public class Network extends Listener {
 	int port = 7777;
 	
 	public void connect(){
-		client = new Client(16384, 16384);
+		client = new Client(25000, 25000);
 		client.getKryo().register(PacketMapData.class);
 		client.getKryo().register(PacketAddPlayer.class);
 		client.getKryo().register(PacketUpdatePlayerPosition.class);
 		client.getKryo().register(PacketUpdatePlayerSprite.class);
+		client.getKryo().register(byte[].class);
 		client.getKryo().register(int[].class);
 		client.getKryo().register(int[][].class);
 		client.addListener(this);
@@ -37,7 +38,12 @@ public class Network extends Listener {
 		if(o instanceof PacketMapData){
 			PacketMapData packet = (PacketMapData) o;
 			
-			System.out.println("map data received: " + packet.packetIndex);
+			for (int l=0;l<500;l++)
+			{
+				Main.mapData[packet.bytePosition+l] = packet.data[l];
+			}
+			
+			System.out.println(packet.bytePosition);
 			
 			
 			
