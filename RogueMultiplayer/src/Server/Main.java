@@ -2,11 +2,13 @@ package Server;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.newdawn.slick.geom.Vector2f;
+import org.apache.commons.lang3.SerializationUtils;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+
+import MapCode.*;
 
 
 public class Main extends Listener {
@@ -15,11 +17,12 @@ public class Main extends Listener {
 	static final int port = 7777;
 	static java.util.Map<Integer, Player> players = new HashMap<Integer, Player>();
 	
-	static Map newMap = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
+	static Map newMap = JsonConverter.convert("C:/Users/Peyton/Desktop/jsonmap.json");
 	
 	public static int tick = 0;
 	
 	public static void main(String[] args) throws IOException{
+		
 		
 		server = new Server();
 		server.getKryo().register(PacketMapData.class);
@@ -34,13 +37,19 @@ public class Main extends Listener {
 		server.addListener(new Main());
 		System.out.println("The server is ready.");	
 		
+		
 		byte[] mapByteData = ByteArrayConverter.convert(newMap);
 		System.out.println(mapByteData.length);
+		
+		System.out.println(newMap.width);
+		System.out.println(newMap.height);
+		
 		
 		while (true)
 		{
 			//server loop
 		}
+		
 	}
 	
 	public void connected(Connection c){
@@ -72,14 +81,10 @@ public class Main extends Listener {
 		System.out.println("Connection received.");
 		
 		//send map data
-		
-		
-		
 		try {
-			byte[] mapByteData = ByteArrayConverter.convert(newMap);
+			byte[] mapByteData = SerializationUtils.serialize(newMap);
 			
 			int remainingData = mapByteData.length;
-			
 			
 			int bytePosition = 0;
 			int packetSize = 500;
@@ -108,7 +113,7 @@ public class Main extends Listener {
 			
 			
 			
-		} catch (IOException | InterruptedException e) {
+		} catch (InterruptedException e) {
 				e.printStackTrace();}
 		
 

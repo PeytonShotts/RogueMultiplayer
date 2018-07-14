@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 
+import MapCode.Map;
+
 public class ByteArrayConverter {
 	
 	public static byte[] convert(Map mapToConvert) throws IOException

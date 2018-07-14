@@ -2,8 +2,8 @@ package Client;
 
 public class Vector implements java.io.Serializable{
 	
-	float x;
-	float y;
+	public float x;
+	public float y;
 	
 	public Vector()
 	{

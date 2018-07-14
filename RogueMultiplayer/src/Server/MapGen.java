@@ -7,6 +7,7 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 
 import Client.Mobs.Snake;
+import MapCode.Map;
 
 public class MapGen {
 

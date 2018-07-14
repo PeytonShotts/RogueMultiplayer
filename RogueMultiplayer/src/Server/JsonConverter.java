@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 
 import com.google.gson.*;
 
+import MapCode.Map;
+
 
 
 public class JsonConverter {
@@ -24,9 +26,11 @@ public class JsonConverter {
 			e.printStackTrace();
 		}
 
-		TiledMap.Map newTiledMap = g.fromJson(jsonText, TiledMap.Map.class);
+		TiledMap.Map newTiledMap = g.fromJson(jsonText, TiledMap.Map.class);	
 		
-		Map newConvertedMap = new Map(newTiledMap.width, newTiledMap.height, newTiledMap.nextlayerid-1);
+		Map newConvertedMap = new Map(newTiledMap.width, newTiledMap.height, newTiledMap.layers.length);
+		
+		System.out.println(newTiledMap.layers.length);
 		
 		for (int layerNum=0; layerNum<newConvertedMap.numLayers; layerNum++)
 		{

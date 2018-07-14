@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="libraries/slick/lib/lwjgl.jar"/>
 	<classpathentry kind="lib" path="libraries/slick/lib/slick.jar"/>
 	<classpathentry kind="lib" path="libraries/gson-2.6.2.jar"/>
+	<classpathentry kind="lib" path="libraries/commons-lang3-3.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

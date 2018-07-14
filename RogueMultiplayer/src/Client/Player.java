@@ -1,5 +1,7 @@
 package Client;
 
+import MapCode.Map;
+
 public class Player {
 	
 	float x;

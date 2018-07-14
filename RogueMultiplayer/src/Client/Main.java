@@ -1,9 +1,15 @@
 package Client;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -16,11 +22,13 @@ import org.newdawn.slick.SlickException;
 
 import Client.Mobs.*;
 
+import MapCode.*;
+
 public class Main extends BasicGame
 {
 	static Map currentMap;
 	
-	static byte[] mapData = new byte[1000000];
+	static byte[] mapBytes = new byte[1000000];
 	
 	static int offsetX = 0;
 	static int offsetY = 0;
@@ -79,7 +87,7 @@ public class Main extends BasicGame
 	{
 		
 		//spawn player
-		if (player.x == 0 && player.y == 0) {player.x = currentMap.spawnPoint.x; player.y = currentMap.spawnPoint.y;}
+		if (player.x == 0 && player.y == 0) {player.x = 800; player.y = 800;}
 
 		//get keyboard and mouse input
 		getInput(gc, i);
@@ -285,7 +293,7 @@ public class Main extends BasicGame
 	public void render(GameContainer gc, Graphics g) throws SlickException
 	{
 		//load images when client first opens
-		if (hasInit == false) {tileset = new Image("res/tileset.png"); spriteset = new Image("res/spriteset.png"); hasInit = true;}
+		if (hasInit == false) {tileset = new Image("res/owlishmedia_pixel_tiles.png"); spriteset = new Image("res/spriteset.png"); hasInit = true;}
 		
 		//draw map around player
 		if (player.x > 0) {
@@ -293,11 +301,15 @@ public class Main extends BasicGame
 		{
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
-				int tile = (currentMap.layers[0].data[drawX][drawY]);
-				int tileX = (int) (tile - Math.floor(currentMap.width / 100));
-				int tileY = (int) (Math.floor(currentMap.width / 100) * 100);
 				
-				g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+				for (int layer=0; layer<currentMap.layers.length; layer++)
+				{
+					int tile = (currentMap.layers[layer].data[drawX][drawY]) - 1;
+					int tileY = (int) (Math.floor(tile / 14));
+					int tileX = (int) (tile - (tileY*14));
+					
+					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+				}
 			}
 		}
 		
@@ -387,11 +399,13 @@ public class Main extends BasicGame
 		
 		}
 		
+		/*
 		for(int projectileI=0; projectileI<currentMap.projectileList.size(); projectileI++)
 		{
 			g.setColor(new Color(180, 170, 180, 550 - (currentMap.projectileList.get(projectileI).time)*28 ));
 			g.fillRect(currentMap.projectileList.get(projectileI).x - 2 + offsetX, currentMap.projectileList.get(projectileI).y - 2 + offsetY, 8, 8);
 		}
+		*/
 		
 		
 	}
@@ -417,11 +431,16 @@ public class Main extends BasicGame
 			
 			while (mapLoaded == false)
 			{
-				//System.out.println(mapLoaded);
+				Scanner scanner = new Scanner(System. in); String input = scanner. nextLine();
+		
+				currentMap = SerializationUtils.deserialize(mapBytes);
+
+				System.out.println(currentMap.height);
+				mapLoaded = true;
+				
 			}
 			
 			appgc.start();
-			
 
 		}
 		catch (SlickException ex)

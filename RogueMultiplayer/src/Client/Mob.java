@@ -2,6 +2,8 @@ package Client;
 
 import java.util.Random;
 
+import MapCode.Map;
+
 public class Mob {
 	
 	public float x;

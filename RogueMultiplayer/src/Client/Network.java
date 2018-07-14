@@ -40,10 +40,11 @@ public class Network extends Listener {
 			
 			for (int l=0;l<500;l++)
 			{
-				Main.mapData[packet.bytePosition+l] = packet.data[l];
+				Main.mapBytes[packet.bytePosition+l] = packet.data[l];
 			}
 			
 			System.out.println(packet.bytePosition);
+			
 			
 			
 			
