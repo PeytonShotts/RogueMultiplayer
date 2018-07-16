@@ -97,7 +97,7 @@ public class Network extends Listener {
 			
 		}else if(o instanceof PacketAddProjectile){
 			PacketAddProjectile packet = (PacketAddProjectile) o;
-			Main.projectiles.put(Main.projectileCount, packet.projectile);
+			Main.projectiles.put(packet.projectile.id, packet.projectile);
 			Main.projectileCount++;
 		}else if(o instanceof PacketRemoveProjectile){
 			PacketRemoveProjectile packet = (PacketRemoveProjectile) o;
