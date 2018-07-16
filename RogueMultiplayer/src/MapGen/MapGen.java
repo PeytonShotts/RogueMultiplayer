@@ -5,6 +5,9 @@ import java.util.Random;
 
 import org.newdawn.slick.Color;
 
+//copy of old map generator
+
+/*
 public class MapGen {
 
 	public static Map create(int mapWidth, int mapHeight)
@@ -47,21 +50,7 @@ public class MapGen {
 								newMap.tileArray[mapX+roomX][mapY+roomY] = new Tile();
 								//newMap.tileArray[mapX+roomX][mapY+roomY].color = new Color(250, 250, 250);
 								newMap.tileArray[mapX+roomX][mapY+roomY].isRoom = true;
-								
-
-								
-								
-								
-								/*
-								int randomMobSpawn = rand.nextInt(50);
-								if (randomMobSpawn == 25)
-								{
-									Snake newSnake = new Snake();
-									newSnake.x = (mapX+roomX)*32;
-									newSnake.y = (mapY+roomY)*32;
-									newMap.mobList.add(newSnake);
-								}
-								*/
+							
 							}
 						}
 					}
@@ -220,3 +209,4 @@ public class MapGen {
 		return newMap;	
 	}
 }
+*/
