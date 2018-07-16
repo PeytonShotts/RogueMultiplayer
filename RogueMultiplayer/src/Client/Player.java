@@ -1,14 +1,18 @@
 package Client;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import MapCode.Map;
 
 public class Player {
 	
-	float x;
-	float y;
+	public float x;
+	public float y;
 	
-	double addX;
-	double addY;
+	public double addX;
+	public double addY;
 	
 	String walkDirection = "down";
 	int spriteX = 0;
@@ -28,16 +32,50 @@ public class Player {
 	int moveX;
 	int moveY;
 	
-	int width = 28;
-	int height = 30;
+	public int width = 28;
+	public int height = 30;
 	
-	int hitTimer = 0;
+	public int hitTimer = 0;
 	
-	int health = 100;
+	public int health = 100;
 	int maxHealth = 100;
+	
+	List<Integer> collisionList = new ArrayList<>(Arrays.asList(16, 226));
+
+	
+
 	
 	public boolean isColliding(Map currentMap)
 	{
+		for (int colX = (int) ((this.x/32) - 1); colX < (this.x/32) + 2; colX++)
+		{
+			for (int colY = (int) ((this.y/32) - 1); colY < (this.y/32) + 2; colY++)
+			{
+				if (colX >= 0 && colY >= 0)
+				{
+					for (int type : collisionList)
+					{
+						for (int layer=0; layer<Main.currentMap.layers.length; layer++)
+						{
+							if (type == currentMap.layers[layer].data[colX][colY])
+							{
+								if (this.x < colX*32 + width &&
+										this.x + width > colX*32 &&
+										this.y < colY*32 + height &&
+										height + this.y > colY*32) 
+										{
+										System.out.println("collision with: " + currentMap.layers[layer].data[colX][colY]);
+											return true;
+										}
+							}
+						}
+
+					}
+				}
+				
+			}
+		}
+		
 		return false;
 	}
 	
@@ -108,7 +146,7 @@ public class Player {
 
 		}
 		
-		if (Main.leftClick)
+		if (Main.mouseOne)
 		{
 			if (Math.abs(Main.aimX) > Math.abs(Main.aimY))
 			{

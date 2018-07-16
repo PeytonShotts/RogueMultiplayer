@@ -20,8 +20,8 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
-import Client.Mobs.*;
-
+import Mob.*;
+import Projectile.Projectile;
 import MapCode.*;
 
 public class Main extends BasicGame
@@ -61,12 +61,19 @@ public class Main extends BasicGame
 	int spawnX;
 	int spawnY;
 	
-	static Player player = new Player();
-	static java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
+	public static int projectileCount = 0;
 	
-	static boolean leftClick;
+	static Player player = new Player();
+	
+	static java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
+	static java.util.Map<Integer,Mob> mobs = new HashMap<Integer,Mob>(); 
+	static java.util.Map<Integer,Projectile> projectiles = new HashMap<Integer,Projectile>(); 
+	
+	static boolean mouseClick;
+	static boolean mouseOne;
 	
 	static Network network = new Network();
+	static Gui.Gui gui = new Gui.Gui();
 
 	public static boolean mapLoaded = false;
 	
@@ -79,102 +86,89 @@ public class Main extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException
 	{
-		
+		gui.init();
 	}
 
 	@Override
 	public void update(GameContainer gc, int i) throws SlickException
 	{
 		
-		//spawn player
-		if (player.x == 0 && player.y == 0) {player.x = 800; player.y = 800;}
-
-		//get keyboard and mouse input
-		getInput(gc, i);
-		
-		//update player position
-		player.update();
-		
-		//update player sprite
-		player.updateSprite();
-		
-		//update view offset
-		updateViewOffset();
-		
-		//add new projectile when mouse is pressed
-		if(gc.getInput().isMouseButtonDown(0) && player.attackTimer == 0)
+		if (mapLoaded == true)
 		{
-			Projectile newProjectile = new Projectile();
-			newProjectile.x = (float) (player.x + 16 + (aimX*12) );
-			newProjectile.y = (float) (player.y + 16 + (aimY*12) );
-			newProjectile.directionX = (float) aimX;
-			newProjectile.directionY = (float) aimY;
-			currentMap.projectileList.add(newProjectile);
-			
-			player.attackTimer = 50;
+			currentMap = SerializationUtils.deserialize(mapBytes);
 		}
 		
-		//update projectiles
-		//updateProjectiles();
-		
-		//update mobs
-		//updateMobs();
-		
-		//calculate visible blocks
-		//calculateVisibleBlocks();
-	    
+		if (mapLoaded == true)
+		{
+			//spawn player
+			if (player.x == 0 && player.y == 0) {player.x = currentMap.spawnPoint.x; player.y = currentMap.spawnPoint.y;}
+	
+			//get keyboard and mouse input
+			getInput(gc, i);
+			
+			//update player position
+			player.update();
+			
+			//update player sprite
+			player.updateSprite();
+			
+			//update view offset
+			updateViewOffset();
+			
+			gui.update(mouseX, mouseY, mouseClick, mouseOne);
+			
+			//add new projectile when mouse is pressed
+			if(mouseClick == true && player.attackTimer == 0)
+			{
+				Projectile newProjectile = new Projectile();
+				
+				newProjectile.position.x = (float) (player.x + 16 + (aimX*12) );
+				newProjectile.position.y = (float) (player.y + 16 + (aimY*12) );
+				
+				newProjectile.direction.x = (float) aimX;
+				newProjectile.direction.y = (float) aimY;
+				newProjectile.time = 20;
+				
+				newProjectile.speed = 5;
+				
+				newProjectile.id = projectileCount;
+				projectiles.put(projectileCount, newProjectile);
+				
+				PacketAddProjectile packet = new PacketAddProjectile();
+				packet.projectile = newProjectile;
+				network.client.sendTCP(packet);
+				
+				projectileCount++;
+				player.attackTimer = 50;
+				
+				
+			}
+			
+			//update projectiles
+			updateProjectiles();
+			
+			//update mobs
+			//updateMobs();
+			
+			//calculate visible blocks
+			//calculateVisibleBlocks();
+		}
 	    
 	}
 
 	private void updateProjectiles() {
 		
-		for(int projectileI=0; projectileI<currentMap.projectileList.size(); projectileI++)
+		for (Projectile projectile : projectiles.values())
 		{
-			currentMap.projectileList.get(projectileI).x += currentMap.projectileList.get(projectileI).directionX*2;
-			currentMap.projectileList.get(projectileI).y += currentMap.projectileList.get(projectileI).directionY*2;
-			
-			currentMap.projectileList.get(projectileI).time++;
-			
-			if (currentMap.projectileList.get(projectileI).time > 20)
+			if (projectile.time == 0)
 			{
-				currentMap.projectileList.remove(projectileI);
+				projectiles.remove(projectile.id);
 			}
-			
+			projectile.update();
 		}
 		
 	}
 
-	private void updateMobs() {
-		
-		for(int mobI=0; mobI<currentMap.mobList.size(); mobI++)
-		{
-			currentMap.mobList.get(mobI).update();
-			
-			currentMap.mobList.get(mobI).isHit = false;
-			for(int projectileI=0; projectileI<currentMap.projectileList.size(); projectileI++)
-			{
-				if (currentMap.mobList.get(mobI).x < currentMap.projectileList.get(projectileI).x + 8 &&
-					currentMap.mobList.get(mobI).x + currentMap.mobList.get(mobI).width > currentMap.projectileList.get(projectileI).x &&
-					currentMap.mobList.get(mobI).y < currentMap.projectileList.get(projectileI).y + 8 &&
-					currentMap.mobList.get(mobI).height + currentMap.mobList.get(mobI).y > currentMap.projectileList.get(projectileI).y) 
-						{
-							currentMap.mobList.get(mobI).isHit = true;
-							currentMap.mobList.get(mobI).health += -1;
-							
-							currentMap.mobList.get(mobI).addX = currentMap.projectileList.get(projectileI).directionX*3;
-							currentMap.mobList.get(mobI).addY = currentMap.projectileList.get(projectileI).directionY*3;
-							
-							currentMap.projectileList.remove(projectileI);
-							
-							if (currentMap.mobList.get(mobI).health <= 0)
-							{
-								currentMap.mobList.remove(mobI);
-							}
-						}
-			}
-		}
-		
-	}
 
 	/*
 	private void calculateVisibleBlocks() {
@@ -262,14 +256,8 @@ public class Main extends BasicGame
 		if (player.isWalking == true) {player.walkTimer++;}
 		
 		
-		if (gc.getInput().isMouseButtonDown(0))
-		{
-			leftClick = true;
-		}
-		else
-		{
-			leftClick = false;
-		}
+		mouseClick = gc.getInput().isMousePressed(Input.MOUSE_LEFT_BUTTON);
+		mouseOne = gc.getInput().isMouseButtonDown(Input.MOUSE_LEFT_BUTTON);
 		
 		//get mouse X and Y
 		mouseX = Mouse.getX();
@@ -292,9 +280,15 @@ public class Main extends BasicGame
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException
 	{
+		
+		if (mapLoaded == true)
+		{
+			
 		//load images when client first opens
 		if (hasInit == false) {tileset = new Image("res/owlishmedia_pixel_tiles.png"); spriteset = new Image("res/spriteset.png"); hasInit = true;}
 		
+		int prevLayer = 0;
+		boolean playerDrawn = false;
 		//draw map around player
 		if (player.x > 0) {
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
@@ -302,24 +296,54 @@ public class Main extends BasicGame
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
 				
-				for (int layer=0; layer<currentMap.layers.length; layer++)
+				for (int layer=0; layer<1; layer++)
 				{
-					int tile = (currentMap.layers[layer].data[drawX][drawY]) - 1;
+					int tile = (currentMap.layers[layer].data[drawX][drawY]);
 					int tileY = (int) (Math.floor(tile / 14));
 					int tileX = (int) (tile - (tileY*14));
 					
+					
 					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+						
 				}
 			}
 		}
 		
-		//draw player
+		
 		g.drawImage(spriteset, (int)player.x + offsetX, (int)player.y + offsetY, (int)player.x+32 + offsetX, (int)player.y+32 + offsetY, (int)player.spriteX*32, (int)player.spriteY*32, ((int)player.spriteX*32) + 32, ((int)player.spriteY*32) + 32, new Color(255,255,255));
+		
+		//draw map around player
+		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
+		{
+			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
+			{
+				
+				for (int layer=1; layer<currentMap.layers.length; layer++)
+				{
+					int tile = (currentMap.layers[layer].data[drawX][drawY]);
+					int tileY = (int) (Math.floor(tile / 14));
+					int tileX = (int) (tile - (tileY*14));
+					
+					
+					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+						
+				}
+			}
+		}
+		
 		
 		//draw other players
 		for(Player mpPlayer : players.values())
 		{
-		g.drawImage(spriteset, (int)mpPlayer.x + offsetX, (int)mpPlayer.y + offsetY, (int)mpPlayer.x+32 + offsetX, (int)mpPlayer.y+32 + offsetY, (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
+			g.drawImage(spriteset, (int)mpPlayer.x + offsetX, (int)mpPlayer.y + offsetY, (int)mpPlayer.x+32 + offsetX, (int)mpPlayer.y+32 + offsetY, (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
+		}
+		
+		//draw mobs (new)
+		for(Mob mob : mobs.values())
+		{
+			g.setColor(new Color(255, 255, 255));
+			g.drawRect(mob.x + offsetX, mob.y + offsetY, 32, 32);
+			System.out.println(mobs.size());
 		}
 		
 		//draw mobs
@@ -397,16 +421,17 @@ public class Main extends BasicGame
 		}
 		*/
 		
-		}
+		gui.draw(gc, g);
 		
-		/*
-		for(int projectileI=0; projectileI<currentMap.projectileList.size(); projectileI++)
+		}
+	
+		for(Projectile projectile : projectiles.values())
 		{
-			g.setColor(new Color(180, 170, 180, 550 - (currentMap.projectileList.get(projectileI).time)*28 ));
-			g.fillRect(currentMap.projectileList.get(projectileI).x - 2 + offsetX, currentMap.projectileList.get(projectileI).y - 2 + offsetY, 8, 8);
+			g.setColor(new Color(180, 170, 180, projectile.time*20 ));
+			g.fillRect(projectile.position.x - 2 + offsetX, projectile.position.y - 2 + offsetY, projectile.size, projectile.size);
 		}
-		*/
 		
+		}
 		
 	}
 	
@@ -427,18 +452,7 @@ public class Main extends BasicGame
 			
 			network.connect();
 			
-			System.out.println("Waiting to receive map data from server...");
 			
-			while (mapLoaded == false)
-			{
-				Scanner scanner = new Scanner(System. in); String input = scanner. nextLine();
-		
-				currentMap = SerializationUtils.deserialize(mapBytes);
-
-				System.out.println(currentMap.height);
-				mapLoaded = true;
-				
-			}
 			
 			appgc.start();
 

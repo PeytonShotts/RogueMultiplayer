@@ -1,6 +1,6 @@
 package Client.Mobs;
 
-import Client.Mob;
+import Mob.Mob;
 
 public class Snake extends Mob {
 

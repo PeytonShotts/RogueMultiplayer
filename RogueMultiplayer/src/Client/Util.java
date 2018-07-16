@@ -1,5 +1,8 @@
 package Client;
 
+import Mob.Mob;
+import Vector.Vector;
+
 public class Util {
 	
 	static int closestInteger(int a, int b) {

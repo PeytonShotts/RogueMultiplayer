@@ -38,7 +38,7 @@ public class JsonConverter {
 			{
 				for (int x=0; x<newTiledMap.width; x++)
 				{
-					newConvertedMap.layers[layerNum].data[x][y] = newTiledMap.layers[layerNum].data[y*newTiledMap.width + x];
+					newConvertedMap.layers[layerNum].data[x][y] = newTiledMap.layers[layerNum].data[y*newTiledMap.width + x] - 1;
 				}
 			}
 		}
