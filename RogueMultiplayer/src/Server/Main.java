@@ -8,12 +8,11 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
-import Client.PacketAddMob;
-import Client.PacketUpdateMob;
 import MapCode.*;
 import Mob.*;
-import Projectile.Projectile;
+import Projectile.*;
 import Vector.Vector;
+import Packet.*;
 
 
 public class Main extends Listener {
@@ -26,7 +25,7 @@ public class Main extends Listener {
 	static java.util.Map<Integer, Projectile> projectiles = new HashMap<Integer, Projectile>();
 	static int mobCount = 0;
 	
-	static Map newMap = JsonConverter.convert("C:/Users/Peyton/Desktop/jsonmap.json");
+	static Map newMap = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
 	
 	public static int tick = 0;
 	public static int projectileCount = 0;
@@ -37,6 +36,7 @@ public class Main extends Listener {
 		server = new Server();
 		server.getKryo().register(PacketMapData.class);
 		server.getKryo().register(PacketAddPlayer.class);
+		server.getKryo().register(PacketRemovePlayer.class);
 		server.getKryo().register(PacketUpdatePlayerPosition.class);
 		server.getKryo().register(PacketUpdatePlayerSprite.class);
 		server.getKryo().register(Mob.class);
@@ -125,11 +125,12 @@ public class Main extends Listener {
 		newPlayerPacket.y = (int) newMap.spawnPoint.y;
 		server.sendToAllExceptTCP(c.getID(), newPlayerPacket);
 		
+		
 		for(Player p : players.values()){
 			PacketAddPlayer packet2 = new PacketAddPlayer();
 			packet2.id = p.c.getID();
-			packet2.x = (int) newMap.spawnPoint.x;
-			packet2.y = (int) newMap.spawnPoint.y;
+			packet2.x = (int) p.x;
+			packet2.y = (int) p.y;
 			c.sendTCP(packet2);
 		}
 		
@@ -228,6 +229,11 @@ public class Main extends Listener {
 	}
 	
 	public void disconnected(Connection c){
+		
+		players.remove(c.getID());
+		PacketRemovePlayer packet = new PacketRemovePlayer();
+		packet.id = c.getID();
+		server.sendToAllTCP(packet);
 
 	}
 	

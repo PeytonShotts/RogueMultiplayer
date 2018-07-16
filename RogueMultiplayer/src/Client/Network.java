@@ -7,8 +7,8 @@ import com.esotericsoftware.kryonet.Listener;
 
 import Mob.Mob;
 import Projectile.Projectile;
-import Server.Tile;
 import Vector.Vector;
+import Packet.*;
 
 
 
@@ -22,6 +22,7 @@ public class Network extends Listener {
 		client = new Client(25000, 25000);
 		client.getKryo().register(PacketMapData.class);
 		client.getKryo().register(PacketAddPlayer.class);
+		client.getKryo().register(PacketRemovePlayer.class);
 		client.getKryo().register(PacketUpdatePlayerPosition.class);
 		client.getKryo().register(PacketUpdatePlayerSprite.class);
 		client.getKryo().register(Mob.class);
@@ -97,6 +98,10 @@ public class Network extends Listener {
 			PacketAddProjectile packet = (PacketAddProjectile) o;
 			Main.projectiles.put(Main.projectileCount, packet.projectile);
 			Main.projectileCount++;
+			
+		}else if(o instanceof PacketRemovePlayer){
+			PacketRemovePlayer packet = (PacketRemovePlayer) o;
+			Main.players.remove(packet.id);
 			
 		}
 		

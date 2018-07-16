@@ -1,4 +1,4 @@
-package Client;
+package Packet;
 
 public class PacketAddPlayer {
 

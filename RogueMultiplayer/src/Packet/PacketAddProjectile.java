@@ -1,9 +1,9 @@
-package Client;
+package Packet;
 
 import Projectile.Projectile;
 
 public class PacketAddProjectile {
 	
-	Projectile projectile = new Projectile();
+	public Projectile projectile = new Projectile();
 
 }

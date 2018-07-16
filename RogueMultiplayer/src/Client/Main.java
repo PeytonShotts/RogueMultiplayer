@@ -21,8 +21,9 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import Mob.*;
-import Projectile.Projectile;
 import MapCode.*;
+import Projectile.*;
+import Packet.*;
 
 public class Main extends BasicGame
 {
@@ -157,7 +158,6 @@ public class Main extends BasicGame
 	}
 
 	private void updateProjectiles() {
-		
 		for (Projectile projectile : projectiles.values())
 		{
 			if (projectile.time == 0)

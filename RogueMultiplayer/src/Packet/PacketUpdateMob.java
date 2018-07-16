@@ -1,4 +1,4 @@
-package Server;
+package Packet;
 
 import Mob.Mob;
 
