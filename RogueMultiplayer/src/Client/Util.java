@@ -17,8 +17,8 @@ public class Util {
 	
 	public static int getDistance(Player p, Mob m)
 	{
-		float xDifference = p.x - m.x;
-		float yDifference = p.y - m.y;
+		float xDifference = p.x - m.position.x;
+		float yDifference = p.y - m.position.y;
 		return (int) Math.sqrt( (xDifference*xDifference) + (yDifference*yDifference));
 	}
 	
@@ -29,8 +29,8 @@ public class Util {
 		
 		if (Math.abs(magnitude) > 0)
 		{
-			directionVector.x = (m.x - p.x) / magnitude;
-			directionVector.y = (m.y - p.y) / magnitude;
+			directionVector.x = (m.position.x - p.x) / magnitude;
+			directionVector.y = (m.position.y - p.y) / magnitude;
 		}
 		else
 		{
@@ -46,8 +46,8 @@ public class Util {
 	{
 		int magnitude = getDistance(p, m);
 		Vector directionVector = new Vector();
-		directionVector.x = (p.x - m.x) / magnitude;
-		directionVector.y = (p.y - m.y) / magnitude;
+		directionVector.x = (p.x - m.position.x) / magnitude;
+		directionVector.y = (p.y - m.position.y) / magnitude;
 		
 		return directionVector;
 	}

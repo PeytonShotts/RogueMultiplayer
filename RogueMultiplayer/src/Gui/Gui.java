@@ -8,7 +8,9 @@ public class Gui {
 	
 	HealthBar healthBar = new HealthBar();
 	Minimap minimap = new Minimap();
-	static Inventory inventory = new Inventory();
+	public static Inventory inventory = new Inventory();
+	
+	public boolean mouseFocus;
 	
 	public void init() throws SlickException
 	{
@@ -23,12 +25,24 @@ public class Gui {
 		{
 			inventory.visible ^= true;
 		}
-		
 		if (inventory.visible == true)
 		{
 			Inventory.update(mouseX, mouseY, mouseClick, mouseOne);
 		}
 		
+		//conditions for mouseFocus
+		if (mouseX > 1240 && mouseX < 1280 && mouseY > 133 && mouseY < 170)
+		{
+			mouseFocus = true;
+		}
+		else if (inventory.mouseX > 0 && inventory.mouseY > 0)
+		{
+			mouseFocus = true;
+		}
+		else
+		{
+			mouseFocus = false;
+		}
 	}
 	
 	public void draw(GameContainer gc, Graphics g)

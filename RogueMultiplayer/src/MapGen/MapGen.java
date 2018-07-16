@@ -1,11 +1,9 @@
-package Client;
+package MapGen;
 
 import java.util.LinkedList;
 import java.util.Random;
 
 import org.newdawn.slick.Color;
-
-import Client.Mobs.Snake;
 
 public class MapGen {
 

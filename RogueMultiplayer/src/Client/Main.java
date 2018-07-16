@@ -36,8 +36,10 @@ public class Main extends BasicGame
 
 	int mouseX;
 	int mouseY;
+	
 	float relativeMouseX;
 	float relativeMouseY;
+	
 	static double aimX;
 	static double aimY;
 	
@@ -88,6 +90,9 @@ public class Main extends BasicGame
 	public void init(GameContainer gc) throws SlickException
 	{
 		gui.init();
+		
+		tileset = new Image("res/owlishmedia_pixel_tiles.png"); 
+		spriteset = new Image("res/spriteset.png");
 	}
 
 	@Override
@@ -116,10 +121,11 @@ public class Main extends BasicGame
 			//update view offset
 			updateViewOffset();
 			
+			//update gui
 			gui.update(mouseX, mouseY, mouseClick, mouseOne);
 			
 			//add new projectile when mouse is pressed
-			if(mouseOne == true && player.attackTimer == 0)
+			if(mouseOne == true && player.attackTimer == 0 && gui.mouseFocus == false)
 			{
 				Projectile newProjectile = new Projectile();
 				
@@ -154,9 +160,6 @@ public class Main extends BasicGame
 						
 					}
 			}
-			
-			//update mobs
-			//updateMobs();
 			
 			//calculate visible blocks
 			//calculateVisibleBlocks();
@@ -292,10 +295,8 @@ public class Main extends BasicGame
 		{
 			
 		//load images when client first opens
-		if (hasInit == false) {tileset = new Image("res/owlishmedia_pixel_tiles.png"); spriteset = new Image("res/spriteset.png"); hasInit = true;}
+		//if (hasInit == false) {tileset = new Image("res/owlishmedia_pixel_tiles.png"); spriteset = new Image("res/spriteset.png"); hasInit = true;}
 		
-		int prevLayer = 0;
-		boolean playerDrawn = false;
 		//draw map around player
 		if (player.x > 0) {
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)

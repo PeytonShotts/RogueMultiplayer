@@ -154,9 +154,9 @@ public class Mob {
 					{
 						if ( map.layers[0].data[colX][colY] == type)
 						{
-							if (this.position.x+5 < colX*32 + 32 &&
-								this.position.x+5 + this.width > colX*32 &&
-								this.position.y+5 < colY*32 + 32 &&
+							if (this.position.x < colX*32 + 32 &&
+								this.position.x + this.width > colX*32 &&
+								this.position.y < colY*32 + 32 &&
 							    this.height + this.position.y > colY*32) 
 							{
 									return true;
