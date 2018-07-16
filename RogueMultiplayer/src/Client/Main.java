@@ -119,7 +119,7 @@ public class Main extends BasicGame
 			gui.update(mouseX, mouseY, mouseClick, mouseOne);
 			
 			//add new projectile when mouse is pressed
-			if(mouseClick == true && player.attackTimer == 0)
+			if(mouseOne == true && player.attackTimer == 0)
 			{
 				Projectile newProjectile = new Projectile();
 				
@@ -130,7 +130,7 @@ public class Main extends BasicGame
 				newProjectile.direction.y = (float) aimY;
 				newProjectile.time = 20;
 				
-				newProjectile.speed = 5;
+				newProjectile.speed = 2;
 				
 				newProjectile.id = projectileCount;
 				projectiles.put(projectileCount, newProjectile);
@@ -147,6 +147,13 @@ public class Main extends BasicGame
 			
 			//update projectiles
 			updateProjectiles();
+			for (Mob mob : mobs.values())
+			{
+					if (mob.isCollidingWithProjectile(projectiles) != null)
+					{
+						
+					}
+			}
 			
 			//update mobs
 			//updateMobs();
@@ -342,8 +349,7 @@ public class Main extends BasicGame
 		for(Mob mob : mobs.values())
 		{
 			g.setColor(new Color(255, 255, 255));
-			g.drawRect(mob.x + offsetX, mob.y + offsetY, 32, 32);
-			System.out.println(mobs.size());
+			g.drawRect(mob.position.x + offsetX, mob.position.y + offsetY, 32, 32);
 		}
 		
 		//draw mobs
@@ -353,14 +359,14 @@ public class Main extends BasicGame
 			if (currentMap.mobList.get(mobI).isHit)
 			{
 				g.drawImage(tileset, 
-						currentMap.mobList.get(mobI).x + offsetX, currentMap.mobList.get(mobI).y + offsetY, currentMap.mobList.get(mobI).x + offsetX + 32, currentMap.mobList.get(mobI).y + offsetY + 32,
+						currentMap.mobList.get(mobI).position.x + offsetX, currentMap.mobList.get(mobI).position.y + offsetY, currentMap.mobList.get(mobI).position.x + offsetX + 32, currentMap.mobList.get(mobI).position.y + offsetY + 32,
 						(currentMap.mobList.get(mobI).spriteX)*32, (currentMap.mobList.get(mobI).spriteY)*32, ((currentMap.mobList.get(mobI).spriteX)*32) + 32, ((currentMap.mobList.get(mobI).spriteY)*32) + 32, 
 						new Color(255,0,0));
 			}
 			else
 			{
 				g.drawImage(tileset, 
-						(int) currentMap.mobList.get(mobI).x + offsetX, (int) currentMap.mobList.get(mobI).y + offsetY, (int) currentMap.mobList.get(mobI).x + offsetX + 32, (int) currentMap.mobList.get(mobI).y + offsetY + 32,
+						(int) currentMap.mobList.get(mobI).position.x + offsetX, (int) currentMap.mobList.get(mobI).position.y + offsetY, (int) currentMap.mobList.get(mobI).position.x + offsetX + 32, (int) currentMap.mobList.get(mobI).position.y + offsetY + 32,
 						(currentMap.mobList.get(mobI).spriteX)*32, (currentMap.mobList.get(mobI).spriteY)*32, ((currentMap.mobList.get(mobI).spriteX)*32) + 32, ((currentMap.mobList.get(mobI).spriteY)*32) + 32, 
 						new Color(255,255,255));
 			}
@@ -369,7 +375,7 @@ public class Main extends BasicGame
 			if (currentMap.mobList.get(mobI).health < currentMap.mobList.get(mobI).maxHealth)
 			{
 				g.setColor(new Color(50,250,50,180));
-				g.fillRect(currentMap.mobList.get(mobI).x + offsetX, currentMap.mobList.get(mobI).y + offsetY - 5, 32* ((float)currentMap.mobList.get(mobI).health / currentMap.mobList.get(mobI).maxHealth), 5);
+				g.fillRect(currentMap.mobList.get(mobI).position.x + offsetX, currentMap.mobList.get(mobI).position.y + offsetY - 5, 32* ((float)currentMap.mobList.get(mobI).health / currentMap.mobList.get(mobI).maxHealth), 5);
 			}
 			
 			//draw health bar if player health is under maximum
@@ -377,7 +383,6 @@ public class Main extends BasicGame
 			{
 				g.setColor(new Color(50,250,50,180));
 				g.fillRect(player.x + offsetX, player.y + offsetY - 5, 32 * ((float)player.health / (float)player.maxHealth), 5);
-				System.out.println(player.health);
 			}
 		}
 				

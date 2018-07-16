@@ -43,6 +43,7 @@ public class Main extends Listener {
 		server.getKryo().register(PacketAddMob.class);
 		server.getKryo().register(PacketUpdateMob.class);
 		server.getKryo().register(PacketAddProjectile.class);
+		server.getKryo().register(PacketRemoveProjectile.class);
 		server.getKryo().register(Vector.class);
 		server.getKryo().register(Projectile.class);
 		server.getKryo().register(byte[].class);
@@ -51,14 +52,14 @@ public class Main extends Listener {
 		server.bind(port, port);
 		server.start();
 		server.addListener(new Main());
-		System.out.println("The server is ready.");	
+		System.out.println("Server Ready");	
 		
 		
 		byte[] mapByteData = ByteArrayConverter.convert(newMap);
-		System.out.println(mapByteData.length);
+		System.out.println("Loading map of size: " + mapByteData.length);
 		
-		System.out.println(newMap.width);
-		System.out.println(newMap.height);
+		System.out.println("Map width: " + newMap.width);
+		System.out.println("Map height: " + newMap.height);
 		
 		int i = 0;
 		
@@ -66,7 +67,7 @@ public class Main extends Listener {
 		long sleepTime = 1000/60;
 		
 		Mob newMob = new Mob();
-		newMob.x = 44*32; newMob.y = 44*32;
+		newMob.position.x = 44*32; newMob.position.y = 44*32;
 		addMob(newMob);
 		
 		while (true)
@@ -79,20 +80,17 @@ public class Main extends Listener {
 			i++;
 			
 			//update mobs
-			for (Mob mob : mobs.values())
-			{
-				mob.update(newMap, projectiles);
-			}
+			updateMobs();
+
 			//update projectiles
 			updateProjectiles();
 			
-			PacketUpdateMob mobUpdate = new PacketUpdateMob();
-			mobUpdate.x = mobs.get(0).x;
-			mobUpdate.y = mobs.get(0).y;
+			PacketUpdateMob mobUpdatePosition = new PacketUpdateMob();
+			mobUpdatePosition.position.x = mobs.get(0).position.x;
+			mobUpdatePosition.position.y = mobs.get(0).position.y;
 			
-			server.sendToAllUDP(mobUpdate);
+			server.sendToAllUDP(mobUpdatePosition);
 			
-			//System.out.println(newMob.x);
 		}
 		
 	}
@@ -103,11 +101,23 @@ public class Main extends Listener {
 		{
 			if (projectile.time == 0)
 			{
+				PacketRemoveProjectile packet = new PacketRemoveProjectile();
+				packet.id = projectile.id;
+				server.sendToAllUDP(packet);
+				
 				projectiles.remove(projectile.id);
 			}
 			projectile.update();
 		}
 		
+	}
+	
+	public static void updateMobs()
+	{
+		for (Mob mob : mobs.values())
+		{
+			mob.update(newMap, projectiles);
+		}
 	}
 	
 	public void connected(Connection c){
@@ -139,8 +149,8 @@ public class Main extends Listener {
 		
 		//send mobs to new player
 		PacketAddMob mobPacket = new PacketAddMob();
-		mobPacket.x = mobs.get(0).x;
-		mobPacket.y = mobs.get(0).y;
+		mobPacket.position.x = mobs.get(0).position.x;
+		mobPacket.position.y = mobs.get(0).position.y;
 		mobPacket.id = 0;
 		c.sendTCP(mobPacket);
 		
@@ -206,7 +216,6 @@ public class Main extends Listener {
 			packet.id = c.getID();
 			server.sendToAllExceptUDP(c.getID(), packet);
 			
-			System.out.println("sending player position.");
 		}
 		else if(o instanceof PacketUpdatePlayerSprite){
 			PacketUpdatePlayerSprite packet = (PacketUpdatePlayerSprite) o;
@@ -214,7 +223,6 @@ public class Main extends Listener {
 			packet.id = c.getID();
 			server.sendToAllExceptUDP(c.getID(), packet);
 			
-			System.out.println("sending player sprite.");
 		}
 		else if(o instanceof PacketAddProjectile){
 			PacketAddProjectile packet = (PacketAddProjectile) o;
@@ -223,7 +231,6 @@ public class Main extends Listener {
 			projectiles.put(packet.projectile.id, packet.projectile);
 			projectileCount++;
 			
-			System.out.println("sending projectile to players.");
 		}
 		
 	}

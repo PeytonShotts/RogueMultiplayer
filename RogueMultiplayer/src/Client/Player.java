@@ -65,15 +65,14 @@ public class Player {
 										this.y < colY*32 + height &&
 										height + this.y > colY*32) 
 										{
-										System.out.println("collision with: " + currentMap.layers[layer].data[colX][colY]);
 											return true;
 										}
 							}
 						}
 
 					}
-				}
 				
+				}
 			}
 		}
 		

@@ -10,13 +10,13 @@ import Client.Main;
 import Client.Player;
 import Client.Util;
 import MapCode.Map;
+import Packet.PacketUpdateMobHealth;
 import Projectile.Projectile;
 import Vector.Vector;
 
 public class Mob {
 	
-	public float x;
-	public float y;
+	public Vector position = new Vector();
 	
 	public int width = 32;
 	public int height = 32;
@@ -34,16 +34,22 @@ public class Mob {
 	public int spriteX;
 	public int spriteY;
 	
-	int timeAlive = 0;
-	
 	public int health;
+	public int networkHealth;
 	public int maxHealth;
 	
-	protected float speed;
+	public float speed;
 	
 	List<Integer> collisionList = new ArrayList<>(Arrays.asList(16, 226));
 	
 	Random rand = new Random();
+	
+	public Mob()
+	{
+		health = 100;
+		maxHealth = health;
+		networkHealth = health;
+	}
 	
 	public void update(Map map, java.util.Map<Integer, Projectile> projectiles)
 	{
@@ -61,25 +67,27 @@ public class Mob {
 				}
 			}
 			
-			this.x += this.addX;
+			this.position.x += this.addX;
 			if (this.isCollidingWithMap(map))
 			{
-				this.x -= this.addX;
+				this.position.x -= this.addX;
 			}
 			this.addX += this.addX*-0.1;
 			
-			this.y += this.addY;
+			this.position.y += this.addY;
 			if (this.isCollidingWithMap(map))
 			{
-				this.y -= this.addY;
+				this.position.y -= this.addY;
 			}
 			this.addY += this.addY*-0.1;
 			
 			Vector hitVector = this.isCollidingWithProjectile(projectiles);
 			if (hitVector != null)
 			{
-				this.addX = hitVector.x*3;
-				this.addY = hitVector.y*3;
+				this.addX = hitVector.x;
+				this.addY = hitVector.y;
+				
+				PacketUpdateMobHealth packet = new PacketUpdateMobHealth();
 			}
 		
 	}
@@ -135,9 +143,9 @@ public class Mob {
 
 	public boolean isCollidingWithMap(Map map)
 	{
-		for (int colX = (int) ((this.x/32) - 1); colX < (this.x/32) + 2; colX++)
+		for (int colX = (int) ((this.position.x/32) - 1); colX < (this.position.x/32) + 2; colX++)
 		{
-			for (int colY = (int) ((this.y/32) - 1); colY < (this.y/32) + 2; colY++)
+			for (int colY = (int) ((this.position.y/32) - 1); colY < (this.position.y/32) + 2; colY++)
 			{
 				if (colX > 0 && colX < map.width &&
 						colY > 0 && colY < map.height)
@@ -146,10 +154,10 @@ public class Mob {
 					{
 						if ( map.layers[0].data[colX][colY] == type)
 						{
-							if (this.x+5 < colX*32 + 32 &&
-								this.x+5 + this.width > colX*32 &&
-								this.y+5 < colY*32 + 32 &&
-							    this.height + this.y > colY*32) 
+							if (this.position.x+5 < colX*32 + 32 &&
+								this.position.x+5 + this.width > colX*32 &&
+								this.position.y+5 < colY*32 + 32 &&
+							    this.height + this.position.y > colY*32) 
 							{
 									return true;
 							}
@@ -167,13 +175,17 @@ public class Mob {
 	{
 		for (Projectile projectile : projectiles.values())
 			{
-				if (projectile.position.x < this.x + this.width &&
-					projectile.position.x + projectile.size > this.x &&
-					projectile.position.y < this.y + this.height &&
-					projectile.size + projectile.position.y > this.y) 
+				if (projectile.position.x < this.position.x + this.width &&
+					projectile.position.x + projectile.size > this.position.x &&
+					projectile.position.y < this.position.y + this.height &&
+					projectile.size + projectile.position.y > this.position.y) 
 						{
 							projectile.time = 0;
-							return projectile.direction;
+							health += -projectile.damage;
+							
+							Vector hitVector = new Vector(projectile.direction.x*projectile.knockback, 
+															projectile.direction.y*projectile.knockback);
+							return hitVector;
 						}
 			}
 				
@@ -182,10 +194,10 @@ public class Mob {
 
 	public boolean isCollidingWithPlayer(Player player)
 	{
-		if (this.x < player.x + player.width &&
-				this.x + this.width > player.x &&
-				this.y < player.y + player.height &&
-				this.height + this.y > player.y) {
+		if (this.position.x < player.x + player.width &&
+				this.position.x + this.width > player.x &&
+				this.position.y < player.y + player.height &&
+				this.height + this.position.y > player.y) {
 			
 				    return true;
 				}
@@ -195,7 +207,7 @@ public class Mob {
 	public void knockBackPlayer(Player player)
 	{
 		Vector collisionVector = new Vector();
-		float xDist = (int) (player.x - this.x); float yDist = (int) (player.y - this.y);
+		float xDist = (int) (player.x - this.position.x); float yDist = (int) (player.y - this.position.y);
 		float magnitude = (int) Math.sqrt( (xDist*xDist) + (yDist*yDist) );
 		collisionVector.x = (xDist / magnitude);
 		collisionVector.y = (yDist / magnitude);

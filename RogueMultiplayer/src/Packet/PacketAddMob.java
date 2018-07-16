@@ -1,10 +1,11 @@
 package Packet;
 
 import Mob.Mob;
+import Vector.Vector;
 
 public class PacketAddMob {
 	
-	public float x,y;
+	public Vector position = new Vector();
 	public int id;
 
 }

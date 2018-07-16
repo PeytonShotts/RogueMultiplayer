@@ -29,6 +29,7 @@ public class Network extends Listener {
 		client.getKryo().register(PacketAddMob.class);
 		client.getKryo().register(PacketUpdateMob.class);
 		client.getKryo().register(PacketAddProjectile.class);
+		client.getKryo().register(PacketRemoveProjectile.class);
 		client.getKryo().register(Vector.class);
 		client.getKryo().register(Projectile.class);
 		client.getKryo().register(byte[].class);
@@ -85,19 +86,22 @@ public class Network extends Listener {
 		}else if(o instanceof PacketAddMob){
 			PacketAddMob packet = (PacketAddMob) o;
 			Mob newMob = new Mob();
-			newMob.x = packet.x;
-			newMob.y = packet.y;
+			newMob.position.x = packet.position.x;
+			newMob.position.y = packet.position.y;
 			Main.mobs.put(packet.id, newMob);
 			
 		}else if(o instanceof PacketUpdateMob){
 			PacketUpdateMob packet = (PacketUpdateMob) o;
-			Main.mobs.get(packet.id).x = packet.x;
-			Main.mobs.get(packet.id).y = packet.y;
+			Main.mobs.get(packet.id).position.x = packet.position.x;
+			Main.mobs.get(packet.id).position.y = packet.position.y;
 			
 		}else if(o instanceof PacketAddProjectile){
 			PacketAddProjectile packet = (PacketAddProjectile) o;
 			Main.projectiles.put(Main.projectileCount, packet.projectile);
 			Main.projectileCount++;
+		}else if(o instanceof PacketRemoveProjectile){
+			PacketRemoveProjectile packet = (PacketRemoveProjectile) o;
+			Main.projectiles.remove(packet.id);
 			
 		}else if(o instanceof PacketRemovePlayer){
 			PacketRemovePlayer packet = (PacketRemovePlayer) o;
