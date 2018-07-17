@@ -68,10 +68,14 @@ public class Main extends Listener {
 		long taskTime = 0;
 		long sleepTime = 1000/60;
 		
-		Mob newMob = new Chicken();
-		newMob.position.x = 44*32; newMob.position.y = 44*32;
-		newMob.health = 100; newMob.maxHealth = 100;
-		addMob(newMob);
+		for (int spawn=0; spawn< 20; spawn++)
+		{
+			Mob newMob = new Chicken();
+			newMob.position.x = 47*32; newMob.position.y = 47*32;
+			newMob.health = 100; newMob.maxHealth = 100;
+			addMob(newMob);
+		}
+		
 		
 		while (true)
 		{
@@ -88,13 +92,7 @@ public class Main extends Listener {
 			//update projectiles
 			updateProjectiles();
 			
-			PacketUpdateMob mobUpdatePosition = new PacketUpdateMob();
-			mobUpdatePosition.position.x = mobs.get(0).position.x;
-			mobUpdatePosition.position.y = mobs.get(0).position.y;
-			mobUpdatePosition.spriteX = (byte) mobs.get(0).spriteX;
-			mobUpdatePosition.spriteY = (byte) mobs.get(0).spriteY;
-			
-			server.sendToAllUDP(mobUpdatePosition);
+			//System.out.println(mobs.get(0).position.x);
 			
 		}
 		
@@ -133,6 +131,21 @@ public class Main extends Listener {
 				
 				System.out.println("mob health: " + mob.getValue().health);
 			}
+			if (mob.getValue().position.x != mob.getValue().networkPosition.x |
+				mob.getValue().position.y != mob.getValue().networkPosition.y)
+			{
+				PacketUpdateMob mobUpdate = new PacketUpdateMob();
+				mobUpdate.id = mob.getKey();
+				mobUpdate.position.x = mob.getValue().position.x;
+				mobUpdate.position.y = mob.getValue().position.y;
+				mobUpdate.spriteX = (byte) mob.getValue().spriteX;
+				mobUpdate.spriteY = (byte) mob.getValue().spriteY;
+				
+				server.sendToAllUDP(mobUpdate);
+				
+				mob.getValue().networkPosition.x = mob.getValue().position.x;
+				mob.getValue().networkPosition.y = mob.getValue().position.y;
+			}
 		}
 	}
 	
@@ -164,13 +177,17 @@ public class Main extends Listener {
 		players.put(c.getID(), player);
 		
 		//send mobs to new player
-		PacketAddMob mobPacket = new PacketAddMob();
-		mobPacket.position.x = mobs.get(0).position.x;
-		mobPacket.position.y = mobs.get(0).position.y;
-		mobPacket.health = mobs.get(0).health;
-		mobPacket.maxHealth = mobs.get(0).maxHealth;
-		mobPacket.id = 0;
-		c.sendTCP(mobPacket);
+		for (Entry<Integer, Mob> mob : mobs.entrySet())
+		{
+			PacketAddMob mobPacket = new PacketAddMob();
+			mobPacket.position.x = mob.getValue().position.x;
+			mobPacket.position.y = mob.getValue().position.y;
+			mobPacket.health = mob.getValue().health;
+			mobPacket.maxHealth = mob.getValue().maxHealth;
+			mobPacket.id = mob.getKey();
+			
+			c.sendTCP(mobPacket);
+		}
 		
 		System.out.println("Connection received.");
 		

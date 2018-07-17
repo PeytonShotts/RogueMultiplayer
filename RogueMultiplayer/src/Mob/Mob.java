@@ -21,6 +21,7 @@ import Vector.Vector;
 public class Mob {
 	
 	public Vector position = new Vector();
+	public Vector networkPosition = new Vector();
 	
 	public int width = 32;
 	public int height = 32;
@@ -56,8 +57,8 @@ public class Mob {
 	
 	public void draw(GameContainer gc, Graphics g, int offsetX, int offsetY)
 	{
-		float drawX = position.x + offsetX;
-		float drawY = position.y + offsetY;
+		int drawX = (int)position.x + offsetX;
+		int drawY = (int)position.y + offsetY;
 		
 		spriteSheet.draw(drawX, drawY, drawX+32, drawY+32, spriteX*32, spriteY*32, (spriteX*32)+32, (spriteY*32)+32);
 	}
@@ -98,6 +99,10 @@ public class Mob {
 					}
 				}
 			}
+			else
+			{
+				spriteX = 1;
+			}
 			
 			this.position.x += this.addX;
 			if (this.isCollidingWithMap(map))
@@ -120,8 +125,6 @@ public class Mob {
 				this.addY = hitVector.y;
 				this.isHit = true;
 			}
-			
-			System.out.println("sprite x: "+spriteX + " spriteY: " + spriteY);
 		
 	}
 	

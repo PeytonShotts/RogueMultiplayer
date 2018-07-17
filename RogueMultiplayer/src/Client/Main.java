@@ -295,7 +295,7 @@ public class Main extends BasicGame
 		//load images when client first opens
 		//if (hasInit == false) {tileset = new Image("res/owlishmedia_pixel_tiles.png"); spriteset = new Image("res/spriteset.png"); hasInit = true;}
 		
-		//draw map around player
+		//draw map around player (first layer)
 		if (player.x > 0) {
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
 		{
@@ -315,28 +315,8 @@ public class Main extends BasicGame
 			}
 		}
 		
-		
+		//draw player
 		g.drawImage(spriteset, (int)player.x + offsetX, (int)player.y + offsetY, (int)player.x+32 + offsetX, (int)player.y+32 + offsetY, (int)player.spriteX*32, (int)player.spriteY*32, ((int)player.spriteX*32) + 32, ((int)player.spriteY*32) + 32, new Color(255,255,255));
-		
-		//draw map around player
-		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
-		{
-			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
-			{
-				
-				for (int layer=1; layer<currentMap.layers.length; layer++)
-				{
-					int tile = (currentMap.layers[layer].data[drawX][drawY]);
-					int tileY = (int) (Math.floor(tile / 14));
-					int tileX = (int) (tile - (tileY*14));
-					
-					
-					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
-						
-				}
-			}
-		}
-		
 		
 		//draw other players
 		for(Player mpPlayer : players.values())
@@ -356,6 +336,27 @@ public class Main extends BasicGame
 				g.fillRect(mob.position.x + offsetX, mob.position.y + offsetY - 5, 32* ((float)mob.health / (float)mob.maxHealth), 5);
 			}
 		}
+		
+		//draw map around player (other layers)
+		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
+		{
+			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
+			{
+				
+				for (int layer=1; layer<currentMap.layers.length; layer++)
+				{
+					int tile = (currentMap.layers[layer].data[drawX][drawY]);
+					int tileY = (int) (Math.floor(tile / 14));
+					int tileX = (int) (tile - (tileY*14));
+					
+					
+					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+						
+				}
+			}
+		}
+		
+		
 		
 		
 		//player health (old)
