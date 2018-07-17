@@ -24,7 +24,7 @@ public class Main extends Listener {
 	
 	static java.util.Map<Integer, Player> players = new HashMap<Integer, Player>();
 	static java.util.Map<Integer, Mob> mobs = new ConcurrentHashMap<Integer, Mob>();
-	static java.util.Map<Integer, Projectile> projectiles = new HashMap<Integer, Projectile>();
+	static java.util.Map<Integer, Projectile> projectiles = new ConcurrentHashMap<Integer, Projectile>();
 	static int mobCount = 0;
 	
 	static Map newMap = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
@@ -93,8 +93,6 @@ public class Main extends Listener {
 			//update projectiles
 			updateProjectiles();
 			
-			//System.out.println(mobs.get(0).position.x);
-			
 		}
 		
 	}
@@ -121,7 +119,14 @@ public class Main extends Listener {
 		for (Entry<Integer, Mob> mob : mobs.entrySet())
 		{
 			mob.getValue().update(newMap, projectiles);
-			if (mob.getValue().health != mob.getValue().networkHealth)
+			if (mob.getValue().health <= 0)
+			{
+				mobs.remove(mob.getKey());
+				PacketRemoveMob mobRemove = new PacketRemoveMob();
+				mobRemove.id = mob.getKey();
+				server.sendToAllTCP(mobRemove);
+			}
+			else if (mob.getValue().health != mob.getValue().networkHealth)
 			{
 				PacketUpdateMobHealth packet = new PacketUpdateMobHealth();
 				packet.id = mob.getKey();
@@ -132,7 +137,7 @@ public class Main extends Listener {
 				
 				System.out.println("mob health: " + mob.getValue().health);
 			}
-			if (mob.getValue().position.x != mob.getValue().networkPosition.x |
+			else if (mob.getValue().position.x != mob.getValue().networkPosition.x |
 				mob.getValue().position.y != mob.getValue().networkPosition.y)
 			{
 				PacketUpdateMob mobUpdate = new PacketUpdateMob();
@@ -146,13 +151,6 @@ public class Main extends Listener {
 				
 				mob.getValue().networkPosition.x = mob.getValue().position.x;
 				mob.getValue().networkPosition.y = mob.getValue().position.y;
-			}
-			if (mob.getValue().health <= 0)
-			{
-				mobs.remove(mob.getKey());
-				PacketRemoveMob mobRemove = new PacketRemoveMob();
-				mobRemove.id = mob.getKey();
-				server.sendToAllTCP(mobRemove);
 			}
 		}
 	}
@@ -266,9 +264,10 @@ public class Main extends Listener {
 		}
 		else if(o instanceof PacketAddProjectile){
 			PacketAddProjectile packet = (PacketAddProjectile) o;
-			
+			packet.projectile.id = projectileCount;
 			server.sendToAllUDP(packet);
-			projectiles.put(packet.projectile.id, packet.projectile);
+			
+			projectiles.put(projectileCount, packet.projectile);
 			projectileCount++;
 			
 		}

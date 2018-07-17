@@ -9,6 +9,7 @@ import Mob.*;
 import Projectile.Projectile;
 import Vector.Vector;
 import Packet.*;
+import ParticleCode.CircleExplosion;
 
 
 
@@ -104,8 +105,10 @@ public class Network extends Listener {
 		}else if(o instanceof PacketAddProjectile){
 			PacketAddProjectile packet = (PacketAddProjectile) o;
 			Main.projectiles.put(packet.projectile.id, packet.projectile);
+			
 		}else if(o instanceof PacketRemoveProjectile){
 			PacketRemoveProjectile packet = (PacketRemoveProjectile) o;
+			
 			Main.projectiles.remove(packet.id);
 			
 		}else if(o instanceof PacketRemovePlayer){

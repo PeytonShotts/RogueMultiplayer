@@ -9,12 +9,12 @@ public class Projectile {
 	public Vector position = new Vector();
 	public Vector direction = new Vector();
 
-	public int size = 10;
+	public int size = 2;
 	public int time;
 	
 	public int speed;
-	public int knockback = 8;
-	public short damage = 5;
+	public int knockback = 2;
+	public short damage = 1;
 	
 	public void update()
 	{

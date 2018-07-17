@@ -4,8 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +25,10 @@ import org.newdawn.slick.SlickException;
 import Mob.*;
 import MapCode.*;
 import Projectile.*;
+import Vector.Vector;
 import Packet.*;
+import ParticleCode.CircleExplosion;
+import ParticleCode.Particle;
 
 public class Main extends BasicGame
 {
@@ -70,7 +75,7 @@ public class Main extends BasicGame
 	
 	static java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
 	static java.util.Map<Integer,Mob> mobs = new HashMap<Integer,Mob>(); 
-	static java.util.Map<Integer,Projectile> projectiles = new HashMap<Integer,Projectile>(); 
+	static java.util.Map<Integer,Projectile> projectiles = new ConcurrentHashMap<Integer,Projectile>(); 
 	
 	static boolean mouseClick;
 	static boolean mouseOne;
@@ -79,6 +84,8 @@ public class Main extends BasicGame
 	static Gui.Gui gui = new Gui.Gui();
 
 	public static boolean mapLoaded = false;
+
+	public static ArrayList<Particle> particles = new ArrayList<Particle>();
 	
 	
 	public Main(String gamename)
@@ -136,28 +143,31 @@ public class Main extends BasicGame
 				
 				newProjectile.direction.x = (float) aimX;
 				newProjectile.direction.y = (float) aimY;
-				newProjectile.time = 20;
+				newProjectile.time = 80;
 				
-				newProjectile.speed = 2;
+				newProjectile.speed = 8;
 				
 				PacketAddProjectile packet = new PacketAddProjectile();
 				packet.projectile = newProjectile;
 				network.client.sendUDP(packet);
 				
-				player.attackTimer = 50;
+				player.attackTimer = 5;
 				
 				
 			}
 			
+			//update particles
+			for (int p=0; p<particles.size(); p++)
+			{
+				particles.get(p).update();
+				if (particles.get(p).time == 0)
+				{
+					particles.remove(p);
+				}
+			}
+			//CircleExplosion a = new CircleExplosion(new Vector(1280/2, 720), 50, 1, 50);
 			//update projectiles
 			updateProjectiles();
-			for (Mob mob : mobs.values())
-			{
-					if (mob.isCollidingWithProjectile(projectiles) != null)
-					{
-						
-					}
-			}
 			
 			//calculate visible blocks
 			//calculateVisibleBlocks();
@@ -171,6 +181,7 @@ public class Main extends BasicGame
 			if (projectile.time == 0)
 			{
 				projectiles.remove(projectile.id);
+				System.out.println("projectile removed");
 			}
 			projectile.update();
 		}
@@ -354,6 +365,13 @@ public class Main extends BasicGame
 						
 				}
 			}
+		}
+		
+		//draw particles
+		for (Particle particle : particles)
+		{
+			particle.draw(g);
+			System.out.println("particle drawn");
 		}
 		
 		
