@@ -15,7 +15,7 @@ import Packet.*;
 public class Network extends Listener {
 
 	Client client;
-	String ip = "73.177.127.130";
+	String ip = "localhost";
 	int port = 7777;
 	
 	public void connect(){
@@ -97,6 +97,8 @@ public class Network extends Listener {
 			PacketUpdateMob packet = (PacketUpdateMob) o;
 			Main.mobs.get(packet.id).position.x = packet.position.x;
 			Main.mobs.get(packet.id).position.y = packet.position.y;
+			Main.mobs.get(packet.id).spriteX = packet.spriteX;
+			Main.mobs.get(packet.id).spriteY = packet.spriteY;
 			
 		}else if(o instanceof PacketAddProjectile){
 			PacketAddProjectile packet = (PacketAddProjectile) o;

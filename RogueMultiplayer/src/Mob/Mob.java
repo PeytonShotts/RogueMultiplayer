@@ -30,10 +30,10 @@ public class Mob {
 	
 	int moveCooldown;
 	
-	boolean isInRange;
-	Player playerInRange;
+	boolean isMoving;
+	boolean isHit;
 	
-	public Image spriteSheet;
+	public static Image spriteSheet;
 	public int spriteCount;
 	public int spriteX;
 	public int spriteY;
@@ -56,41 +56,46 @@ public class Mob {
 	
 	public void draw(GameContainer gc, Graphics g, int offsetX, int offsetY)
 	{
-		g.drawImage(spriteSheet, position.x + offsetX, position.y + offsetY, position.x + offsetX + 32, position.y + offsetY + 32, spriteX*32, spriteY*32, (spriteX*32)+32, (spriteY*32)+32);
+		float drawX = position.x + offsetX;
+		float drawY = position.y + offsetY;
+		
+		spriteSheet.draw(drawX, drawY, drawX+32, drawY+32, spriteX*32, spriteY*32, (spriteX*32)+32, (spriteY*32)+32);
 	}
 	
 	public void update(Map map, java.util.Map<Integer, Projectile> projectiles)
 	{
+			/*
 			if (this.isInRange)
 			{
 				this.addX += (float) (-Util.getDirectionVector(playerInRange, this).x*this.speed);
 				this.addY += (float) (-Util.getDirectionVector(playerInRange, this).y*this.speed);
 			}
-			else if (Math.abs(this.addX+this.addY) < 0.001)
+			*/
+		
+			if (Math.abs(this.addX+this.addY) < 0.001)
 			{
+				if (isHit == true)
+				{
+					isHit = false;
+				}
+				
 				moveCooldown -= 1;
 				if (moveCooldown < 0)
 				{
 					randomMove();
 				}
 			}
-			
-			if (Math.abs(this.addX+this.addY) < 0.001)
+			else if (Math.abs(this.addX+this.addY) > 0.1 && isHit == false)
 			{
 				walkTimer++;
-				
 				if (walkTimer == 10)
 				{
-					if (spriteX != spriteCount-1)
-					{
-						spriteX++;
-					}
-					else
+					walkTimer = 0;
+					spriteX++;
+					if (spriteX == spriteCount)
 					{
 						spriteX = 0;
 					}
-					
-					walkTimer = 0;
 				}
 			}
 			
@@ -113,7 +118,10 @@ public class Mob {
 			{
 				this.addX = hitVector.x;
 				this.addY = hitVector.y;
+				this.isHit = true;
 			}
+			
+			System.out.println("sprite x: "+spriteX + " spriteY: " + spriteY);
 		
 	}
 	
@@ -127,18 +135,22 @@ public class Mob {
 			case 0:
 				addX = -2;
 				addY =  0;
+				spriteY = 3;
 				break;
 			case 1:
 				addX =  2;
 				addY =  0;
+				spriteY = 1;
 				break;
 			case 2:
 				addY =  2;
 				addX =  0;
+				spriteY = 2;
 				break;
 			case 3:
 				addY = -2;
 				addX =  0;
+				spriteY = 0;
 				break;
 		}
 		
@@ -152,6 +164,7 @@ public class Mob {
 	}
 
 	//return closest player if close enough
+	/*
 	public Player checkPlayerDistance(Player player)
 	{
 		if (Util.getDistance(player, this) < 8*32)
@@ -165,6 +178,7 @@ public class Mob {
 			return null;
 		}
 	}
+	*/
 
 	public boolean isCollidingWithMap(Map map)
 	{

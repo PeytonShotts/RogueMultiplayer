@@ -93,6 +93,8 @@ public class Main extends BasicGame
 		
 		tileset = new Image("res/owlishmedia_pixel_tiles.png"); 
 		spriteset = new Image("res/spriteset.png");
+		
+		Chicken.init();
 	}
 
 	@Override

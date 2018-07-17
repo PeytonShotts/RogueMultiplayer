@@ -26,7 +26,7 @@ public class Main extends Listener {
 	static java.util.Map<Integer, Projectile> projectiles = new HashMap<Integer, Projectile>();
 	static int mobCount = 0;
 	
-	static Map newMap = JsonConverter.convert("C:/Users/Peyton/Desktop/jsonmap.json");
+	static Map newMap = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
 	
 	public static int tick = 0;
 	public static int projectileCount = 0;
@@ -68,7 +68,7 @@ public class Main extends Listener {
 		long taskTime = 0;
 		long sleepTime = 1000/60;
 		
-		Mob newMob = new Mob();
+		Mob newMob = new Chicken();
 		newMob.position.x = 44*32; newMob.position.y = 44*32;
 		newMob.health = 100; newMob.maxHealth = 100;
 		addMob(newMob);
@@ -91,6 +91,8 @@ public class Main extends Listener {
 			PacketUpdateMob mobUpdatePosition = new PacketUpdateMob();
 			mobUpdatePosition.position.x = mobs.get(0).position.x;
 			mobUpdatePosition.position.y = mobs.get(0).position.y;
+			mobUpdatePosition.spriteX = (byte) mobs.get(0).spriteX;
+			mobUpdatePosition.spriteY = (byte) mobs.get(0).spriteY;
 			
 			server.sendToAllUDP(mobUpdatePosition);
 			
