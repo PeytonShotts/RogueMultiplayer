@@ -1,6 +1,7 @@
 package Server;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -42,6 +43,7 @@ public class Main extends Listener {
 		server.getKryo().register(Mob.class);
 		server.getKryo().register(PacketAddMob.class);
 		server.getKryo().register(PacketUpdateMob.class);
+		server.getKryo().register(PacketUpdateMobHealth.class);
 		server.getKryo().register(PacketAddProjectile.class);
 		server.getKryo().register(PacketRemoveProjectile.class);
 		server.getKryo().register(Vector.class);
@@ -68,6 +70,7 @@ public class Main extends Listener {
 		
 		Mob newMob = new Mob();
 		newMob.position.x = 44*32; newMob.position.y = 44*32;
+		newMob.health = 100; newMob.maxHealth = 100;
 		addMob(newMob);
 		
 		while (true)
@@ -114,9 +117,20 @@ public class Main extends Listener {
 	
 	public static void updateMobs()
 	{
-		for (Mob mob : mobs.values())
+		for (Entry<Integer, Mob> mob : mobs.entrySet())
 		{
-			mob.update(newMap, projectiles);
+			mob.getValue().update(newMap, projectiles);
+			if (mob.getValue().health != mob.getValue().networkHealth)
+			{
+				PacketUpdateMobHealth packet = new PacketUpdateMobHealth();
+				packet.id = mob.getKey();
+				packet.health = mob.getValue().health;
+				server.sendToAllTCP(packet);
+				
+				mob.getValue().networkHealth = mob.getValue().health;
+				
+				System.out.println("mob health: " + mob.getValue().health);
+			}
 		}
 	}
 	
@@ -151,6 +165,8 @@ public class Main extends Listener {
 		PacketAddMob mobPacket = new PacketAddMob();
 		mobPacket.position.x = mobs.get(0).position.x;
 		mobPacket.position.y = mobs.get(0).position.y;
+		mobPacket.health = mobs.get(0).health;
+		mobPacket.maxHealth = mobs.get(0).maxHealth;
 		mobPacket.id = 0;
 		c.sendTCP(mobPacket);
 		

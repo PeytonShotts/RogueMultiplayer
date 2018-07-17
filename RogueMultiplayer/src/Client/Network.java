@@ -5,7 +5,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
-import Mob.Mob;
+import Mob.*;
 import Projectile.Projectile;
 import Vector.Vector;
 import Packet.*;
@@ -28,6 +28,7 @@ public class Network extends Listener {
 		client.getKryo().register(Mob.class);
 		client.getKryo().register(PacketAddMob.class);
 		client.getKryo().register(PacketUpdateMob.class);
+		client.getKryo().register(PacketUpdateMobHealth.class);
 		client.getKryo().register(PacketAddProjectile.class);
 		client.getKryo().register(PacketRemoveProjectile.class);
 		client.getKryo().register(Vector.class);
@@ -85,9 +86,11 @@ public class Network extends Listener {
 			
 		}else if(o instanceof PacketAddMob){
 			PacketAddMob packet = (PacketAddMob) o;
-			Mob newMob = new Mob();
+			Chicken newMob = new Chicken();
 			newMob.position.x = packet.position.x;
 			newMob.position.y = packet.position.y;
+			newMob.health = packet.health;
+			newMob.maxHealth = packet.maxHealth;
 			Main.mobs.put(packet.id, newMob);
 			
 		}else if(o instanceof PacketUpdateMob){
@@ -105,6 +108,10 @@ public class Network extends Listener {
 		}else if(o instanceof PacketRemovePlayer){
 			PacketRemovePlayer packet = (PacketRemovePlayer) o;
 			Main.players.remove(packet.id);
+			
+		}else if(o instanceof PacketUpdateMobHealth){
+			PacketUpdateMobHealth packet = (PacketUpdateMobHealth) o;
+			Main.mobs.get(packet.id).health = packet.health;
 			
 		}
 		

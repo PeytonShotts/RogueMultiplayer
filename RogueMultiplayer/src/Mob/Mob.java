@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+
 import Client.Main;
 import Client.Player;
 import Client.Util;
@@ -26,13 +30,14 @@ public class Mob {
 	
 	int moveCooldown;
 	
-	public boolean isHit;
-	
 	boolean isInRange;
 	Player playerInRange;
 	
+	public Image spriteSheet;
+	public int spriteCount;
 	public int spriteX;
 	public int spriteY;
+	public int walkTimer;
 	
 	public int health;
 	public int networkHealth;
@@ -47,8 +52,11 @@ public class Mob {
 	public Mob()
 	{
 		health = 100;
-		maxHealth = health;
-		networkHealth = health;
+	}
+	
+	public void draw(GameContainer gc, Graphics g, int offsetX, int offsetY)
+	{
+		g.drawImage(spriteSheet, position.x + offsetX, position.y + offsetY, position.x + offsetX + 32, position.y + offsetY + 32, spriteX*32, spriteY*32, (spriteX*32)+32, (spriteY*32)+32);
 	}
 	
 	public void update(Map map, java.util.Map<Integer, Projectile> projectiles)
@@ -64,6 +72,25 @@ public class Mob {
 				if (moveCooldown < 0)
 				{
 					randomMove();
+				}
+			}
+			
+			if (Math.abs(this.addX+this.addY) < 0.001)
+			{
+				walkTimer++;
+				
+				if (walkTimer == 10)
+				{
+					if (spriteX != spriteCount-1)
+					{
+						spriteX++;
+					}
+					else
+					{
+						spriteX = 0;
+					}
+					
+					walkTimer = 0;
 				}
 			}
 			
@@ -86,8 +113,6 @@ public class Mob {
 			{
 				this.addX = hitVector.x;
 				this.addY = hitVector.y;
-				
-				PacketUpdateMobHealth packet = new PacketUpdateMobHealth();
 			}
 		
 	}
@@ -182,6 +207,7 @@ public class Mob {
 						{
 							projectile.time = 0;
 							health += -projectile.damage;
+							
 							
 							Vector hitVector = new Vector(projectile.direction.x*projectile.knockback, 
 															projectile.direction.y*projectile.knockback);

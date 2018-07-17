@@ -345,44 +345,21 @@ public class Main extends BasicGame
 		//draw mobs (new)
 		for(Mob mob : mobs.values())
 		{
-			g.setColor(new Color(255, 255, 255));
-			g.drawRect(mob.position.x + offsetX, mob.position.y + offsetY, 32, 32);
-		}
-		
-		//draw mobs
-		for(int mobI=0; mobI<currentMap.mobList.size(); mobI++)
-		{
-		
-			if (currentMap.mobList.get(mobI).isHit)
-			{
-				g.drawImage(tileset, 
-						currentMap.mobList.get(mobI).position.x + offsetX, currentMap.mobList.get(mobI).position.y + offsetY, currentMap.mobList.get(mobI).position.x + offsetX + 32, currentMap.mobList.get(mobI).position.y + offsetY + 32,
-						(currentMap.mobList.get(mobI).spriteX)*32, (currentMap.mobList.get(mobI).spriteY)*32, ((currentMap.mobList.get(mobI).spriteX)*32) + 32, ((currentMap.mobList.get(mobI).spriteY)*32) + 32, 
-						new Color(255,0,0));
-			}
-			else
-			{
-				g.drawImage(tileset, 
-						(int) currentMap.mobList.get(mobI).position.x + offsetX, (int) currentMap.mobList.get(mobI).position.y + offsetY, (int) currentMap.mobList.get(mobI).position.x + offsetX + 32, (int) currentMap.mobList.get(mobI).position.y + offsetY + 32,
-						(currentMap.mobList.get(mobI).spriteX)*32, (currentMap.mobList.get(mobI).spriteY)*32, ((currentMap.mobList.get(mobI).spriteX)*32) + 32, ((currentMap.mobList.get(mobI).spriteY)*32) + 32, 
-						new Color(255,255,255));
-			}
-					
-			//draw health bar if mob health is under maximum
-			if (currentMap.mobList.get(mobI).health < currentMap.mobList.get(mobI).maxHealth)
-			{
-				g.setColor(new Color(50,250,50,180));
-				g.fillRect(currentMap.mobList.get(mobI).position.x + offsetX, currentMap.mobList.get(mobI).position.y + offsetY - 5, 32* ((float)currentMap.mobList.get(mobI).health / currentMap.mobList.get(mobI).maxHealth), 5);
-			}
+			mob.draw(gc, g, offsetX, offsetY);
 			
-			//draw health bar if player health is under maximum
-			if (player.health < player.maxHealth)
+			//draw mob health bars (new)
+			if (mob.health < mob.maxHealth)
 			{
 				g.setColor(new Color(50,250,50,180));
-				g.fillRect(player.x + offsetX, player.y + offsetY - 5, 32 * ((float)player.health / (float)player.maxHealth), 5);
+				g.fillRect(mob.position.x + offsetX, mob.position.y + offsetY - 5, 32* ((float)mob.health / (float)mob.maxHealth), 5);
 			}
 		}
-				
+		
+		
+		//player health (old)
+		//g.setColor(new Color(50,250,50,180));
+		//g.fillRect(player.x + offsetX, player.y + offsetY - 5, 32 * ((float)player.health / (float)player.maxHealth), 5);
+
 		
 		//draw lighting
 		/*
