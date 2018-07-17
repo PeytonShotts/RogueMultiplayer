@@ -227,7 +227,7 @@ public class Main extends Listener {
 		else if(o instanceof PacketAddProjectile){
 			PacketAddProjectile packet = (PacketAddProjectile) o;
 			
-			server.sendToAllExceptTCP(c.getID(), packet);
+			server.sendToAllUDP(packet);
 			projectiles.put(packet.projectile.id, packet.projectile);
 			projectileCount++;
 			

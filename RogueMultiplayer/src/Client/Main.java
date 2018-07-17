@@ -138,14 +138,10 @@ public class Main extends BasicGame
 				
 				newProjectile.speed = 2;
 				
-				newProjectile.id = projectileCount;
-				projectiles.put(projectileCount, newProjectile);
-				
 				PacketAddProjectile packet = new PacketAddProjectile();
 				packet.projectile = newProjectile;
-				network.client.sendTCP(packet);
+				network.client.sendUDP(packet);
 				
-				projectileCount++;
 				player.attackTimer = 50;
 				
 				
