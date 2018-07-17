@@ -2,6 +2,7 @@ package Server;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -22,7 +23,7 @@ public class Main extends Listener {
 	static final int port = 7777;
 	
 	static java.util.Map<Integer, Player> players = new HashMap<Integer, Player>();
-	static java.util.Map<Integer, Mob> mobs = new HashMap<Integer, Mob>();
+	static java.util.Map<Integer, Mob> mobs = new ConcurrentHashMap<Integer, Mob>();
 	static java.util.Map<Integer, Projectile> projectiles = new HashMap<Integer, Projectile>();
 	static int mobCount = 0;
 	
@@ -42,6 +43,7 @@ public class Main extends Listener {
 		server.getKryo().register(PacketUpdatePlayerSprite.class);
 		server.getKryo().register(Mob.class);
 		server.getKryo().register(PacketAddMob.class);
+		server.getKryo().register(PacketRemoveMob.class);
 		server.getKryo().register(PacketUpdateMob.class);
 		server.getKryo().register(PacketUpdateMobHealth.class);
 		server.getKryo().register(PacketAddProjectile.class);
@@ -68,11 +70,10 @@ public class Main extends Listener {
 		long taskTime = 0;
 		long sleepTime = 1000/60;
 		
-		for (int spawn=0; spawn< 20; spawn++)
+		for (int spawn=0; spawn< 50; spawn++)
 		{
 			Mob newMob = new Chicken();
 			newMob.position.x = 47*32; newMob.position.y = 47*32;
-			newMob.health = 100; newMob.maxHealth = 100;
 			addMob(newMob);
 		}
 		
@@ -145,6 +146,13 @@ public class Main extends Listener {
 				
 				mob.getValue().networkPosition.x = mob.getValue().position.x;
 				mob.getValue().networkPosition.y = mob.getValue().position.y;
+			}
+			if (mob.getValue().health <= 0)
+			{
+				mobs.remove(mob.getKey());
+				PacketRemoveMob mobRemove = new PacketRemoveMob();
+				mobRemove.id = mob.getKey();
+				server.sendToAllTCP(mobRemove);
 			}
 		}
 	}
@@ -228,17 +236,14 @@ public class Main extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 3);
+					Thread.sleep((long) 1);
 			}
 			
 			
 			
 		} catch (InterruptedException e) {
 				e.printStackTrace();}
-		
 
-		
-		
 		
 	}
 	

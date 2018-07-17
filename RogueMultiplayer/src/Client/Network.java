@@ -27,6 +27,7 @@ public class Network extends Listener {
 		client.getKryo().register(PacketUpdatePlayerSprite.class);
 		client.getKryo().register(Mob.class);
 		client.getKryo().register(PacketAddMob.class);
+		client.getKryo().register(PacketRemoveMob.class);
 		client.getKryo().register(PacketUpdateMob.class);
 		client.getKryo().register(PacketUpdateMobHealth.class);
 		client.getKryo().register(PacketAddProjectile.class);
@@ -114,6 +115,10 @@ public class Network extends Listener {
 		}else if(o instanceof PacketUpdateMobHealth){
 			PacketUpdateMobHealth packet = (PacketUpdateMobHealth) o;
 			Main.mobs.get(packet.id).health = packet.health;
+			
+		}else if(o instanceof PacketRemoveMob){
+			PacketRemoveMob packet = (PacketRemoveMob) o;
+			Main.mobs.remove(packet.id);
 			
 		}
 		

@@ -52,7 +52,7 @@ public class Mob {
 	
 	public Mob()
 	{
-		health = 100;
+		
 	}
 	
 	public void draw(GameContainer gc, Graphics g, int offsetX, int offsetY)
