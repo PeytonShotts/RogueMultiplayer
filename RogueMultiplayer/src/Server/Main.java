@@ -234,7 +234,7 @@ public class Main extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 1);
+					Thread.sleep((long) 3);
 			}
 			
 			

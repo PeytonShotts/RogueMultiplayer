@@ -97,10 +97,13 @@ public class Network extends Listener {
 			
 		}else if(o instanceof PacketUpdateMob){
 			PacketUpdateMob packet = (PacketUpdateMob) o;
-			Main.mobs.get(packet.id).position.x = packet.position.x;
-			Main.mobs.get(packet.id).position.y = packet.position.y;
-			Main.mobs.get(packet.id).spriteX = packet.spriteX;
-			Main.mobs.get(packet.id).spriteY = packet.spriteY;
+			if (Main.mobs.containsKey(packet.id))
+			{
+				Main.mobs.get(packet.id).position.x = packet.position.x;
+				Main.mobs.get(packet.id).position.y = packet.position.y;
+				Main.mobs.get(packet.id).spriteX = packet.spriteX;
+				Main.mobs.get(packet.id).spriteY = packet.spriteY;
+			}
 			
 		}else if(o instanceof PacketAddProjectile){
 			PacketAddProjectile packet = (PacketAddProjectile) o;
