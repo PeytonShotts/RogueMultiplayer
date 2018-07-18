@@ -427,7 +427,7 @@ public class Main extends BasicGame
 	
 		for(Projectile projectile : projectiles.values())
 		{
-			g.setColor(new Color(180, 170, 180, projectile.time*20 ));
+			g.setColor(new Color(80, 80, 80, projectile.time*20 ));
 			g.fillRect(projectile.position.x - 2 + offsetX, projectile.position.y - 2 + offsetY, projectile.size, projectile.size);
 		}
 		

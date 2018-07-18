@@ -9,7 +9,7 @@ public class Projectile {
 	public Vector position = new Vector();
 	public Vector direction = new Vector();
 
-	public int size = 2;
+	public int size = 4;
 	public int time;
 	
 	public int speed;

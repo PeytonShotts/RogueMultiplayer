@@ -139,8 +139,8 @@ public class Player {
 			}
 			
 			PacketUpdatePlayerSprite packet = new PacketUpdatePlayerSprite();
-			packet.spriteX = this.spriteX;
-			packet.spriteY = this.spriteY;
+			packet.spriteX = (byte) this.spriteX;
+			packet.spriteY = (byte) this.spriteY;
 			
 			Main.network.client.sendUDP(packet);
 
@@ -152,11 +152,23 @@ public class Player {
 			{
 				if (Main.aimX < 0) { Main.player.spriteY = 1; }
 				else if (Main.aimX > 0) { Main.player.spriteY = 2; }
+				
+				PacketUpdatePlayerSprite packet = new PacketUpdatePlayerSprite();
+				packet.spriteX = (byte) this.spriteX;
+				packet.spriteY = (byte) this.spriteY;
+				
+				Main.network.client.sendUDP(packet);
 			}
 			else
 			{
 				if (Main.aimY < 0) { Main.player.spriteY = 3; }
 				else if (Main.aimY > 0) { Main.player.spriteY = 0; }
+				
+				PacketUpdatePlayerSprite packet = new PacketUpdatePlayerSprite();
+				packet.spriteX = (byte) this.spriteX;
+				packet.spriteY = (byte) this.spriteY;
+				
+				Main.network.client.sendUDP(packet);
 			}
 		}
 		
