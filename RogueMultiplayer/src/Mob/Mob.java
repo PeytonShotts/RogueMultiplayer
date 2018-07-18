@@ -55,10 +55,10 @@ public class Mob {
 		
 	}
 	
-	public void draw(GameContainer gc, Graphics g, int offsetX, int offsetY)
+	public void draw(GameContainer gc, Graphics g, float offsetX, float offsetY)
 	{
-		int drawX = (int)position.x + offsetX;
-		int drawY = (int)position.y + offsetY;
+		float drawX = position.x + offsetX;
+		float drawY = position.y + offsetY;
 		
 		spriteSheet.draw(drawX, drawY, drawX+32, drawY+32, spriteX*32, spriteY*32, (spriteX*32)+32, (spriteY*32)+32);
 	}

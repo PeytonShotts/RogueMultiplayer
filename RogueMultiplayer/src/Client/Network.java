@@ -1,6 +1,8 @@
 package Client;
 import java.io.IOException;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -16,12 +18,13 @@ import ParticleCode.CircleExplosion;
 public class Network extends Listener {
 
 	Client client;
-	String ip = "73.177.127.130";
+	String ip = "localhost";
 	int port = 7777;
 	
 	public void connect(){
 		client = new Client(25000, 25000);
 		client.getKryo().register(PacketMapData.class);
+		client.getKryo().register(PacketMapRequest.class);
 		client.getKryo().register(PacketAddPlayer.class);
 		client.getKryo().register(PacketRemovePlayer.class);
 		client.getKryo().register(PacketUpdatePlayerPosition.class);
@@ -57,11 +60,11 @@ public class Network extends Listener {
 				Main.mapBytes[packet.bytePosition+l] = packet.data[l];
 			}
 			
-			
 			System.out.println(packet.bytePosition);
 			
 			if (packet.finalPacket == true)
 			{
+				Main.currentMap = SerializationUtils.deserialize(Main.mapBytes);
 				Main.mapLoaded = true;
 				System.out.println("map loaded");
 			}

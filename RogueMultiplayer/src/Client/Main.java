@@ -36,8 +36,8 @@ public class Main extends BasicGame
 	
 	static byte[] mapBytes = new byte[1000000];
 	
-	static int offsetX = 0;
-	static int offsetY = 0;
+	static float offsetX = 0;
+	static float offsetY = 0;
 
 	int mouseX;
 	int mouseY;
@@ -74,7 +74,7 @@ public class Main extends BasicGame
 	static Player player = new Player();
 	
 	static java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
-	static java.util.Map<Integer,Mob> mobs = new HashMap<Integer,Mob>(); 
+	static java.util.Map<Integer,Mob> mobs = new ConcurrentHashMap<Integer,Mob>(); 
 	static java.util.Map<Integer,Projectile> projectiles = new ConcurrentHashMap<Integer,Projectile>(); 
 	
 	static boolean mouseClick;
@@ -107,12 +107,6 @@ public class Main extends BasicGame
 	@Override
 	public void update(GameContainer gc, int i) throws SlickException
 	{
-		
-		if (mapLoaded == true)
-		{
-			currentMap = SerializationUtils.deserialize(mapBytes);
-		}
-		
 		if (mapLoaded == true)
 		{
 			//spawn player
@@ -226,8 +220,9 @@ public class Main extends BasicGame
 
 	private void updateViewOffset() {
 		
-		offsetX = (int) ((spawnX)*-1 - (int)player.x - player.addX + (640));
-		offsetY = (int) ((spawnY)*-1 - (int)player.y - player.addY + (360));
+		offsetX = ((spawnX)*-1 - player.x + (640));
+		offsetY = ((spawnY)*-1 - player.y + (360));
+		
 		
 		if (offsetX > 0) {offsetX = 0;}
 		if (offsetY > 0) {offsetY = 0;}
@@ -236,6 +231,7 @@ public class Main extends BasicGame
 	private void getInput(GameContainer gc, int i) {
 		if (gc.getInput().isKeyDown(Input.KEY_W))
 		{
+			requestMap(2);
 			player.addY = -1;
 			offsetY += 0.5;
 			
@@ -296,15 +292,23 @@ public class Main extends BasicGame
 			
 	}
 
+	private void requestMap(int mapID) {
+		mapLoaded = false;
+		
+		PacketMapRequest packet = new PacketMapRequest();
+		packet.mapID = mapID;
+		
+		network.client.sendTCP(packet);
+		
+		
+		
+	}
+
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException
 	{
-		
 		if (mapLoaded == true)
 		{
-			
-		//load images when client first opens
-		//if (hasInit == false) {tileset = new Image("res/owlishmedia_pixel_tiles.png"); spriteset = new Image("res/spriteset.png"); hasInit = true;}
 		
 		//draw map around player (first layer)
 		if (player.x > 0) {
@@ -320,14 +324,14 @@ public class Main extends BasicGame
 					int tileX = (int) (tile - (tileY*14));
 					
 					
-					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+					g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
 						
 				}
 			}
 		}
 		
 		//draw player
-		g.drawImage(spriteset, (int)player.x + offsetX, (int)player.y + offsetY, (int)player.x+32 + offsetX, (int)player.y+32 + offsetY, (int)player.spriteX*32, (int)player.spriteY*32, ((int)player.spriteX*32) + 32, ((int)player.spriteY*32) + 32, new Color(255,255,255));
+		g.drawImage(spriteset, player.x + offsetX, player.y + offsetY, player.x+32 + offsetX, player.y+32 + offsetY, (int)player.spriteX*32, (int)player.spriteY*32, ((int)player.spriteX*32) + 32, ((int)player.spriteY*32) + 32, new Color(255,255,255));
 		
 		//draw other players
 		for(Player mpPlayer : players.values())
@@ -361,7 +365,7 @@ public class Main extends BasicGame
 					int tileX = (int) (tile - (tileY*14));
 					
 					
-					g.drawImage(tileset, drawX*32 + offsetX, drawY*32 + offsetY, (drawX*32) + 32 + offsetX, (drawY*32) + 32 + offsetY, tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+					g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
 						
 				}
 			}
@@ -443,16 +447,13 @@ public class Main extends BasicGame
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new Main("Slick2d Window"));
 			appgc.setDisplayMode(1280, 720, false);
-			appgc.setTargetFrameRate(60);
-			appgc.setShowFPS(false);
-			appgc.setUpdateOnlyWhenVisible(false);
+			appgc.setTargetFrameRate(59);
+			appgc.setVSync(true);
+			//appgc.setMaximumLogicUpdateInterval(60);
+			appgc.setShowFPS(true);
 			appgc.setAlwaysRender(true);
 
-
-			
 			network.connect();
-			
-			
 			
 			appgc.start();
 

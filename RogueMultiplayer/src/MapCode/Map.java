@@ -10,6 +10,8 @@ import Projectile.*;
 
 public class Map implements java.io.Serializable{
 	
+	public static String name;
+	
 	public int width;
 	public int height;
 	
