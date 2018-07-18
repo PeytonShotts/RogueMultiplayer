@@ -16,7 +16,7 @@ import ParticleCode.CircleExplosion;
 public class Network extends Listener {
 
 	Client client;
-	String ip = "localhost";
+	String ip = "73.177.127.130";
 	int port = 7777;
 	
 	public void connect(){
