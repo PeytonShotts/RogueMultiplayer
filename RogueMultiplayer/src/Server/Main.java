@@ -23,16 +23,15 @@ public class Main extends Listener {
 	static Server server = new Server(30000,30000);
 	static final int port = 7777;
 	
-	
-	static java.util.Map<Integer, Map> maps = new HashMap<Integer, Map>();
+	public static java.util.Map<Integer, Map> maps = new HashMap<Integer, Map>();
+	public static java.util.Map<Integer, Player> connectedPlayers = new HashMap<Integer, Player>();
 
-	static int mobCount = 0;
-	
 	public static int currentMap = 1;
 	
-	
 	public static int tick = 0;
+	
 	public static int projectileCount = 0;
+	public static int mobCount = 0;
 	
 	public static void main(String[] args) throws IOException, InterruptedException{
 
@@ -229,8 +228,13 @@ public class Main extends Listener {
 			c.sendTCP(packet2);
 		}
 		
-		//add new player to server array
+		player.mapID = 0;
+		
+		//add new player to map array
 		maps.get(0).players.put(c.getID(), player);
+		
+		//add new player to server array
+		connectedPlayers.put(c.getID(), player);
 		
 		//send map to new player
 		sendMap(c, maps.get(1));
@@ -285,6 +289,12 @@ public class Main extends Listener {
 		{
 			PacketMapRequest packet = (PacketMapRequest) o;
 			sendMap(c, maps.get(packet.mapID));
+			//remove player from current map's hashmap
+			int currentMapID = connectedPlayers.get(c.getID()).mapID;
+			maps.get(currentMapID).players.remove(c.getID());
+			//add player to new map's hashmap
+			int newMapID = packet.mapID;
+			//maps.get(newMapID).players.put(c.getID(), serverPlayers.get(c.getID()));
 		}
 		
 	}

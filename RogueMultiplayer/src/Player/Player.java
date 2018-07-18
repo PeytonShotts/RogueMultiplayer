@@ -12,6 +12,8 @@ import Packet.*;
 
 public class Player {
 	
+	public static int mapID;
+	
 	public float x;
 	public float y;
 	
