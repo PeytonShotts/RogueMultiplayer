@@ -11,10 +11,10 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import Client.Main;
-import Client.Player;
 import Client.Util;
 import MapCode.Map;
 import Packet.PacketUpdateMobHealth;
+import Player.Player;
 import Projectile.Projectile;
 import Vector.Vector;
 

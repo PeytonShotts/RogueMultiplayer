@@ -1,9 +1,12 @@
-package Client;
+package Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.esotericsoftware.kryonet.Connection;
+
+import Client.Main;
 import MapCode.Map;
 import Packet.*;
 
@@ -15,23 +18,22 @@ public class Player {
 	public double addX;
 	public double addY;
 	
-	String walkDirection = "down";
-	int spriteX = 0;
-	int spriteY = 0;
+	public int spriteX = 0;
+	public int spriteY = 0;
 	
-	boolean isWalking;
+	public boolean isWalking;
 	
-	int walkTimer;
-	int attackTimer;
+	public int walkTimer;
+	public int attackTimer;
 	
-	int tileX;
-	int tileY;
+	public int tileX;
+	public int tileY;
 	
-	double accelSpeed = 0.03;
-	double maxSpeed = 1;
+	public double accelSpeed = 0.03;
+	public double maxSpeed = 1;
 	
-	int moveX;
-	int moveY;
+	public int moveX;
+	public int moveY;
 	
 	public int width = 28;
 	public int height = 30;
@@ -39,9 +41,10 @@ public class Player {
 	public int hitTimer = 0;
 	
 	public int health = 100;
-	int maxHealth = 100;
+	public int maxHealth = 100;
 	
 	List<Integer> collisionList = new ArrayList<>(Arrays.asList(16, 226));
+	public Connection c;
 
 	
 

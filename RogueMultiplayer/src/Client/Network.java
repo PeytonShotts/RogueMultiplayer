@@ -12,12 +12,13 @@ import Projectile.Projectile;
 import Vector.Vector;
 import Packet.*;
 import ParticleCode.CircleExplosion;
+import Player.Player;
 
 
 
 public class Network extends Listener {
 
-	Client client;
+	public Client client;
 	String ip = "localhost";
 	int port = 7777;
 	
@@ -76,18 +77,18 @@ public class Network extends Listener {
 			Player newPlayer = new Player();
 			newPlayer.x = packet.x;
 			newPlayer.y = packet.y;
-			Main.players.put(packet.id, newPlayer);
+			Main.currentMap.players.put(packet.id, newPlayer);
 			
 			System.out.println("new player joined");
 		}else if(o instanceof PacketUpdatePlayerPosition){
 			PacketUpdatePlayerPosition packet = (PacketUpdatePlayerPosition) o;
-			Main.players.get(packet.id).x = packet.x;
-			Main.players.get(packet.id).y = packet.y;
+			Main.currentMap.players.get(packet.id).x = packet.x;
+			Main.currentMap.players.get(packet.id).y = packet.y;
 			
 		}else if(o instanceof PacketUpdatePlayerSprite){
 			PacketUpdatePlayerSprite packet = (PacketUpdatePlayerSprite) o;
-			Main.players.get(packet.id).spriteX = packet.spriteX;
-			Main.players.get(packet.id).spriteY = packet.spriteY;
+			Main.currentMap.players.get(packet.id).spriteX = packet.spriteX;
+			Main.currentMap.players.get(packet.id).spriteY = packet.spriteY;
 			
 		}else if(o instanceof PacketAddMob){
 			PacketAddMob packet = (PacketAddMob) o;
@@ -96,38 +97,38 @@ public class Network extends Listener {
 			newMob.position.y = packet.position.y;
 			newMob.health = packet.health;
 			newMob.maxHealth = packet.maxHealth;
-			Main.mobs.put(packet.id, newMob);
+			Main.currentMap.mobs.put(packet.id, newMob);
 			
 		}else if(o instanceof PacketUpdateMob){
 			PacketUpdateMob packet = (PacketUpdateMob) o;
-			if (Main.mobs.containsKey(packet.id))
+			if (Main.currentMap.mobs.containsKey(packet.id))
 			{
-				Main.mobs.get(packet.id).position.x = packet.position.x;
-				Main.mobs.get(packet.id).position.y = packet.position.y;
-				Main.mobs.get(packet.id).spriteX = packet.spriteX;
-				Main.mobs.get(packet.id).spriteY = packet.spriteY;
+				Main.currentMap.mobs.get(packet.id).position.x = packet.position.x;
+				Main.currentMap.mobs.get(packet.id).position.y = packet.position.y;
+				Main.currentMap.mobs.get(packet.id).spriteX = packet.spriteX;
+				Main.currentMap.mobs.get(packet.id).spriteY = packet.spriteY;
 			}
 			
 		}else if(o instanceof PacketAddProjectile){
 			PacketAddProjectile packet = (PacketAddProjectile) o;
-			Main.projectiles.put(packet.projectile.id, packet.projectile);
+			Main.currentMap.projectiles.put(packet.projectile.id, packet.projectile);
 			
 		}else if(o instanceof PacketRemoveProjectile){
 			PacketRemoveProjectile packet = (PacketRemoveProjectile) o;
 			
-			Main.projectiles.remove(packet.id);
+			Main.currentMap.projectiles.remove(packet.id);
 			
 		}else if(o instanceof PacketRemovePlayer){
 			PacketRemovePlayer packet = (PacketRemovePlayer) o;
-			Main.players.remove(packet.id);
+			Main.currentMap.players.remove(packet.id);
 			
 		}else if(o instanceof PacketUpdateMobHealth){
 			PacketUpdateMobHealth packet = (PacketUpdateMobHealth) o;
-			Main.mobs.get(packet.id).health = packet.health;
+			Main.currentMap.mobs.get(packet.id).health = packet.health;
 			
 		}else if(o instanceof PacketRemoveMob){
 			PacketRemoveMob packet = (PacketRemoveMob) o;
-			Main.mobs.remove(packet.id);
+			Main.currentMap.mobs.remove(packet.id);
 			
 		}
 		

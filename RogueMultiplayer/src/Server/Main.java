@@ -15,6 +15,7 @@ import Mob.*;
 import Projectile.*;
 import Vector.Vector;
 import Packet.*;
+import Player.*;
 
 
 public class Main extends Listener {
@@ -24,9 +25,7 @@ public class Main extends Listener {
 	
 	
 	static java.util.Map<Integer, Map> maps = new HashMap<Integer, Map>();
-	static java.util.Map<Integer, Player> players = new HashMap<Integer, Player>();
-	static java.util.Map<Integer, Mob> mobs = new ConcurrentHashMap<Integer, Mob>();
-	static java.util.Map<Integer, Projectile> projectiles = new ConcurrentHashMap<Integer, Projectile>();
+
 	static int mobCount = 0;
 	
 	public static int currentMap = 1;
@@ -73,12 +72,14 @@ public class Main extends Listener {
 		long taskTime = 0;
 		long sleepTime = 1000/60;
 		
+		/*
 		for (int spawn=0; spawn< 50; spawn++)
 		{
 			Mob newMob = new Chicken();
 			newMob.position.x = 47*32; newMob.position.y = 47*32;
 			addMob(newMob);
 		}
+		*/
 		
 		
 		while (true)
@@ -91,11 +92,11 @@ public class Main extends Listener {
 			i++;
 			
 			//update mobs
-			updateMobs();
-
-			//update projectiles
-			updateProjectiles();
-			
+			for (Map map : maps.values())
+			{
+				updateMobs(map);
+				updateProjectiles(map);
+			}
 		}
 		
 	}
@@ -139,7 +140,7 @@ public class Main extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 3);
+					Thread.sleep((long) 5);
 			}
 			
 			
@@ -148,9 +149,9 @@ public class Main extends Listener {
 				e.printStackTrace();}
 	}
 	
-	public static void updateProjectiles() {
+	public static void updateProjectiles(Map map) {
 		
-		for (Projectile projectile : projectiles.values())
+		for (Projectile projectile : map.projectiles.values())
 		{
 			if (projectile.time == 0)
 			{
@@ -158,21 +159,21 @@ public class Main extends Listener {
 				packet.id = projectile.id;
 				server.sendToAllUDP(packet);
 				
-				projectiles.remove(projectile.id);
+				map.projectiles.remove(projectile.id);
 			}
 			projectile.update();
 		}
 		
 	}
 	
-	public static void updateMobs()
+	public static void updateMobs(Map map)
 	{
-		for (Entry<Integer, Mob> mob : mobs.entrySet())
+		for (Entry<Integer, Mob> mob : map.mobs.entrySet())
 		{
-			mob.getValue().update(maps.get(currentMap), projectiles);
+			mob.getValue().update(maps.get(currentMap), map.projectiles);
 			if (mob.getValue().health <= 0)
 			{
-				mobs.remove(mob.getKey());
+				map.mobs.remove(mob.getKey());
 				PacketRemoveMob mobRemove = new PacketRemoveMob();
 				mobRemove.id = mob.getKey();
 				server.sendToAllTCP(mobRemove);
@@ -206,7 +207,6 @@ public class Main extends Listener {
 	}
 	
 	public void connected(Connection c){
-		
 		Player player = new Player();
 		player.x = maps.get(1).spawnPoint.x;
 		player.y = maps.get(1).spawnPoint.y;
@@ -221,7 +221,7 @@ public class Main extends Listener {
 		server.sendToAllExceptTCP(c.getID(), newPlayerPacket);
 		
 		
-		for(Player p : players.values()){
+		for(Player p : maps.get(1).players.values()){
 			PacketAddPlayer packet2 = new PacketAddPlayer();
 			packet2.id = p.c.getID();
 			packet2.x = (int) p.x;
@@ -230,13 +230,13 @@ public class Main extends Listener {
 		}
 		
 		//add new player to server array
-		players.put(c.getID(), player);
+		maps.get(0).players.put(c.getID(), player);
 		
 		//send map to new player
 		sendMap(c, maps.get(1));
 		
 		//send mobs to new player
-		for (Entry<Integer, Mob> mob : mobs.entrySet())
+		for (Entry<Integer, Mob> mob : maps.get(0).mobs.entrySet())
 		{
 			PacketAddMob mobPacket = new PacketAddMob();
 			mobPacket.position.x = mob.getValue().position.x;
@@ -256,8 +256,8 @@ public class Main extends Listener {
 	public void received(Connection c, Object o){
 		if(o instanceof PacketUpdatePlayerPosition){
 			PacketUpdatePlayerPosition packet = (PacketUpdatePlayerPosition) o;
-			players.get(c.getID()).x = packet.x;
-			players.get(c.getID()).y = packet.y;
+			maps.get(0).players.get(c.getID()).x = packet.x;
+			maps.get(0).players.get(c.getID()).y = packet.y;
 			
 			packet.id = c.getID();
 			server.sendToAllExceptUDP(c.getID(), packet);
@@ -271,12 +271,14 @@ public class Main extends Listener {
 			
 		}
 		else if(o instanceof PacketAddProjectile){
+			/*
 			PacketAddProjectile packet = (PacketAddProjectile) o;
 			packet.projectile.id = projectileCount;
 			server.sendToAllUDP(packet);
 			
 			projectiles.put(projectileCount, packet.projectile);
 			projectileCount++;
+			*/
 			
 		}
 		else if (o instanceof PacketMapRequest)
@@ -288,17 +290,19 @@ public class Main extends Listener {
 	}
 	
 	public void disconnected(Connection c){
-		
+		/*
 		players.remove(c.getID());
 		PacketRemovePlayer packet = new PacketRemovePlayer();
 		packet.id = c.getID();
 		server.sendToAllTCP(packet);
-
+		*/
 	}
 	
 	public static void addMob(Mob mob)
 	{
+		/*
 		mobs.put(mobCount, mob);
 		mobCount++;
+		*/
 	}
 }

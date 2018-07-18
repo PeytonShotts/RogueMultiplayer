@@ -1,16 +1,21 @@
 package MapCode;
 
 import Mob.Mob;
+import Player.Player;
 import Vector.Vector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import Projectile.*;
 
 public class Map implements java.io.Serializable{
 	
-	public static String name;
+	public static java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
+	public static java.util.Map<Integer,Mob> mobs = new ConcurrentHashMap<Integer,Mob>(); 
+	public static java.util.Map<Integer,Projectile> projectiles = new ConcurrentHashMap<Integer,Projectile>(); 
 	
 	public int width;
 	public int height;

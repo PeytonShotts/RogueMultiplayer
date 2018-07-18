@@ -1,6 +1,7 @@
 package Client;
 
 import Mob.Mob;
+import Player.Player;
 import Vector.Vector;
 
 public class Util {

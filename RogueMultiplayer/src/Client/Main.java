@@ -29,15 +29,16 @@ import Vector.Vector;
 import Packet.*;
 import ParticleCode.CircleExplosion;
 import ParticleCode.Particle;
+import Player.*;
 
 public class Main extends BasicGame
 {
-	static Map currentMap;
+	public static Map currentMap;
 	
 	static byte[] mapBytes = new byte[1000000];
 	
-	static float offsetX = 0;
-	static float offsetY = 0;
+	public static float offsetX = 0;
+	public static float offsetY = 0;
 
 	int mouseX;
 	int mouseY;
@@ -45,8 +46,8 @@ public class Main extends BasicGame
 	float relativeMouseX;
 	float relativeMouseY;
 	
-	static double aimX;
-	static double aimY;
+	public static double aimX;
+	public static double aimY;
 	
 	int mouseBlockX;
 	int mouseBlockY;
@@ -71,16 +72,12 @@ public class Main extends BasicGame
 	
 	public static int projectileCount = 0;
 	
-	static Player player = new Player();
-	
-	static java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
-	static java.util.Map<Integer,Mob> mobs = new ConcurrentHashMap<Integer,Mob>(); 
-	static java.util.Map<Integer,Projectile> projectiles = new ConcurrentHashMap<Integer,Projectile>(); 
+	public static Player player = new Player();
 	
 	static boolean mouseClick;
-	static boolean mouseOne;
+	public static boolean mouseOne;
 	
-	static Network network = new Network();
+	public static Network network = new Network();
 	static Gui.Gui gui = new Gui.Gui();
 
 	public static boolean mapLoaded = false;
@@ -170,11 +167,11 @@ public class Main extends BasicGame
 	}
 
 	private void updateProjectiles() {
-		for (Projectile projectile : projectiles.values())
+		for (Projectile projectile : currentMap.projectiles.values())
 		{
 			if (projectile.time == 0)
 			{
-				projectiles.remove(projectile.id);
+				currentMap.projectiles.remove(projectile.id);
 				System.out.println("projectile removed");
 			}
 			projectile.update();
@@ -334,13 +331,13 @@ public class Main extends BasicGame
 		g.drawImage(spriteset, player.x + offsetX, player.y + offsetY, player.x+32 + offsetX, player.y+32 + offsetY, (int)player.spriteX*32, (int)player.spriteY*32, ((int)player.spriteX*32) + 32, ((int)player.spriteY*32) + 32, new Color(255,255,255));
 		
 		//draw other players
-		for(Player mpPlayer : players.values())
+		for(Player mpPlayer : currentMap.players.values())
 		{
 			g.drawImage(spriteset, (int)mpPlayer.x + offsetX, (int)mpPlayer.y + offsetY, (int)mpPlayer.x+32 + offsetX, (int)mpPlayer.y+32 + offsetY, (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
 		}
 		
 		//draw mobs (new)
-		for(Mob mob : mobs.values())
+		for(Mob mob : currentMap.mobs.values())
 		{
 			mob.draw(gc, g, offsetX, offsetY);
 			
@@ -429,7 +426,7 @@ public class Main extends BasicGame
 		
 		}
 	
-		for(Projectile projectile : projectiles.values())
+		for(Projectile projectile : currentMap.projectiles.values())
 		{
 			g.setColor(new Color(80, 80, 80, projectile.time*20 ));
 			g.fillRect(projectile.position.x - 2 + offsetX, projectile.position.y - 2 + offsetY, projectile.size, projectile.size);

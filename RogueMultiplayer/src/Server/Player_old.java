@@ -2,7 +2,7 @@ package Server;
 
 import com.esotericsoftware.kryonet.Connection;
 
-public class Player {
+public class Player_old {
 	
 	float x;
 	float y;
