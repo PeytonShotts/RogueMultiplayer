@@ -105,7 +105,8 @@ public class Network extends Listener {
 			
 		}else if(o instanceof PacketUpdateMob){
 			PacketUpdateMob packet = (PacketUpdateMob) o;
-			if (Main.currentMap.mobs.containsKey(packet.id))
+
+			if (Main.mapLoaded == true && Main.currentMap.mobs.containsKey(packet.id))
 			{
 				Main.currentMap.mobs.get(packet.id).position.x = packet.position.x;
 				Main.currentMap.mobs.get(packet.id).position.y = packet.position.y;

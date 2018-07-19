@@ -143,8 +143,6 @@ public class Main extends BasicGame
 				network.client.sendUDP(packet);
 				
 				player.attackTimer = 5;
-				
-				
 			}
 			
 			//update particles
@@ -457,9 +455,9 @@ public class Main extends BasicGame
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new Main("Slick2d Window"));
 			appgc.setDisplayMode(1280, 720, false);
-			appgc.setTargetFrameRate(59);
-			appgc.setVSync(true);
-			//appgc.setMaximumLogicUpdateInterval(60);
+			appgc.setTargetFrameRate(60);
+			//appgc.setVSync(true);
+			appgc.setMaximumLogicUpdateInterval(60);
 			appgc.setShowFPS(true);
 			appgc.setAlwaysRender(true);
 

@@ -75,14 +75,14 @@ public class Main extends Listener {
 		long taskTime = 0;
 		long sleepTime = 1000/60;
 		
-		/*
+		
 		for (int spawn=0; spawn< 50; spawn++)
 		{
 			Mob newMob = new Chicken();
 			newMob.position.x = 47*32; newMob.position.y = 47*32;
-			addMob(newMob);
+			spawnMob(newMob, map0);
 		}
-		*/
+		
 		
 		
 		while (true)
@@ -92,17 +92,11 @@ public class Main extends Listener {
 			  if (sleepTime-taskTime > 0 ) {
 			    Thread.sleep(sleepTime-taskTime);
 			  }
-			i++;
 			
-			//update mobs/projectiles
-			//int mapNum = 1;
 			for (Map map : maps)
 			{
 				updateMobs(map);
 				updateProjectiles(map);
-				//System.out.println(maps.get(0).players);
-				//System.out.println(mapNum + " " + map.players);
-				//mapNum++;
 			}
 		}
 		
@@ -147,7 +141,7 @@ public class Main extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 5);
+					Thread.sleep((long) 1);
 			}
 			
 			
@@ -174,10 +168,10 @@ public class Main extends Listener {
 	}
 	
 	public static void updateMobs(Map map)
-	{	/*
+	{	
 		for (Entry<Integer, Mob> mob : map.mobs.entrySet())
 		{
-			mob.getValue().update(maps.get(currentMap), map.projectiles);
+			mob.getValue().update(map, map.projectiles);
 			if (mob.getValue().health <= 0)
 			{
 				map.mobs.remove(mob.getKey());
@@ -211,7 +205,7 @@ public class Main extends Listener {
 				mob.getValue().networkPosition.y = mob.getValue().position.y;
 			}
 		}
-		*/
+		
 	}
 	
 	public void connected(Connection c){
@@ -343,19 +337,27 @@ public class Main extends Listener {
 	}
 	
 	public void disconnected(Connection c){
-		/*
-		players.remove(c.getID());
+		
+		int mapID = connectedPlayers.get(c.getID()).mapID;
+		maps.get(mapID).players.remove(c.getID());
 		PacketRemovePlayer packet = new PacketRemovePlayer();
 		packet.id = c.getID();
 		server.sendToAllTCP(packet);
-		*/
+		
+		for (Player player : maps.get(mapID).players.values())
+		{
+			if (player.connectionID != c.getID())
+				{
+					server.sendToTCP(player.connectionID, packet);
+				}
+		}
+		
 	}
 	
-	public static void addMob(Mob mob)
+	public static void spawnMob(Mob mob, Map map)
 	{
-		/*
-		mobs.put(mobCount, mob);
+		map.mobs.put(mobCount, mob);
 		mobCount++;
-		*/
+		
 	}
 }

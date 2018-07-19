@@ -104,14 +104,14 @@ public class Player implements java.io.Serializable{
 			{
 				this.x -= this.addX;
 			}
-			this.addX *= 0.0;
+			this.addX *= 0.8;
 			
 			this.y += this.addY;
 			if (this.isColliding(Main.currentMap))
 			{
 				this.y -= this.addY;
 			}
-			this.addY *= 0.0;
+			this.addY *= 0.8;
 			
 			if (hitTimer > 0)
 			{
