@@ -154,6 +154,7 @@ public class Main extends BasicGame
 					particles.remove(p);
 				}
 			}
+			
 			//CircleExplosion a = new CircleExplosion(new Vector(1280/2, 720), 50, 1, 50);
 			//update projectiles
 			updateProjectiles();
@@ -165,6 +166,7 @@ public class Main extends BasicGame
 	}
 
 	private void updateProjectiles() {
+		
 		for (Projectile projectile : currentMap.projectiles.values())
 		{
 			if (projectile.time == 0)
