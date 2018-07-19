@@ -2,7 +2,7 @@ package Projectile;
 
 import Vector.*;
 
-public class Projectile {
+public class Projectile implements java.io.Serializable{
 	
 	public int id;
 	

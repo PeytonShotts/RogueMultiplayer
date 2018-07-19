@@ -13,7 +13,7 @@ import Packet.*;
 
 public class Player implements java.io.Serializable{
 	
-	public static int mapID;
+	public int mapID;
 	
 	public float x;
 	public float y;

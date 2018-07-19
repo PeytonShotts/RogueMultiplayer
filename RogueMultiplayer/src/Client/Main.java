@@ -228,7 +228,7 @@ public class Main extends BasicGame
 	private void getInput(GameContainer gc, int i) {
 		if (gc.getInput().isKeyDown(Input.KEY_W))
 		{
-			requestMap(2);
+			requestMap(1);
 			player.addY = -1;
 			offsetY += 0.5;
 			

@@ -36,9 +36,9 @@ public class Main extends Listener {
 	
 	public static void main(String[] args) throws IOException, InterruptedException{
 
-		Map map0 = JsonConverter.convert("C:/Users/peyton/Desktop/jsonmap.json");
+		Map map0 = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
 		maps.add(map0);
-		Map map1 = JsonConverter.convert("C:/Users/peyton/Desktop/jsonmap2.json");
+		Map map1 = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap2.json");
 		maps.add(map1);
 		
 		server = new Server();
@@ -212,35 +212,31 @@ public class Main extends Listener {
 	}
 	
 	public void connected(Connection c){
+		int defaultMap = 0;
+		
 		Player player = new Player();
-		player.x = maps.get(1).spawnPoint.x;
-		player.y = maps.get(1).spawnPoint.y;
+		player.x = maps.get(defaultMap).spawnPoint.x;
+		player.y = maps.get(defaultMap).spawnPoint.y;
 		player.connectionID = c.getID();
 		
 		//send new player data to other connected clients
 		PacketAddPlayer newPlayerPacket = new PacketAddPlayer();
 		newPlayerPacket.id = c.getID();
-		newPlayerPacket.x = (int) maps.get(1).spawnPoint.x;
-		newPlayerPacket.y = (int) maps.get(1).spawnPoint.y;
+		newPlayerPacket.x = (int) maps.get(defaultMap).spawnPoint.x;
+		newPlayerPacket.y = (int) maps.get(defaultMap).spawnPoint.y;
 		server.sendToAllExceptTCP(c.getID(), newPlayerPacket);
 		
-		for(Player p : maps.get(1).players.values()){
-			PacketAddPlayer packet2 = new PacketAddPlayer();
-			packet2.id = p.connectionID;
-			packet2.x = (int) p.x;
-			packet2.y = (int) p.y;
-			c.sendTCP(packet2);
-		}
-		
 		//send map to new player
-		sendMap(c, maps.get(1));
+		sendMap(c, maps.get(defaultMap));
 		
-		//add new player to map array
-		maps.get(1).players.put(c.getID(), player);
+		//add new player to map's player array
+		maps.get(defaultMap).players.put(c.getID(), player);
 		
-		//add new player to server array
+		//add new player to server's player array
 		connectedPlayers.put(c.getID(), player);
+		connectedPlayers.get(c.getID()).mapID = defaultMap;
 		
+		/*
 		//send mobs to new player
 		for (Entry<Integer, Mob> mob : maps.get(1).mobs.entrySet())
 		{
@@ -253,6 +249,7 @@ public class Main extends Listener {
 			
 			c.sendTCP(mobPacket);
 		}
+		*/
 		
 		System.out.println("Connection received." + c.getID());
 
@@ -261,23 +258,23 @@ public class Main extends Listener {
 	
 	public void received(Connection c, Object o){
 		if(o instanceof PacketUpdatePlayerPosition){
-			/*
+			
 			PacketUpdatePlayerPosition packet = (PacketUpdatePlayerPosition) o;
-			maps.get(0).players.get(c.getID()).x = packet.x;
-			maps.get(0).players.get(c.getID()).y = packet.y;
+			maps.get(connectedPlayers.get(c.getID()).mapID).players.get(c.getID()).x = packet.x;
+			maps.get(connectedPlayers.get(c.getID()).mapID).players.get(c.getID()).y = packet.y;
 			
 			packet.id = c.getID();
 			server.sendToAllExceptUDP(c.getID(), packet);
-			*/
+			
 			
 		}
 		else if(o instanceof PacketUpdatePlayerSprite){
-			/*
+			
 			PacketUpdatePlayerSprite packet = (PacketUpdatePlayerSprite) o;
 			
 			packet.id = c.getID();
 			server.sendToAllExceptUDP(c.getID(), packet);
-			*/
+			
 			
 		}
 		else if(o instanceof PacketAddProjectile){
@@ -289,7 +286,7 @@ public class Main extends Listener {
 			projectileCount++;
 			for (Player player : maps.get(mapID).players.values())
 			{
-				//server.sendToUDP(player.c.getID(), packet);
+				server.sendToUDP(player.connectionID, packet);
 			}
 			
 		}
