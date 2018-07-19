@@ -18,7 +18,7 @@ import Player.Player;
 import Projectile.Projectile;
 import Vector.Vector;
 
-public class Mob {
+public class Mob implements java.io.Serializable{
 	
 	public Vector position = new Vector();
 	public Vector networkPosition = new Vector();

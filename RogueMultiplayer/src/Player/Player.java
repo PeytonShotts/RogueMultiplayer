@@ -1,5 +1,6 @@
 package Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +11,7 @@ import Client.Main;
 import MapCode.Map;
 import Packet.*;
 
-public class Player {
+public class Player implements java.io.Serializable{
 	
 	public static int mapID;
 	
@@ -45,12 +46,10 @@ public class Player {
 	public int health = 100;
 	public int maxHealth = 100;
 	
+	public int connectionID;
+	
 	List<Integer> collisionList = new ArrayList<>(Arrays.asList(16, 226));
-	public Connection c;
 
-	
-
-	
 	public boolean isColliding(Map currentMap)
 	{
 		for (int colX = (int) ((this.x/32) - 1); colX < (this.x/32) + 2; colX++)

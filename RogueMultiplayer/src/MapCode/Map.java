@@ -13,9 +13,9 @@ import Projectile.*;
 
 public class Map implements java.io.Serializable{
 	
-	public static java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
-	public static java.util.Map<Integer,Mob> mobs = new ConcurrentHashMap<Integer,Mob>(); 
-	public static java.util.Map<Integer,Projectile> projectiles = new ConcurrentHashMap<Integer,Projectile>(); 
+	public java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
+	public java.util.Map<Integer,Mob> mobs = new ConcurrentHashMap<Integer,Mob>(); 
+	public java.util.Map<Integer,Projectile> projectiles = new ConcurrentHashMap<Integer,Projectile>(); 
 	
 	public int width;
 	public int height;

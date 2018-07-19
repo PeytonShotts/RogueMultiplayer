@@ -39,6 +39,7 @@ public class Network extends Listener {
 		client.getKryo().register(PacketRemoveProjectile.class);
 		client.getKryo().register(Vector.class);
 		client.getKryo().register(Projectile.class);
+		client.getKryo().register(Player.class);
 		client.getKryo().register(byte[].class);
 		client.getKryo().register(int[].class);
 		client.getKryo().register(int[][].class);
