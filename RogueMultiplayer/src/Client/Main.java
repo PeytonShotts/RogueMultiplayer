@@ -228,7 +228,6 @@ public class Main extends BasicGame
 	private void getInput(GameContainer gc, int i) {
 		if (gc.getInput().isKeyDown(Input.KEY_W))
 		{
-			requestMap(1);
 			player.addY = -1;
 			offsetY += 0.5;
 			
@@ -257,6 +256,17 @@ public class Main extends BasicGame
 			
 			player.spriteY = 2;
 			player.isWalking = true;
+		}
+		else if (gc.getInput().isKeyPressed(Input.KEY_R))
+		{
+			if (player.mapID == 0)
+			{
+				requestMap(1);
+			}
+			else
+			{
+				requestMap(0);
+			}
 		}
 		
 		if (gc.getInput().isKeyDown(Input.KEY_W) == false && gc.getInput().isKeyDown(Input.KEY_A) == false &&
@@ -291,11 +301,14 @@ public class Main extends BasicGame
 
 	private void requestMap(int mapID) {
 		mapLoaded = false;
+		player.mapID = mapID;
 		
 		PacketMapRequest packet = new PacketMapRequest();
 		packet.mapID = mapID;
 		
 		network.client.sendTCP(packet);
+		
+		
 		
 		
 		

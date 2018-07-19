@@ -48,6 +48,8 @@ public class Main extends Listener {
 		server.getKryo().register(PacketRemovePlayer.class);
 		server.getKryo().register(PacketUpdatePlayerPosition.class);
 		server.getKryo().register(PacketUpdatePlayerSprite.class);
+		server.getKryo().register(PacketPlayerLeaveMap.class);
+		server.getKryo().register(PacketPlayerEnterMap.class);
 		server.getKryo().register(Mob.class);
 		server.getKryo().register(PacketAddMob.class);
 		server.getKryo().register(PacketRemoveMob.class);
@@ -61,6 +63,7 @@ public class Main extends Listener {
 		server.getKryo().register(byte[].class);
 		server.getKryo().register(int[].class);
 		server.getKryo().register(int[][].class);
+		server.getKryo().register(java.util.ArrayList.class);
 		server.bind(port, port);
 		server.start();
 		server.addListener(new Main());
@@ -93,14 +96,14 @@ public class Main extends Listener {
 			
 			//update mobs/projectiles
 			//int mapNum = 1;
-			//for (Map map : maps.values())
-			//{
-				//updateMobs(map);
-				//updateProjectiles(map);
+			for (Map map : maps)
+			{
+				updateMobs(map);
+				updateProjectiles(map);
 				//System.out.println(maps.get(0).players);
 				//System.out.println(mapNum + " " + map.players);
 				//mapNum++;
-			//}
+			}
 		}
 		
 	}
@@ -260,20 +263,35 @@ public class Main extends Listener {
 		if(o instanceof PacketUpdatePlayerPosition){
 			
 			PacketUpdatePlayerPosition packet = (PacketUpdatePlayerPosition) o;
-			maps.get(connectedPlayers.get(c.getID()).mapID).players.get(c.getID()).x = packet.x;
-			maps.get(connectedPlayers.get(c.getID()).mapID).players.get(c.getID()).y = packet.y;
+			int mapID = connectedPlayers.get(c.getID()).mapID;
+			maps.get(mapID).players.get(c.getID()).x = packet.x;
+			maps.get(mapID).players.get(c.getID()).y = packet.y;
 			
 			packet.id = c.getID();
-			server.sendToAllExceptUDP(c.getID(), packet);
+
+			for (Player player : maps.get(mapID).players.values())
+			{
+				if (player.connectionID != packet.id)
+					{
+						server.sendToUDP(player.connectionID, packet);
+					}
+			}
 			
 			
 		}
 		else if(o instanceof PacketUpdatePlayerSprite){
 			
 			PacketUpdatePlayerSprite packet = (PacketUpdatePlayerSprite) o;
-			
+			int mapID = connectedPlayers.get(c.getID()).mapID;
 			packet.id = c.getID();
-			server.sendToAllExceptUDP(c.getID(), packet);
+			
+			for (Player player : maps.get(mapID).players.values())
+			{
+				if (player.connectionID != packet.id)
+					{
+						server.sendToUDP(player.connectionID, packet);
+					}
+			}
 			
 			
 		}
@@ -284,6 +302,7 @@ public class Main extends Listener {
 			packet.projectile.id = projectileCount;
 			maps.get(mapID).projectiles.put(projectileCount, packet.projectile);
 			projectileCount++;
+			
 			for (Player player : maps.get(mapID).players.values())
 			{
 				server.sendToUDP(player.connectionID, packet);
@@ -295,12 +314,30 @@ public class Main extends Listener {
 			PacketMapRequest packet = (PacketMapRequest) o;
 			sendMap(c, maps.get(packet.mapID));
 			//remove player from current map's hashmap
-			int currentMapID = connectedPlayers.get(c.getID()).mapID;
-			maps.get(currentMapID).players.remove(c.getID());
+			int oldMapID = connectedPlayers.get(c.getID()).mapID;
+			maps.get(oldMapID).players.remove(c.getID());
 			//add player to new map's hashmap
 			int newMapID = packet.mapID;
 			maps.get(newMapID).players.put(c.getID(), connectedPlayers.get(c.getID()));
 			connectedPlayers.get(c.getID()).mapID = newMapID;
+			
+			PacketPlayerLeaveMap packet2 = new PacketPlayerLeaveMap();
+			packet2.id = c.getID();
+			for (Player player : maps.get(oldMapID).players.values())
+			{
+				server.sendToTCP(player.connectionID, packet2);
+			}
+			
+			PacketPlayerEnterMap packet3 = new PacketPlayerEnterMap();
+			packet3.id = c.getID();
+			packet3.newPlayer = connectedPlayers.get(c.getID());
+			for (Player player : maps.get(newMapID).players.values())
+			{
+				if (player.connectionID != c.getID())
+					{
+						server.sendToTCP(player.connectionID, packet3);
+					}
+			}
 		}
 		
 	}
