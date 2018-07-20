@@ -36,9 +36,9 @@ public class Main extends Listener {
 	
 	public static void main(String[] args) throws IOException, InterruptedException{
 
-		Map map0 = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
+		Map map0 = JsonConverter.convert("C:/Users/Peyton/Desktop/jsonmap.json");
 		maps.add(map0);
-		Map map1 = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap2.json");
+		Map map1 = JsonConverter.convert("C:/Users/Peyton/Desktop/jsonmap2.json");
 		maps.add(map1);
 		
 		server = new Server();
@@ -141,7 +141,7 @@ public class Main extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 1);
+					Thread.sleep((long) 5);
 			}
 			
 			

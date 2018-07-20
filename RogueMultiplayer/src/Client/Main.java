@@ -84,6 +84,8 @@ public class Main extends BasicGame
 
 	public static ArrayList<Particle> particles = new ArrayList<Particle>();
 	
+	double loadAnim = 0;
+	
 	
 	public Main(String gamename)
 	{
@@ -317,6 +319,7 @@ public class Main extends BasicGame
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException
 	{
+		
 		if (mapLoaded == true)
 		{
 		
@@ -435,7 +438,6 @@ public class Main extends BasicGame
 		}
 		*/
 		
-		gui.draw(gc, g);
 		
 		}
 	
@@ -446,6 +448,9 @@ public class Main extends BasicGame
 		}
 		
 		}
+		
+		gui.draw(gc, g);
+
 		
 	}
 	
@@ -458,7 +463,7 @@ public class Main extends BasicGame
 			appgc = new AppGameContainer(new Main("Slick2d Window"));
 			appgc.setDisplayMode(1280, 720, false);
 			appgc.setTargetFrameRate(60);
-			//appgc.setVSync(true);
+			appgc.setVSync(true);
 			appgc.setMaximumLogicUpdateInterval(60);
 			appgc.setShowFPS(true);
 			appgc.setAlwaysRender(true);

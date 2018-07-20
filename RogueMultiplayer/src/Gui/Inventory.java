@@ -19,6 +19,7 @@ public class Inventory extends GuiElement{
 	public static int mouseX;
 	public static int mouseY;
 	
+	
 	public void init() throws SlickException
 	{
 		inventoryImage = new Image("res/inventory.png");

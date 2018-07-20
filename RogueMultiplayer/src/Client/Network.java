@@ -2,6 +2,7 @@ package Client;
 import java.io.IOException;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.newdawn.slick.geom.RoundedRectangle;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -19,7 +20,7 @@ import Player.Player;
 public class Network extends Listener {
 
 	public Client client;
-	String ip = "localhost";
+	String ip = "73.177.127.130";
 	int port = 7777;
 	
 	public void connect(){
@@ -59,7 +60,6 @@ public class Network extends Listener {
 	public void received(Connection c, Object o){
 		if(o instanceof PacketMapData){
 			PacketMapData packet = (PacketMapData) o;
-			
 			for (int l=0;l<1000;l++)
 			{
 				Main.mapBytes[packet.bytePosition+l] = packet.data[l];
