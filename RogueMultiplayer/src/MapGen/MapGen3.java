@@ -5,7 +5,7 @@ import java.util.Random;
 
 import MapCode.*;
 
-public class MapGen {
+public class MapGen3 {
 	
 	public static LinkedList<Room> roomList = new LinkedList<Room>();
 	public static int roomCount = 0;
@@ -43,60 +43,48 @@ public class MapGen {
 						{
 							for (int roomX=0; roomX<roomWidth; roomX++)
 							{
-									newMap.layers[0].data[mapX+roomX][mapY+roomY] = 18;
+								newMap.layers[0].data[mapX+roomX][mapY+roomY] = 1;
 							}
 						}
 						
-						//connect rooms
-						Room roomOne = newRoom;
-							int distance = 1000000;
-							Room roomTwo = new Room();
-							for (Room searchRoom : roomList)
-							{
-								if (roomOne.getDistance(searchRoom) < distance && roomOne != searchRoom)
-								{
-									roomTwo = searchRoom;
-									distance = roomOne.getDistance(searchRoom);
-									System.out.println(distance);
-								}
-							}
-							
-							
-							Point point1 = new Point(roomOne.x + (roomOne.width/2), roomOne.y + (roomOne.height/2));
-							Point point2 = new Point(roomTwo.x + (roomTwo.width/2), roomTwo.y + (roomTwo.height/2));
-							
-							int xdistance = point2.x - point1.x;
-							int ydistance = point2.y - point1.y;
-							
-							while (point1.y != point2.y)
-							{
-								point1.y += Math.signum(ydistance);
-								newMap.layers[0].data[point1.x][point1.y] = 18;
-							}
-							while (point1.x != point2.x)
-							{
-								point1.x += Math.signum(xdistance);
-								newMap.layers[0].data[point1.x][point1.y] = 18;
-							}
-						
 					}
-					
-
-						
 				}		
 		}
 		
-		for (int x=0; x<mapWidth; x++)
+		//connect rooms
+		for (Room roomOne : roomList)
 		{
-			for (int y=0; y<mapWidth; y++)
+			int distance = 1000000;
+			Room roomTwo = new Room();
+			for (Room searchRoom : roomList)
 			{
-				if (newMap.layers[0].data[x][y] == 0)
+				if (roomOne.getDistance(searchRoom) < distance && roomOne != searchRoom)
 				{
-					newMap.layers[0].data[x][y] = 16;
+					roomTwo = searchRoom;
+					distance = roomOne.getDistance(searchRoom);
+					System.out.println(distance);
 				}
 			}
+			
+			
+			Point point1 = new Point(roomOne.x + (roomOne.width/2), roomOne.y + (roomOne.height/2));
+			Point point2 = new Point(roomTwo.x + (roomTwo.width/2), roomTwo.y + (roomTwo.height/2));
+			
+			int xdistance = point2.x - point1.x;
+			int ydistance = point2.y - point1.y;
+			
+			while (point1.y != point2.y)
+			{
+				point1.y += Math.signum(ydistance);
+				newMap.layers[0].data[point1.x][point1.y] = 1;
+			}
+			while (point1.x != point2.x)
+			{
+				point1.x += Math.signum(xdistance);
+				newMap.layers[0].data[point1.x][point1.y] = 1;
+			}
+			
 		}
-		
 		
 		return newMap;
 	}

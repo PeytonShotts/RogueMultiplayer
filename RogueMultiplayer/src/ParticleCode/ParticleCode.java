@@ -29,6 +29,10 @@ public class ParticleCode extends BasicGame
 	
 	static ArrayList<Particle> particles = new ArrayList<Particle>();
 	
+	public boolean mouseClick;
+	public int mouseX;
+	public int mouseY;
+	
 	public ParticleCode(String gamename)
 	{
 		super(gamename);
@@ -37,7 +41,7 @@ public class ParticleCode extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException
 	{
-		CircleExplosion a = new CircleExplosion(new Vector(1280/2, 720), 50, 1, 30);
+		
 	}
 
 	@Override
@@ -47,14 +51,30 @@ public class ParticleCode extends BasicGame
 		{
 			particle.update();
 		}
+		
+		
+		mouseX = Mouse.getX();
+	    mouseY = 720 - Mouse.getY();
+		mouseClick = gc.getInput().isMousePressed(Input.MOUSE_LEFT_BUTTON);
+		
+		if (mouseClick == true)
+		{
+			CircleExplosion a = new CircleExplosion(new Vector(mouseX, mouseY), 500, 2, 100);
+		}
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException
 	{
+		int i = 0;
 		for (Particle particle : particles)
 		{
 			particle.draw(g);
+			if (particle.time == 0)
+			{
+				particles.remove(i);
+			}
+			i++;
 		}
 	}
 	

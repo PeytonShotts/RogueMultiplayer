@@ -20,7 +20,7 @@ import Player.Player;
 public class Network extends Listener {
 
 	public Client client;
-	String ip = "73.177.127.130";
+	String ip = "localhost";
 	int port = 7777;
 	
 	public void connect(){

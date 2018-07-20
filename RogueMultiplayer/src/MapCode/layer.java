@@ -8,6 +8,7 @@ public class layer implements java.io.Serializable{
 	public layer(int width, int height)
 	{
 		data = new int[width][height];
+		
 	}
 
 }

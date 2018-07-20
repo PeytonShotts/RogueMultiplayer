@@ -5,7 +5,7 @@ import java.util.Random;
 
 import MapCode.*;
 
-public class MapGen {
+public class MapGen2 {
 	
 	public static LinkedList<Room> roomList = new LinkedList<Room>();
 	public static int roomCount = 0;
@@ -17,10 +17,19 @@ public class MapGen {
 		
 		Random rand = new Random();
 		
-		for (int roomI=0; roomI<mapHeight*mapWidth; roomI++)
+		for (int mapY=0; mapY<mapHeight; mapY++)
 		{
-				int mapX = rand.nextInt(mapWidth);
-				int mapY = rand.nextInt(mapHeight);
+			int start = 0;
+			int max = mapWidth-1;
+			int add = 1;
+			if (mapY % 2 == 0) 
+			{
+				start = mapWidth-1;
+				max = 0;
+				add = -1;
+			}
+			for (int mapX=start; mapX!=max; mapX += add)
+			{
 				if (newMap.layers[0].data[mapX][mapY] == 0)
 				{
 					
@@ -43,23 +52,14 @@ public class MapGen {
 						{
 							for (int roomX=0; roomX<roomWidth; roomX++)
 							{
-									newMap.layers[0].data[mapX+roomX][mapY+roomY] = 18;
+								newMap.layers[0].data[mapX+roomX][mapY+roomY] = 1;
 							}
 						}
 						
-						//connect rooms
-						Room roomOne = newRoom;
-							int distance = 1000000;
-							Room roomTwo = new Room();
-							for (Room searchRoom : roomList)
-							{
-								if (roomOne.getDistance(searchRoom) < distance && roomOne != searchRoom)
-								{
-									roomTwo = searchRoom;
-									distance = roomOne.getDistance(searchRoom);
-									System.out.println(distance);
-								}
-							}
+						if (roomList.size() >= 2)
+						{
+							Room roomOne = roomList.get(roomCount-2);
+							Room roomTwo = roomList.get(roomCount-1);
 							
 							
 							Point point1 = new Point(roomOne.x + (roomOne.width/2), roomOne.y + (roomOne.height/2));
@@ -71,32 +71,19 @@ public class MapGen {
 							while (point1.y != point2.y)
 							{
 								point1.y += Math.signum(ydistance);
-								newMap.layers[0].data[point1.x][point1.y] = 18;
+								newMap.layers[0].data[point1.x][point1.y] = 1;
 							}
 							while (point1.x != point2.x)
 							{
 								point1.x += Math.signum(xdistance);
-								newMap.layers[0].data[point1.x][point1.y] = 18;
+								newMap.layers[0].data[point1.x][point1.y] = 1;
 							}
-						
+							
+						}
 					}
-					
-
-						
 				}		
-		}
-		
-		for (int x=0; x<mapWidth; x++)
-		{
-			for (int y=0; y<mapWidth; y++)
-			{
-				if (newMap.layers[0].data[x][y] == 0)
-				{
-					newMap.layers[0].data[x][y] = 16;
-				}
 			}
 		}
-		
 		
 		return newMap;
 	}

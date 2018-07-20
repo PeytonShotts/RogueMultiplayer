@@ -14,6 +14,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
 import MapCode.*;
+import MapGen.MapGen;
 import Mob.*;
 import Projectile.*;
 import Vector.Vector;
@@ -36,9 +37,13 @@ public class Main extends Listener {
 	
 	public static void main(String[] args) throws IOException, InterruptedException{
 
-		Map map0 = JsonConverter.convert("C:/Users/Peyton/Desktop/jsonmap.json");
+		Map map0 = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
 		maps.add(map0);
-		Map map1 = JsonConverter.convert("C:/Users/Peyton/Desktop/jsonmap2.json");
+		//Map map1 = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap2.json");
+		//maps.add(map1);
+		Map map1 = MapGen.create(50, 50, 4);
+		map1.spawnPoint.x = 100;
+		map1.spawnPoint.y = 100;
 		maps.add(map1);
 		
 		server = new Server();
@@ -73,7 +78,7 @@ public class Main extends Listener {
 		int i = 0;
 		
 		long taskTime = 0;
-		long sleepTime = 1000/60;
+		long sleepTime = 1000/50;
 		
 		
 		for (int spawn=0; spawn< 50; spawn++)
@@ -82,7 +87,6 @@ public class Main extends Listener {
 			newMob.position.x = 47*32; newMob.position.y = 47*32;
 			spawnMob(newMob, map0);
 		}
-		
 		
 		
 		while (true)

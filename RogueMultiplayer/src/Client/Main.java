@@ -138,7 +138,7 @@ public class Main extends BasicGame
 				newProjectile.direction.y = (float) aimY;
 				newProjectile.time = 80;
 				
-				newProjectile.speed = 8;
+				newProjectile.speed = 1;
 				
 				PacketAddProjectile packet = new PacketAddProjectile();
 				packet.projectile = newProjectile;
@@ -225,6 +225,8 @@ public class Main extends BasicGame
 		
 		if (offsetX > 0) {offsetX = 0;}
 		if (offsetY > 0) {offsetY = 0;}
+		if (offsetX < -currentMap.width*32 + 1280+32) {offsetX = -currentMap.width*32 + 1280+32;}
+		if (offsetY < -currentMap.height*32 + 720+32) {offsetY = -currentMap.height*32 + 720+32;}
 	}
 
 	private void getInput(GameContainer gc, int i) {
