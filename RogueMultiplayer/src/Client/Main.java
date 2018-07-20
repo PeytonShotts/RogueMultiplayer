@@ -36,6 +36,7 @@ public class Main extends BasicGame
 	public static Map currentMap;
 	
 	static byte[] mapBytes = new byte[10000000];
+	static int[][] visibleTiles = new int[1000][1000];
 	
 	public static float offsetX = 0;
 	public static float offsetY = 0;
@@ -129,22 +130,7 @@ public class Main extends BasicGame
 			//add new projectile when mouse is pressed
 			if(mouseOne == true && player.attackTimer == 0 && gui.mouseFocus == false)
 			{
-				Projectile newProjectile = new Projectile();
-				
-				newProjectile.position.x = (float) (player.x + 16 + (aimX*12) );
-				newProjectile.position.y = (float) (player.y + 16 + (aimY*12) );
-				
-				newProjectile.direction.x = (float) aimX;
-				newProjectile.direction.y = (float) aimY;
-				newProjectile.time = 80;
-				
-				newProjectile.speed = 1;
-				
-				PacketAddProjectile packet = new PacketAddProjectile();
-				packet.projectile = newProjectile;
-				network.client.sendUDP(packet);
-				
-				player.attackTimer = 5;
+				spawnProjectile();
 			}
 			
 			//update particles
@@ -157,16 +143,36 @@ public class Main extends BasicGame
 				}
 			}
 			
-			//CircleExplosion a = new CircleExplosion(new Vector(1280/2, 720), 50, 1, 50);
 			//update projectiles
 			updateProjectiles();
 			
-			//calculate visible blocks
-			//calculateVisibleBlocks();
+			//get visible tiles
+			getVisibleTiles();
+			
 		}
 	    
 	}
 
+	private void spawnProjectile()
+	{
+		Projectile newProjectile = new Projectile();
+		
+		newProjectile.position.x = (float) (player.x + 16 + (aimX*12) );
+		newProjectile.position.y = (float) (player.y + 16 + (aimY*12) );
+		
+		newProjectile.direction.x = (float) aimX;
+		newProjectile.direction.y = (float) aimY;
+		newProjectile.time = 80;
+		
+		newProjectile.speed = 1;
+		
+		PacketAddProjectile packet = new PacketAddProjectile();
+		packet.projectile = newProjectile;
+		network.client.sendUDP(packet);
+		
+		player.attackTimer = 5;
+	}
+	
 	private void updateProjectiles() {
 		
 		for (Projectile projectile : currentMap.projectiles.values())
@@ -174,7 +180,6 @@ public class Main extends BasicGame
 			if (projectile.time == 0)
 			{
 				currentMap.projectiles.remove(projectile.id);
-				System.out.println("projectile removed");
 			}
 			projectile.update();
 		}
@@ -291,6 +296,7 @@ public class Main extends BasicGame
 		
 		//draw map around player (first layer)
 		if (player.x > 0) {
+		int tile, tileX, tileY;
 		for (int drawY = (int) Math.max( ((player.y/32) - 25), 0) ; drawY < Math.min( ((player.y/32) + 25), currentMap.height - 1); drawY++)
 		{
 			for (int drawX = (int) Math.max( ((player.x/32) - 25), 0); drawX < Math.min( ((player.x/32) + 25), currentMap.width - 1); drawX++)
@@ -298,12 +304,18 @@ public class Main extends BasicGame
 				
 				for (int layer=0; layer<1; layer++)
 				{
-					int tile = (currentMap.layers[layer].data[drawX][drawY]);
-					int tileY = (int) (Math.floor(tile / 14));
-					int tileX = (int) (tile - (tileY*14));
+					tile = (currentMap.layers[layer].data[drawX][drawY]);
+					tileY = (int) (Math.floor(tile / 14));
+					tileX = (int) (tile - (tileY*14));
 					
-					
-					g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+					if (visibleTiles[drawX][drawY] == 1)
+					{	
+						g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+						
+						int distance = (int) Math.hypot((player.x) - (drawX*32), (player.y) - (drawY*32));
+						g.setColor(new Color(0, 0, 0, (int)(distance/1.2)));
+						g.fillRect(drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), 32, 32);
+					}
 						
 				}
 			}
@@ -331,7 +343,7 @@ public class Main extends BasicGame
 			}
 		}
 		
-		/*
+		
 		//draw map around player (other layers)
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
 		{
@@ -340,9 +352,9 @@ public class Main extends BasicGame
 				
 				for (int layer=1; layer<currentMap.layers.length; layer++)
 				{
-					int tile = (currentMap.layers[layer].data[drawX][drawY]);
-					int tileY = (int) (Math.floor(tile / 14));
-					int tileX = (int) (tile - (tileY*14));
+					tile = (currentMap.layers[layer].data[drawX][drawY]);
+					tileY = (int) (Math.floor(tile / 14));
+					tileX = (int) (tile - (tileY*14));
 					
 					
 					g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
@@ -350,10 +362,6 @@ public class Main extends BasicGame
 				}
 			}
 		}
-		*/
-		
-		//draw lighting
-		drawLighting(g);
 		
 		
 		}
@@ -371,15 +379,31 @@ public class Main extends BasicGame
 		
 	}
 	
-	public void drawLighting(Graphics g)
+	public void getVisibleTiles()
 	{
-		int rayLength = 5;
-		for (double lightI=0; lightI<2*Math.PI; lightI+= (2*Math.PI)/50) 
+		int rayLength = 10;
+		int rayCount = 50;
+		for (double lightI=0; lightI<2*Math.PI; lightI+= (2*Math.PI)/rayCount)
 		{
 			for (int rayI=0; rayI<rayLength; rayI++)
 			{
-				g.setColor(new Color(0, 250, 250));
-				g.fillRect(50 + (float) Math.cos(lightI)*rayLength*3, 50 + (float) Math.sin(lightI)*rayLength*3, 5, 5);
+				int tileX = (int) ((player.x+16)/32);
+				int tileY = (int) ((player.y+16)/32);
+				int addX = (int) (Math.cos(lightI)*rayI);
+				int addY = (int) (Math.sin(lightI)*rayI);
+				if (currentMap.layers[0].data[(tileX)+addX][(tileY)+addY] == 16)
+				{
+					visibleTiles[(tileX)+addX][(tileY)+addY] = 1;
+					break;
+				}
+				else
+				{
+					visibleTiles[(tileX)+addX][(tileY)+addY] = 1;
+					visibleTiles[(tileX)+addX-1][(tileY)+addY] = 1;
+					visibleTiles[(tileX)+addX+1][(tileY)+addY] = 1;
+					visibleTiles[(tileX)+addX][(tileY)+addY-1] = 1;
+					visibleTiles[(tileX)+addX][(tileY)+addY+1] = 1;
+				}
 			}
 		}
 	}
@@ -392,9 +416,9 @@ public class Main extends BasicGame
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new Main("Slick2d Window"));
 			appgc.setDisplayMode(1280, 720, false);
-			appgc.setTargetFrameRate(60);
-			appgc.setVSync(true);
-			appgc.setMaximumLogicUpdateInterval(60);
+			//appgc.setTargetFrameRate(60);
+			//appgc.setVSync(true);
+			//appgc.setMaximumLogicUpdateInterval(60);
 			appgc.setShowFPS(true);
 			appgc.setAlwaysRender(true);
 
