@@ -41,9 +41,7 @@ public class Main extends Listener {
 		maps.add(map0);
 		//Map map1 = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap2.json");
 		//maps.add(map1);
-		Map map1 = MapGen.create(50, 50, 4);
-		map1.spawnPoint.x = 100;
-		map1.spawnPoint.y = 100;
+		Map map1 = MapGen.create(250, 250, 4);
 		maps.add(map1);
 		
 		server = new Server();

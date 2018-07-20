@@ -35,7 +35,7 @@ public class Main extends BasicGame
 {
 	public static Map currentMap;
 	
-	static byte[] mapBytes = new byte[1000000];
+	static byte[] mapBytes = new byte[10000000];
 	
 	public static float offsetX = 0;
 	public static float offsetY = 0;
@@ -181,42 +181,6 @@ public class Main extends BasicGame
 		
 	}
 
-
-	/*
-	private void calculateVisibleBlocks() {
-		
-		for (double lightI = 0; lightI < Math.PI*2; lightI += Math.PI/100)
-		{
-			lightX = (float) Math.cos(lightI);
-			lightY = (float) Math.sin(lightI);
-			lightDirectionX = (float) (lightX / Math.sqrt((lightX*lightX) + (lightY*lightY)));
-			lightDirectionY = (float) (lightY / Math.sqrt((lightX*lightX) + (lightY*lightY)));
-					
-			for (int lightR = 0; lightR < 8; lightR++)
-			{
-				int lightBlockX =  player.tileX + Util.closestInteger((int) ((lightDirectionX*lightR*32)), 32);
-				int lightBlockY =  player.tileY + Util.closestInteger((int) ((lightDirectionY*lightR*32)), 32);
-				
-				if ( (lightBlockX-offsetX)/32 > 0 && (lightBlockX-offsetX)/32 < currentMap.width-1 &&
-					 (lightBlockY-offsetY)/32 > 0 && (lightBlockY-offsetY)/32 < currentMap.height-1)
-				{
-					if (currentMap.tileArray[ (lightBlockX-offsetX)/32][ (lightBlockY-offsetY)/32].isRoom == true)
-					{
-						currentMap.tileArray[ (lightBlockX-offsetX)/32][ (lightBlockY-offsetY)/32].isVisible = true;
-					}
-					else
-					{
-						currentMap.tileArray[ (lightBlockX-offsetX)/32][ (lightBlockY-offsetY)/32].isVisible = true;
-						break;
-					}
-				}
-						
-			}
-		}
-		
-	}
-	*/
-
 	private void updateViewOffset() {
 		
 		offsetX = ((spawnX)*-1 - player.x + (640));
@@ -327,9 +291,9 @@ public class Main extends BasicGame
 		
 		//draw map around player (first layer)
 		if (player.x > 0) {
-		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
+		for (int drawY = (int) Math.max( ((player.y/32) - 25), 0) ; drawY < Math.min( ((player.y/32) + 25), currentMap.height - 1); drawY++)
 		{
-			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
+			for (int drawX = (int) Math.max( ((player.x/32) - 25), 0); drawX < Math.min( ((player.x/32) + 25), currentMap.width - 1); drawX++)
 			{
 				
 				for (int layer=0; layer<1; layer++)
@@ -367,6 +331,7 @@ public class Main extends BasicGame
 			}
 		}
 		
+		/*
 		//draw map around player (other layers)
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
 		{
@@ -385,60 +350,10 @@ public class Main extends BasicGame
 				}
 			}
 		}
-		
-		//draw particles
-		for (Particle particle : particles)
-		{
-			particle.draw(g);
-			System.out.println("particle drawn");
-		}
-		
-		
-		
-		
-		//player health (old)
-		//g.setColor(new Color(50,250,50,180));
-		//g.fillRect(player.x + offsetX, player.y + offsetY - 5, 32 * ((float)player.health / (float)player.maxHealth), 5);
-
+		*/
 		
 		//draw lighting
-		/*
-		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY<(player.y/32) + 20; drawY++)
-		{
-			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX<(player.x/32) + 20; drawX++)
-			{
-				xDist = Math.abs((float)drawX - (float)player.x/32); 
-				yDist = Math.abs((float)drawY - (float)player.y/32);
-				double blockDist = Math.sqrt((xDist*xDist) + (yDist*yDist));
-				if (drawX >= 0 && drawX < currentMap.width-1 &&
-					drawY >= 0 && drawY < currentMap.height-1)
-				{
-					if (currentMap.tileArray[drawX][drawY].isVisible)
-					{
-						int tileDarkness;
-						if (blockDist < 4)
-						{
-							tileDarkness = (int) (blockDist * 25);
-						}
-						else
-						{
-							tileDarkness = (int) (blockDist * 30);
-						}
-						
-						
-						g.setColor(new Color(0,0,0, tileDarkness));
-						g.fillRect(drawX*32 + offsetX, drawY*32 + offsetY, 32, 32);
-					}
-					else
-					{
-						g.setColor(new Color(0,0,0, 255));
-						g.fillRect(drawX*32 + offsetX, drawY*32 + offsetY, 32, 32);
-					}
-				}
-				
-			}
-		}
-		*/
+		drawLighting(g);
 		
 		
 		}
@@ -454,6 +369,19 @@ public class Main extends BasicGame
 		gui.draw(gc, g);
 
 		
+	}
+	
+	public void drawLighting(Graphics g)
+	{
+		int rayLength = 5;
+		for (double lightI=0; lightI<2*Math.PI; lightI+= (2*Math.PI)/50) 
+		{
+			for (int rayI=0; rayI<rayLength; rayI++)
+			{
+				g.setColor(new Color(0, 250, 250));
+				g.fillRect(50 + (float) Math.cos(lightI)*rayLength*3, 50 + (float) Math.sin(lightI)*rayLength*3, 5, 5);
+			}
+		}
 	}
 	
 	public static void main(String[] args)

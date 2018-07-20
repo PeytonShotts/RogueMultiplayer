@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import MapCode.*;
+import Vector.Vector;
 
 public class MapGen {
 	
@@ -44,6 +45,10 @@ public class MapGen {
 							for (int roomX=0; roomX<roomWidth; roomX++)
 							{
 									newMap.layers[0].data[mapX+roomX][mapY+roomY] = 18;
+									if (roomCount == 1)
+									{
+										newMap.spawnPoint = new Vector((mapX*32)+((roomX/2)*32), (mapY*32)+((roomY/2)*32));
+									}
 							}
 						}
 						

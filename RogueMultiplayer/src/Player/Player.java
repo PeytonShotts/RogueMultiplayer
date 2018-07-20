@@ -29,8 +29,8 @@ public class Player implements java.io.Serializable{
 	public int walkTimer;
 	public int attackTimer;
 	
-	public int tileX;
-	public int tileY;
+	public float tileX;
+	public float tileY;
 	
 	public double accelSpeed = 0.03;
 	public double maxSpeed = 1;
@@ -122,8 +122,8 @@ public class Player implements java.io.Serializable{
 			if (this.attackTimer > 0) {this.attackTimer -= 1;}
 			
 			//get nearest tile to player position
-		    this.tileX = (int) (( (this.x+16) / 32)*32 + Main.offsetX);
-		    this.tileY = (int) (( (this.y+16) / 32)*32 + Main.offsetY);
+		    this.tileX = (( (this.x+16) / 32));
+		    this.tileY = (( (this.y+16) / 32));
 	}
 	
 	public void updateSprite()

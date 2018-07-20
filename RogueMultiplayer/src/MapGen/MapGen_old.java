@@ -9,7 +9,7 @@ import MapCode.*;
 
 //copy of old map generator
 
-
+/*
 public class MapGen_old {
 	
 	public static LinkedList<Room> roomList = new LinkedList<Room>();
@@ -219,3 +219,4 @@ public class MapGen_old {
 		return newMap;	
 	}
 }
+*/

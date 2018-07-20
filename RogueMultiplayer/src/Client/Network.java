@@ -70,6 +70,8 @@ public class Network extends Listener {
 			if (packet.finalPacket == true)
 			{
 				Main.currentMap = SerializationUtils.deserialize(Main.mapBytes);
+				Main.player.x = Main.currentMap.spawnPoint.x;
+				Main.player.y = Main.currentMap.spawnPoint.y;
 				Main.mapLoaded = true;
 				System.out.println("map loaded");
 			}
