@@ -37,12 +37,12 @@ public class Main extends Listener {
 	
 	public static void main(String[] args) throws IOException, InterruptedException{
 
-		Map map0 = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap.json");
+		Map map0 = JsonConverter.convert("C:/Users/Peyton/Desktop/jsonmap.json");
 		maps.add(map0);
-		//Map map1 = JsonConverter.convert("C:/Users/p05119/Desktop/newfolder2/jsonmap2.json");
-		//maps.add(map1);
+		map0.type = 0;
 		Map map1 = MapGen.create(250, 250, 4);
 		maps.add(map1);
+		map1.type = 1;
 		
 		server = new Server();
 		server.getKryo().register(PacketMapData.class);
@@ -76,7 +76,7 @@ public class Main extends Listener {
 		int i = 0;
 		
 		long taskTime = 0;
-		long sleepTime = 1000/50;
+		long sleepTime = 1000/60;
 		
 		
 		for (int spawn=0; spawn< 50; spawn++)
@@ -143,7 +143,7 @@ public class Main extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 5);
+					Thread.sleep((long) 1);
 			}
 			
 			

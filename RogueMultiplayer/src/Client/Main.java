@@ -164,7 +164,7 @@ public class Main extends BasicGame
 		newProjectile.direction.y = (float) aimY;
 		newProjectile.time = 80;
 		
-		newProjectile.speed = 1;
+		newProjectile.speed = 4;
 		
 		PacketAddProjectile packet = new PacketAddProjectile();
 		packet.projectile = newProjectile;
@@ -297,21 +297,24 @@ public class Main extends BasicGame
 		//draw map around player (first layer)
 		if (player.x > 0) {
 		int tile, tileX, tileY;
-		for (int drawY = (int) Math.max( ((player.y/32) - 10), 0) ; drawY < Math.min( ((player.y/32) + 10), currentMap.height - 1); drawY++)
+		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
 		{
-			for (int drawX = (int) Math.max( ((player.x/32) - 10), 0); drawX < Math.min( ((player.x/32) + 10), currentMap.width - 1); drawX++)
+			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
 				
 				for (int layer=0; layer<3; layer++)
 				{
 					
-					tile = (currentMap.layers[layer].data[drawX][drawY]);
-					tileY = (int) (Math.floor(tile / 14));
-					tileX = (int) (tile - (tileY*14));
-					g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+					if (visibleTiles[drawX][drawY] == 1 | currentMap.type == 0)
+					{
+						tile = (currentMap.layers[layer].data[drawX][drawY]);
+						tileY = (int) (Math.floor(tile / 14));
+						tileX = (int) (tile - (tileY*14));
+						g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+					}
 					
 					
-					if (layer == 2)
+					if (layer == 2 && currentMap.type == 1)
 					{	
 						//g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
 						
@@ -331,7 +334,7 @@ public class Main extends BasicGame
 		//draw other players
 		for(Player mpPlayer : currentMap.players.values())
 		{
-			//g.drawImage(spriteset, (int)mpPlayer.x + offsetX, (int)mpPlayer.y + offsetY, (int)mpPlayer.x+32 + offsetX, (int)mpPlayer.y+32 + offsetY, (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
+			g.drawImage(spriteset, (int)mpPlayer.x + offsetX, (int)mpPlayer.y + offsetY, (int)mpPlayer.x+32 + offsetX, (int)mpPlayer.y+32 + offsetY, (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
 		}
 		
 		//draw mobs (new)
@@ -374,7 +377,7 @@ public class Main extends BasicGame
 		for(Projectile projectile : currentMap.projectiles.values())
 		{
 			g.setColor(new Color(80, 80, 80, projectile.time*20 ));
-			g.fillRect(projectile.position.x - 2 + offsetX, projectile.position.y - 2 + offsetY, projectile.size, projectile.size);
+			g.fillOval(projectile.position.x - 2 + offsetX, projectile.position.y - 2 + offsetY, projectile.size, projectile.size);
 		}
 		
 		}
@@ -425,9 +428,9 @@ public class Main extends BasicGame
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new Main("Slick2d Window"));
 			appgc.setDisplayMode(1280, 720, false);
-			//appgc.setTargetFrameRate(60);
-			//appgc.setVSync(true);
-			//appgc.setMaximumLogicUpdateInterval(60);
+			appgc.setTargetFrameRate(60);
+			appgc.setVSync(true);
+			appgc.setMaximumLogicUpdateInterval(60);
 			appgc.setShowFPS(true);
 			appgc.setAlwaysRender(true);
 

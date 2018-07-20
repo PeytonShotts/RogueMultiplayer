@@ -13,6 +13,8 @@ import Projectile.*;
 
 public class Map implements java.io.Serializable{
 	
+	public int type = 0;
+	
 	public java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
 	public java.util.Map<Integer,Mob> mobs = new ConcurrentHashMap<Integer,Mob>(); 
 	public java.util.Map<Integer,Projectile> projectiles = new ConcurrentHashMap<Integer,Projectile>(); 
