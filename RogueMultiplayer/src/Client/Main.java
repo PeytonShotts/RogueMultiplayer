@@ -297,25 +297,29 @@ public class Main extends BasicGame
 		//draw map around player (first layer)
 		if (player.x > 0) {
 		int tile, tileX, tileY;
-		for (int drawY = (int) Math.max( ((player.y/32) - 25), 0) ; drawY < Math.min( ((player.y/32) + 25), currentMap.height - 1); drawY++)
+		for (int drawY = (int) Math.max( ((player.y/32) - 10), 0) ; drawY < Math.min( ((player.y/32) + 10), currentMap.height - 1); drawY++)
 		{
-			for (int drawX = (int) Math.max( ((player.x/32) - 25), 0); drawX < Math.min( ((player.x/32) + 25), currentMap.width - 1); drawX++)
+			for (int drawX = (int) Math.max( ((player.x/32) - 10), 0); drawX < Math.min( ((player.x/32) + 10), currentMap.width - 1); drawX++)
 			{
 				
-				for (int layer=0; layer<1; layer++)
+				for (int layer=0; layer<3; layer++)
 				{
+					
 					tile = (currentMap.layers[layer].data[drawX][drawY]);
 					tileY = (int) (Math.floor(tile / 14));
 					tileX = (int) (tile - (tileY*14));
+					g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
 					
-					if (visibleTiles[drawX][drawY] == 1)
+					
+					if (layer == 2)
 					{	
-						g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+						//g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
 						
 						int distance = (int) Math.hypot((player.x) - (drawX*32), (player.y) - (drawY*32));
 						g.setColor(new Color(0, 0, 0, (int)(distance/1.2)));
 						g.fillRect(drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), 32, 32);
 					}
+					
 						
 				}
 			}
@@ -327,7 +331,7 @@ public class Main extends BasicGame
 		//draw other players
 		for(Player mpPlayer : currentMap.players.values())
 		{
-			g.drawImage(spriteset, (int)mpPlayer.x + offsetX, (int)mpPlayer.y + offsetY, (int)mpPlayer.x+32 + offsetX, (int)mpPlayer.y+32 + offsetY, (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
+			//g.drawImage(spriteset, (int)mpPlayer.x + offsetX, (int)mpPlayer.y + offsetY, (int)mpPlayer.x+32 + offsetX, (int)mpPlayer.y+32 + offsetY, (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
 		}
 		
 		//draw mobs (new)
@@ -343,7 +347,7 @@ public class Main extends BasicGame
 			}
 		}
 		
-		
+		/*
 		//draw map around player (other layers)
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
 		{
@@ -362,6 +366,7 @@ public class Main extends BasicGame
 				}
 			}
 		}
+		*/
 		
 		
 		}
@@ -373,6 +378,10 @@ public class Main extends BasicGame
 		}
 		
 		}
+		
+		
+
+
 		
 		gui.draw(gc, g);
 
