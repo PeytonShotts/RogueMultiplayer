@@ -37,7 +37,7 @@ public class Main extends Listener {
 	
 	public static void main(String[] args) throws IOException, InterruptedException{
 
-		Map map0 = JsonConverter.convert("C:/Users/Peyton/git/RogueMultiplayer/RogueMultiplayer/src/maps/courtyard.json");
+		Map map0 = JsonConverter.convert("C:/Users/Peyton/git/RogueMultiplayer/RogueMultiplayer/src/maps/courtyard_1.0.1.json");
 		map0.spawnPoint.x = 60*32;
 		map0.spawnPoint.y = 71*32;
 		maps.add(map0);

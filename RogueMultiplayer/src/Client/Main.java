@@ -303,7 +303,7 @@ public class Main extends BasicGame
 		if (mapLoaded == true)
 		{
 		
-		//draw map around player
+		//draw map first layer around player
 		if (player.x > 0) {
 		int tile, tileX, tileY;
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
@@ -311,7 +311,7 @@ public class Main extends BasicGame
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
 				
-				for (int layer=0; layer<6; layer++)
+				for (int layer=0; layer<1; layer++)
 				{
 					
 					if (visibleTiles[drawX][drawY] == 1 | currentMap.type == 0)
@@ -365,26 +365,28 @@ public class Main extends BasicGame
 			}
 		}
 		
-		/*
+		
 		//draw map around player (other layers)
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
 		{
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
 				
-				for (int layer=1; layer<currentMap.layers.length; layer++)
+				for (int layer=1; layer<6; layer++)
 				{
 					tile = (currentMap.layers[layer].data[drawX][drawY]);
-					tileY = (int) (Math.floor(tile / 14));
-					tileX = (int) (tile - (tileY*14));
+					tileY = (int) (Math.floor(tile / 16));
+					tileX = (int) (tile - (tileY*16));
 					
-					
-					g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+					if (tile != -1)
+					{
+						g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+					}
 						
 				}
 			}
 		}
-		*/
+		
 		
 		
 		}
