@@ -37,7 +37,7 @@ public class Main extends Listener {
 	
 	public static void main(String[] args) throws IOException, InterruptedException{
 
-		Map map0 = JsonConverter.convert("C:/Users/Peyton/Desktop/jsonmap.json");
+		Map map0 = JsonConverter.convert("C:/Users/Peyton/git/RogueMultiplayer/RogueMultiplayer/src/maps/courtyard.json");
 		maps.add(map0);
 		map0.type = 0;
 		Map map1 = MapGen.create(250, 250, 4);
@@ -138,12 +138,11 @@ public class Main extends Listener {
 						packet.finalPacket = false;
 					}
 					
-					
 					c.sendTCP(packet);
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 1);
+					Thread.sleep((long) 5);
 			}
 			
 			
@@ -179,14 +178,21 @@ public class Main extends Listener {
 				map.mobs.remove(mob.getKey());
 				PacketRemoveMob mobRemove = new PacketRemoveMob();
 				mobRemove.id = mob.getKey();
-				server.sendToAllTCP(mobRemove);
+				
+				for (Player player : map.players.values())
+				{
+					server.sendToTCP(player.connectionID, mobRemove);
+				}
 			}
 			else if (mob.getValue().health != mob.getValue().networkHealth)
 			{
 				PacketUpdateMobHealth packet = new PacketUpdateMobHealth();
 				packet.id = mob.getKey();
 				packet.health = mob.getValue().health;
-				server.sendToAllTCP(packet);
+				for (Player player : map.players.values())
+				{
+					server.sendToTCP(player.connectionID, packet);
+				}
 				
 				mob.getValue().networkHealth = mob.getValue().health;
 				
@@ -201,7 +207,10 @@ public class Main extends Listener {
 				mobUpdate.spriteX = (byte) mob.getValue().spriteX;
 				mobUpdate.spriteY = (byte) mob.getValue().spriteY;
 				
-				server.sendToAllUDP(mobUpdate);
+				for (Player player : map.players.values())
+				{
+					server.sendToUDP(player.connectionID, mobUpdate);
+				}
 				
 				mob.getValue().networkPosition.x = mob.getValue().position.x;
 				mob.getValue().networkPosition.y = mob.getValue().position.y;

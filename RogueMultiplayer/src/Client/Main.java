@@ -22,6 +22,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
+import Item.*;
 import Mob.*;
 import MapCode.*;
 import Projectile.*;
@@ -87,6 +88,8 @@ public class Main extends BasicGame
 	
 	double loadAnim = 0;
 	
+	public static Item[] items = new Item[24];
+	
 	
 	public Main(String gamename)
 	{
@@ -98,10 +101,16 @@ public class Main extends BasicGame
 	{
 		gui.init();
 		
-		tileset = new Image("res/owlishmedia_pixel_tiles.png"); 
+		tileset = new Image("res/Castle2.png"); 
 		spriteset = new Image("res/spriteset.png");
 		
 		Chicken.init();
+		
+		for (int i=0; i<24; i++)
+		{
+			items[i] = new TestItem();
+		}
+		items[20] = new Apple();
 	}
 
 	@Override
@@ -294,7 +303,7 @@ public class Main extends BasicGame
 		if (mapLoaded == true)
 		{
 		
-		//draw map around player (first layer)
+		//draw map around player
 		if (player.x > 0) {
 		int tile, tileX, tileY;
 		for (int drawY = (int) Math.max( ((player.y/32) - 20), 0) ; drawY < Math.min( ((player.y/32) + 20), currentMap.height - 1); drawY++)
@@ -302,7 +311,7 @@ public class Main extends BasicGame
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
 				
-				for (int layer=0; layer<3; layer++)
+				for (int layer=0; layer<6; layer++)
 				{
 					
 					if (visibleTiles[drawX][drawY] == 1 | currentMap.type == 0)
@@ -322,6 +331,7 @@ public class Main extends BasicGame
 						g.setColor(new Color(0, 0, 0, (int)(distance/1.2)));
 						g.fillRect(drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), 32, 32);
 					}
+					
 					
 						
 				}

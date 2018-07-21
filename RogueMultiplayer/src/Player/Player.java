@@ -58,11 +58,8 @@ public class Player implements java.io.Serializable{
 			{
 				if (colX >= 0 && colY >= 0)
 				{
-					for (int type : collisionList)
-					{
-						for (int layer=0; layer<Main.currentMap.layers.length; layer++)
-						{
-							if (type == currentMap.layers[layer].data[colX][colY])
+
+							if (currentMap.layers[3].data[colX][colY] > 0)
 							{
 								if (this.x < colX*32 + width &&
 										this.x + width > colX*32 &&
@@ -71,8 +68,6 @@ public class Player implements java.io.Serializable{
 										{
 											return true;
 										}
-							}
-						}
 
 					}
 				
