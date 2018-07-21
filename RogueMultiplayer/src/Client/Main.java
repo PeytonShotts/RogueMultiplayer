@@ -317,8 +317,8 @@ public class Main extends BasicGame
 					if (visibleTiles[drawX][drawY] == 1 | currentMap.type == 0)
 					{
 						tile = (currentMap.layers[layer].data[drawX][drawY]);
-						tileY = (int) (Math.floor(tile / 14));
-						tileX = (int) (tile - (tileY*14));
+						tileY = (int) (Math.floor(tile / 16));
+						tileX = (int) (tile - (tileY*16));
 						g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
 					}
 					

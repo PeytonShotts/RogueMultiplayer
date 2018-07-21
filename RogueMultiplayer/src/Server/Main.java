@@ -78,13 +78,14 @@ public class Main extends Listener {
 		long taskTime = 0;
 		long sleepTime = 1000/60;
 		
-		
+		/*
 		for (int spawn=0; spawn< 50; spawn++)
 		{
 			Mob newMob = new Chicken();
 			newMob.position.x = 47*32; newMob.position.y = 47*32;
 			spawnMob(newMob, map0);
 		}
+		*/
 		
 		
 		while (true)
