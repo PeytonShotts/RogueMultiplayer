@@ -311,7 +311,7 @@ public class Main extends BasicGame
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
 				
-				for (int layer=0; layer<1; layer++)
+				for (int layer=0; layer<2; layer++)
 				{
 					
 					if (visibleTiles[drawX][drawY] == 1 | currentMap.type == 0)
@@ -372,7 +372,7 @@ public class Main extends BasicGame
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
 				
-				for (int layer=1; layer<6; layer++)
+				for (int layer=2; layer<7; layer++)
 				{
 					tile = (currentMap.layers[layer].data[drawX][drawY]);
 					tileY = (int) (Math.floor(tile / 16));

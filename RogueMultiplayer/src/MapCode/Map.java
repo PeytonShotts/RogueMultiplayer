@@ -15,7 +15,7 @@ public class Map implements java.io.Serializable{
 	
 	public int type = 0;
 	
-	public java.util.Map<Integer,Player> players = new HashMap<Integer,Player>(); 
+	public java.util.Map<Integer,Player> players = new ConcurrentHashMap<Integer,Player>(); 
 	public java.util.Map<Integer,Mob> mobs = new ConcurrentHashMap<Integer,Mob>(); 
 	public java.util.Map<Integer,Projectile> projectiles = new ConcurrentHashMap<Integer,Projectile>(); 
 	
@@ -24,7 +24,7 @@ public class Map implements java.io.Serializable{
 	
 	public int numLayers;
 	
-	public layer[] layers = new layer[7];
+	public layer[] layers = new layer[8];
 	public Vector spawnPoint = new Vector(42*32, 42*32);
 	
 	public List<Mob> mobList = new ArrayList<Mob>();
@@ -41,7 +41,6 @@ public class Map implements java.io.Serializable{
 			layers[i] = new layer(mapWidth, mapHeight);
 		}
 	}
-	
 	
 	
 }
