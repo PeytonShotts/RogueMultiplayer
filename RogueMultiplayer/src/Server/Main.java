@@ -38,6 +38,8 @@ public class Main extends Listener {
 	public static void main(String[] args) throws IOException, InterruptedException{
 
 		Map map0 = JsonConverter.convert("C:/Users/Peyton/git/RogueMultiplayer/RogueMultiplayer/src/maps/courtyard.json");
+		map0.spawnPoint.x = 60*32;
+		map0.spawnPoint.y = 71*32;
 		maps.add(map0);
 		map0.type = 0;
 		Map map1 = MapGen.create(250, 250, 4);

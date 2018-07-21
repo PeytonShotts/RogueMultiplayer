@@ -319,10 +319,14 @@ public class Main extends BasicGame
 						tile = (currentMap.layers[layer].data[drawX][drawY]);
 						tileY = (int) (Math.floor(tile / 16));
 						tileX = (int) (tile - (tileY*16));
-						g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+						if (tile >= 0)
+						{
+							g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+						}
+						
 					}
 					
-					
+					/*
 					if (layer == 2 && currentMap.type == 1)
 					{	
 						//g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
@@ -331,6 +335,7 @@ public class Main extends BasicGame
 						g.setColor(new Color(0, 0, 0, (int)(distance/1.2)));
 						g.fillRect(drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), 32, 32);
 					}
+					*/
 					
 					
 						

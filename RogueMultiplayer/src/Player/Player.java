@@ -59,7 +59,7 @@ public class Player implements java.io.Serializable{
 				if (colX >= 0 && colY >= 0)
 				{
 
-							if (currentMap.layers[3].data[colX][colY] > 0)
+							if (currentMap.layers[6].data[colX][colY] > 0)
 							{
 								if (this.x < colX*32 + width &&
 										this.x + width > colX*32 &&
