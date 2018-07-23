@@ -1,4 +1,4 @@
-package MapCode;
+package Map;
 
 
 public class layer implements java.io.Serializable{

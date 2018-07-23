@@ -20,7 +20,7 @@ import Player.Player;
 public class Network extends Listener {
 
 	public Client client;
-	String ip = "73.177.127.130";
+	String ip = "localhost";
 	int port = 7777;
 	
 	public void connect(){
@@ -72,7 +72,19 @@ public class Network extends Listener {
 				Main.currentMap = SerializationUtils.deserialize(Main.mapBytes);
 				Main.player.x = Main.currentMap.spawnPoint.x;
 				Main.player.y = Main.currentMap.spawnPoint.y;
+				if (Main.currentMap.tileset.equals("owlish"))
+				{
+					Main.currentTileset = Main.tileset_owlish;
+				}
+				else if (Main.currentMap.tileset.equals("castle"))
+				{
+					Main.currentTileset = Main.tileset_castle;
+				}
+				
+				
 				Main.mapLoaded = true;
+				
+				
 				System.out.println("map loaded");
 			}
 			

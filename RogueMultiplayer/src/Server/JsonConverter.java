@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 import com.google.gson.*;
 
-import MapCode.Map;
+import Map.Map;
 
 
 
@@ -32,7 +32,7 @@ public class JsonConverter {
 		
 		System.out.println(newTiledMap.layers.length);
 		
-		for (int layerNum=0; layerNum<newConvertedMap.numLayers; layerNum++)
+		for (int layerNum=0; layerNum<newConvertedMap.layerCount; layerNum++)
 		{
 			for (int y=0; y<newTiledMap.height; y++)
 			{

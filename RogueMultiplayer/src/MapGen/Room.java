@@ -19,4 +19,9 @@ public class Room {
 	{
 		return (int) Math.hypot(this.x-roomTwo.x, this.y-roomTwo.y);
 	}
+	
+	public boolean connects(Room b) {
+		  return (Math.abs(this.x - b.x) * 2 < (this.width + b.width)) &&
+		         (Math.abs(this.y - b.y) * 2 < (this.height + b.height));
+		}
 }

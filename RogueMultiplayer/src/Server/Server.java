@@ -2,29 +2,39 @@ package Server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.SerializationUtils;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
 
-import MapCode.*;
+import Map.Map;
 import MapGen.MapGen;
 import Mob.*;
-import Projectile.*;
+import Packet.PacketAddMob;
+import Packet.PacketAddPlayer;
+import Packet.PacketAddProjectile;
+import Packet.PacketMapData;
+import Packet.PacketMapRequest;
+import Packet.PacketPlayerEnterMap;
+import Packet.PacketPlayerLeaveMap;
+import Packet.PacketRemoveMob;
+import Packet.PacketRemovePlayer;
+import Packet.PacketRemoveProjectile;
+import Packet.PacketUpdateMob;
+import Packet.PacketUpdateMobHealth;
+import Packet.PacketUpdatePlayerPosition;
+import Packet.PacketUpdatePlayerSprite;
+import Player.Player;
+import Projectile.Projectile;
 import Vector.Vector;
-import Packet.*;
-import Player.*;
 
 
-public class Main extends Listener {
+public class Server extends Listener {
 
-	static Server server = new Server(30000,30000);
+	static com.esotericsoftware.kryonet.Server server = new com.esotericsoftware.kryonet.Server(30000,30000);
 	static final int port = 7777;
 	
 	public static List<Map> maps = new ArrayList<Map>();
@@ -37,16 +47,17 @@ public class Main extends Listener {
 	
 	public static void main(String[] args) throws IOException, InterruptedException{
 
-		Map map0 = JsonConverter.convert("C:/Users/Peyton/git/RogueMultiplayer/RogueMultiplayer/src/maps/courtyard_1.0.2.json");
+		Map map0 = JsonConverter.convert("C:/Users/p05119/git/RogueMultiplayer/RogueMultiplayer/src/maps/courtyard_1.0.2.json");
 		map0.spawnPoint.x = 60*32;
 		map0.spawnPoint.y = 71*32;
+		map0.tileset = "castle";
 		maps.add(map0);
 		map0.type = 0;
 		Map map1 = MapGen.create(250, 250, 4);
+		map1.tileset = "owlish";
 		maps.add(map1);
 		map1.type = 1;
 		
-		server = new Server();
 		server.getKryo().register(PacketMapData.class);
 		server.getKryo().register(PacketMapRequest.class);
 		server.getKryo().register(PacketAddPlayer.class);
@@ -71,24 +82,18 @@ public class Main extends Listener {
 		server.getKryo().register(java.util.ArrayList.class);
 		server.bind(port, port);
 		server.start();
-		server.addListener(new Main());
+		server.addListener(new Server());
 		System.out.println("Server Ready");	
-		
-		
-		int i = 0;
 		
 		long taskTime = 0;
 		long sleepTime = 1000/60;
 		
-		/*
-		for (int spawn=0; spawn< 50; spawn++)
+		for (int spawn=0; spawn< 5; spawn++)
 		{
 			Mob newMob = new Chicken();
-			newMob.position.x = 47*32; newMob.position.y = 47*32;
+			newMob.position.x = 55*32+(spawn*33); newMob.position.y = 65*32;
 			spawnMob(newMob, map0);
 		}
-		*/
-		
 		
 		while (true)
 		{
@@ -97,7 +102,7 @@ public class Main extends Listener {
 			  if (sleepTime-taskTime > 0 ) {
 			    Thread.sleep(sleepTime-taskTime);
 			  }
-			
+			  
 			for (Map map : maps)
 			{
 				updateMobs(map);
@@ -145,7 +150,7 @@ public class Main extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 5);
+					Thread.sleep((long) 1);
 			}
 			
 			

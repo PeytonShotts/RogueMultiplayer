@@ -23,8 +23,8 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import Item.*;
+import Map.*;
 import Mob.*;
-import MapCode.*;
 import Projectile.*;
 import Vector.Vector;
 import Packet.*;
@@ -35,6 +35,7 @@ import Player.*;
 public class Main extends BasicGame
 {
 	public static Map currentMap;
+	public static Image currentTileset;
 	
 	static byte[] mapBytes = new byte[10000000];
 	static int[][] visibleTiles = new int[1000][1000];
@@ -66,7 +67,10 @@ public class Main extends BasicGame
 	
 	String moveDirection;
 	
-	Image tileset;
+	static Image tileset_castle;
+	static Image tileset_owlish;
+	
+	
 	Image spriteset;
 	
 	int spawnX;
@@ -101,7 +105,9 @@ public class Main extends BasicGame
 	{
 		gui.init();
 		
-		tileset = new Image("res/Castle2.png"); 
+		tileset_castle = new Image("res/castle.png");
+		tileset_owlish = new Image("res/owlishmedia_pixel_tiles.png");
+		
 		spriteset = new Image("res/spriteset.png");
 		
 		Chicken.init();
@@ -321,23 +327,10 @@ public class Main extends BasicGame
 						tileX = (int) (tile - (tileY*16));
 						if (tile >= 0)
 						{
-							g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+							g.drawImage(currentTileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
 						}
 						
 					}
-					
-					/*
-					if (layer == 2 && currentMap.type == 1)
-					{	
-						//g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
-						
-						int distance = (int) Math.hypot((player.x) - (drawX*32), (player.y) - (drawY*32));
-						g.setColor(new Color(0, 0, 0, (int)(distance/1.2)));
-						g.fillRect(drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), 32, 32);
-					}
-					*/
-					
-					
 						
 				}
 			}
@@ -372,7 +365,7 @@ public class Main extends BasicGame
 			for (int drawX = (int) Math.max( ((player.x/32) - 20), 0); drawX < Math.min( ((player.x/32) + 20), currentMap.width - 1); drawX++)
 			{
 				
-				for (int layer=2; layer<7; layer++)
+				for (int layer=2; layer<currentMap.layerCount-1; layer++)
 				{
 					tile = (currentMap.layers[layer].data[drawX][drawY]);
 					tileY = (int) (Math.floor(tile / 16));
@@ -380,7 +373,16 @@ public class Main extends BasicGame
 					
 					if (tile != -1)
 					{
-						g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+						g.drawImage(currentTileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+					}
+					
+					if (layer == 2 && currentMap.type == 1)
+					{	
+						//g.drawImage(tileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
+						
+						int distance = (int) Math.hypot((player.x) - (drawX*32), (player.y) - (drawY*32));
+						g.setColor(new Color(0, 0, 0, (int)(distance/1.2)));
+						g.fillRect(drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), 32, 32);
 					}
 						
 				}
@@ -410,7 +412,7 @@ public class Main extends BasicGame
 	
 	public void getVisibleTiles()
 	{
-		int rayLength = 10;
+		int rayLength = 8;
 		int rayCount = 50;
 		for (double lightI=0; lightI<2*Math.PI; lightI+= (2*Math.PI)/rayCount)
 		{

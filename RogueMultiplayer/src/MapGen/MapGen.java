@@ -3,7 +3,7 @@ package MapGen;
 import java.util.LinkedList;
 import java.util.Random;
 
-import MapCode.*;
+import Map.*;
 import Vector.Vector;
 
 public class MapGen {
@@ -25,64 +25,85 @@ public class MapGen {
 				if (newMap.layers[0].data[mapX][mapY] == 0)
 				{
 					
-					int  r = rand.nextInt(100) + 0;
+					int  r = rand.nextInt(200) + 0;
 					if (r == 50 && mapX < mapWidth-10 && mapY < mapHeight-10 && mapX > 2 && mapY > 2)
 					{
 						//generate room parameters
 						int roomWidth = rand.nextInt(8) + 3;
 						int roomHeight = rand.nextInt(8) + 3;
+						
 						Room newRoom = new Room();
 						newRoom.x = mapX;
 						newRoom.y = mapY;
 						newRoom.width = roomWidth;
 						newRoom.height = roomHeight;
-						roomList.add(newRoom);
-						roomCount++;
 						
-						//create room
-						for (int roomY=0; roomY<roomHeight; roomY++)
+						boolean roomConnects = false;
+						for (Room room : roomList)
 						{
-							for (int roomX=0; roomX<roomWidth; roomX++)
+							if (newRoom.connects(room))
 							{
-									newMap.layers[0].data[mapX+roomX][mapY+roomY] = 18;
-									if (roomCount == 1)
-									{
-										newMap.spawnPoint = new Vector((mapX*32)+((roomX/2)*32), (mapY*32)+((roomY/2)*32));
-									}
+								roomConnects = true;
+								//break;
 							}
 						}
 						
-						//connect rooms
-						Room roomOne = newRoom;
-							int distance = 1000000;
-							Room roomTwo = new Room();
-							for (Room searchRoom : roomList)
+						if (roomConnects == false)
+						{
+							roomList.add(newRoom);
+							roomCount++;
+							
+							//create room
+							for (int roomY=0; roomY<roomHeight; roomY++)
 							{
-								if (roomOne.getDistance(searchRoom) < distance && roomOne != searchRoom)
+								for (int roomX=0; roomX<roomWidth; roomX++)
 								{
-									roomTwo = searchRoom;
-									distance = roomOne.getDistance(searchRoom);
-									System.out.println(distance);
+										newMap.layers[0].data[mapX+roomX][mapY+roomY] = 18;
+										if (roomCount == 1)
+										{
+											newMap.spawnPoint = new Vector((mapX*32)+((roomX/2)*32), (mapY*32)+((roomY/2)*32));
+										}
 								}
 							}
 							
-							
-							Point point1 = new Point(roomOne.x + (roomOne.width/2), roomOne.y + (roomOne.height/2));
-							Point point2 = new Point(roomTwo.x + (roomTwo.width/2), roomTwo.y + (roomTwo.height/2));
-							
-							int xdistance = point2.x - point1.x;
-							int ydistance = point2.y - point1.y;
-							
-							while (point1.y != point2.y)
+							//connect rooms
+							if (roomCount > 1)
 							{
-								point1.y += Math.signum(ydistance);
-								newMap.layers[0].data[point1.x][point1.y] = 18;
+								Room roomOne = newRoom;
+								int distance = 1000000;
+								Room roomTwo = new Room();
+								for (Room searchRoom : roomList)
+								{
+									if (roomOne.getDistance(searchRoom) < distance && roomOne != searchRoom)
+									{
+										roomTwo = searchRoom;
+										distance = roomOne.getDistance(searchRoom);
+										System.out.println(distance);
+									}
+								}
+								
+								Point point1 = new Point(roomOne.x + (roomOne.width/2), roomOne.y + (roomOne.height/2));
+								Point point2 = new Point(roomTwo.x + (roomTwo.width/2), roomTwo.y + (roomTwo.height/2));
+								
+								int xdistance = point2.x - point1.x;
+								int ydistance = point2.y - point1.y;
+								
+								while (point1.y != point2.y)
+								{
+									point1.y += Math.signum(ydistance);
+									newMap.layers[0].data[point1.x][point1.y] = 18;
+								}
+								
+								while (point1.x != point2.x)
+								{
+									point1.x += Math.signum(xdistance);
+									newMap.layers[0].data[point1.x][point1.y] = 18;
+								}
+								
 							}
-							while (point1.x != point2.x)
-							{
-								point1.x += Math.signum(xdistance);
-								newMap.layers[0].data[point1.x][point1.y] = 18;
-							}
+							
+							
+						}
 						
 					}
 					
@@ -91,18 +112,21 @@ public class MapGen {
 				}		
 		}
 		
-		for (int x=0; x<mapWidth; x++)
+		for (int wallY=0; wallY<newMap.height; wallY++)
 		{
-			for (int y=0; y<mapWidth; y++)
+			for (int wallX=0; wallX<newMap.width; wallX++)
 			{
-				if (newMap.layers[0].data[x][y] == 0)
+				if (newMap.layers[0].data[wallX][wallY] != 18)
 				{
-					newMap.layers[0].data[x][y] = 16;
+					newMap.layers[0].data[wallX][wallY] = 16;
+					newMap.layers[newMap.layers.length-1].data[wallX][wallY] = 1;
 				}
+				
 			}
 		}
 		
 		
 		return newMap;
 	}
+	
 }

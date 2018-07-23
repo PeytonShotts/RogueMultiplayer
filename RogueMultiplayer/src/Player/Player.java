@@ -8,7 +8,7 @@ import java.util.List;
 import com.esotericsoftware.kryonet.Connection;
 
 import Client.Main;
-import MapCode.Map;
+import Map.Map;
 import Packet.*;
 
 public class Player implements java.io.Serializable{
@@ -59,7 +59,7 @@ public class Player implements java.io.Serializable{
 				if (colX >= 0 && colY >= 0)
 				{
 
-							if (currentMap.layers[7].data[colX][colY] > 0)
+							if (currentMap.layers[currentMap.layerCount-1].data[colX][colY] > 0)
 							{
 								if (this.x < colX*32 + width &&
 										this.x + width > colX*32 &&

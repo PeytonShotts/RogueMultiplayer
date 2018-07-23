@@ -13,14 +13,14 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
-import MapCode.Map;
+import Map.Map;
 
 public class MapGenTester extends BasicGame
 {
-	int mapWidth = 100;
-	int mapHeight = 100;
+	int mapWidth = 250;
+	int mapHeight = 250;
 	Map newMap = MapGen.create(mapWidth, mapHeight, 1);
-	int r = 1;
+	int r = 2;
 	
 	public MapGenTester(String gamename)
 	{
@@ -50,7 +50,7 @@ public class MapGenTester extends BasicGame
 			for (int drawX=0; drawX<mapWidth; drawX++)
 			{
 				g.setColor(new Color(250, 250, 250));
-				if (newMap.layers[0].data[drawX][drawY] == 0)
+				if (newMap.layers[0].data[drawX][drawY] == 18)
 				{
 					g.fillRect(drawX*r, drawY*r, r, r);
 				}

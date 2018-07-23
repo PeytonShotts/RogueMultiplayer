@@ -12,7 +12,7 @@ import org.newdawn.slick.Image;
 
 import Client.Main;
 import Client.Util;
-import MapCode.Map;
+import Map.Map;
 import Packet.PacketUpdateMobHealth;
 import Player.Player;
 import Projectile.Projectile;
@@ -28,11 +28,18 @@ public class Mob implements java.io.Serializable{
 	
 	public float addX;
 	public float addY;
+	public float targetX;
+	public float targetY;
+	
+	Vector momentum = new Vector();
 	
 	int moveCooldown;
 	
 	boolean isMoving;
 	boolean isHit;
+	
+	boolean isInRange;
+	Player playerInRange;
 	
 	public static Image spriteSheet;
 	public int spriteCount;
@@ -44,7 +51,7 @@ public class Mob implements java.io.Serializable{
 	public int networkHealth;
 	public int maxHealth;
 	
-	public float speed;
+	public float speed = (float) 0.9;
 	
 	List<Integer> collisionList = new ArrayList<>(Arrays.asList(16, 226));
 	
@@ -65,15 +72,9 @@ public class Mob implements java.io.Serializable{
 	
 	public void update(Map map, java.util.Map<Integer, Projectile> projectiles)
 	{
-			/*
-			if (this.isInRange)
-			{
-				this.addX += (float) (-Util.getDirectionVector(playerInRange, this).x*this.speed);
-				this.addY += (float) (-Util.getDirectionVector(playerInRange, this).y*this.speed);
-			}
-			*/
+			
 		
-			if (Math.abs(this.addX+this.addY) < 0.001)
+			if (Math.abs(momentum.x+momentum.y) < 0.01)
 			{
 				if (isHit == true)
 				{
@@ -86,16 +87,40 @@ public class Mob implements java.io.Serializable{
 					randomMove();
 				}
 			}
-			else if (Math.abs(this.addX+this.addY) > 0.1 && isHit == false)
-			{
+			else if (Math.abs(momentum.x + momentum.y) > 0.1 && isHit == false)
+			{	//up right down left
 				walkTimer++;
 				if (walkTimer == 10)
 				{
 					walkTimer = 0;
 					spriteX++;
+					
 					if (spriteX == spriteCount)
 					{
 						spriteX = 0;
+					}
+				}
+				
+				if (Math.abs(momentum.x) > Math.abs(momentum.y))
+				{
+					if (momentum.x > 0)
+					{
+						spriteY = 1;
+					}
+					else
+					{
+						spriteY = 3;
+					}
+				}
+				else
+				{
+					if (momentum.y > 0)
+					{
+						spriteY = 2;
+					}
+					else
+					{
+						spriteY = 0;
 					}
 				}
 			}
@@ -104,27 +129,74 @@ public class Mob implements java.io.Serializable{
 				spriteX = 1;
 			}
 			
-			this.position.x += this.addX;
+			this.position.x += this.addX + this.targetX;
 			if (this.isCollidingWithMap(map))
 			{
-				this.position.x -= this.addX;
+				this.position.x -= this.addX + this.targetX;
 			}
+			for (Mob mob : map.mobs.values())
+			{
+				if (mob != this && this.isCollidingWithMob(mob))
+				{
+					this.position.x -= this.addX + this.targetX;
+				}
+			}
+			for (Player player : map.players.values())
+			{
+				if (this.isCollidingWithPlayer(player))
+				{
+					this.position.x -= this.addX + this.targetX;
+				}
+			}
+			
 			this.addX += this.addX*-0.1;
 			
-			this.position.y += this.addY;
+			this.position.y += this.addY + this.targetY;
 			if (this.isCollidingWithMap(map))
 			{
-				this.position.y -= this.addY;
+				this.position.y -= this.addY + this.targetY;
 			}
+			for (Mob mob : map.mobs.values())
+			{
+				if (mob != this && this.isCollidingWithMob(mob))
+				{
+					this.position.y -= this.addY + this.targetY;
+				}
+			}
+			for (Player player : map.players.values())
+			{
+				if (this.isCollidingWithPlayer(player))
+				{
+					this.position.y -= this.addY + this.targetY;
+				}
+			}
+			
 			this.addY += this.addY*-0.1;
+			
+			
+			
+			for (Player player : map.players.values())
+			{
+				playerInRange = checkPlayerDistance(player);
+			}
+			
+			if (playerInRange != null && this.isInRange)
+			{
+				this.targetX = (float) (-Util.getDirectionVector(playerInRange, this).x*this.speed);
+				this.targetY = (float) (-Util.getDirectionVector(playerInRange, this).y*this.speed);
+			}
+			
 			
 			Vector hitVector = this.isCollidingWithProjectile(projectiles);
 			if (hitVector != null)
 			{
-				this.addX = hitVector.x;
-				this.addY = hitVector.y;
+				this.addX += hitVector.x;
+				this.addY += hitVector.y;
 				this.isHit = true;
 			}
+			
+			momentum.x = addX+targetX;
+			momentum.y = addY+targetY;
 		
 	}
 	
@@ -166,8 +238,7 @@ public class Mob implements java.io.Serializable{
 		moveCooldown = 50;
 	}
 
-	//return closest player if close enough
-	/*
+
 	public Player checkPlayerDistance(Player player)
 	{
 		if (Util.getDistance(player, this) < 8*32)
@@ -181,7 +252,6 @@ public class Mob implements java.io.Serializable{
 			return null;
 		}
 	}
-	*/
 
 	public boolean isCollidingWithMap(Map map)
 	{
@@ -241,6 +311,18 @@ public class Mob implements java.io.Serializable{
 				this.position.x + this.width > player.x &&
 				this.position.y < player.y + player.height &&
 				this.height + this.position.y > player.y) {
+			
+				    return true;
+				}
+		return false;
+	}
+	
+	public boolean isCollidingWithMob(Mob mob)
+	{
+		if (this.position.x < mob.position.x + mob.width &&
+				this.position.x + this.width > mob.position.x &&
+				this.position.y < mob.position.y + mob.height &&
+				this.height + this.position.y > mob.position.y) {
 			
 				    return true;
 				}
