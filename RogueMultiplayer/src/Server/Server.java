@@ -13,20 +13,7 @@ import com.esotericsoftware.kryonet.Listener;
 import Map.Map;
 import MapGen.MapGen;
 import Mob.*;
-import Packet.PacketAddMob;
-import Packet.PacketAddPlayer;
-import Packet.PacketAddProjectile;
-import Packet.PacketMapData;
-import Packet.PacketMapRequest;
-import Packet.PacketPlayerEnterMap;
-import Packet.PacketPlayerLeaveMap;
-import Packet.PacketRemoveMob;
-import Packet.PacketRemovePlayer;
-import Packet.PacketRemoveProjectile;
-import Packet.PacketUpdateMob;
-import Packet.PacketUpdateMobHealth;
-import Packet.PacketUpdatePlayerPosition;
-import Packet.PacketUpdatePlayerSprite;
+import Packet.*;
 import Player.Player;
 import Projectile.Projectile;
 import Vector.Vector;
@@ -34,7 +21,7 @@ import Vector.Vector;
 
 public class Server extends Listener {
 
-	static com.esotericsoftware.kryonet.Server server = new com.esotericsoftware.kryonet.Server(30000,30000);
+	public static com.esotericsoftware.kryonet.Server server = new com.esotericsoftware.kryonet.Server(30000,30000);
 	static final int port = 7777;
 	
 	public static List<Map> maps = new ArrayList<Map>();
@@ -66,6 +53,7 @@ public class Server extends Listener {
 		server.getKryo().register(PacketUpdatePlayerSprite.class);
 		server.getKryo().register(PacketPlayerLeaveMap.class);
 		server.getKryo().register(PacketPlayerEnterMap.class);
+		server.getKryo().register(PacketPlayerHit.class);
 		server.getKryo().register(Mob.class);
 		server.getKryo().register(PacketAddMob.class);
 		server.getKryo().register(PacketRemoveMob.class);
@@ -84,16 +72,19 @@ public class Server extends Listener {
 		server.start();
 		server.addListener(new Server());
 		System.out.println("Server Ready");	
+		System.out.println(map1.mobs.size());	
 		
 		long taskTime = 0;
 		long sleepTime = 1000/60;
 		
+		/*
 		for (int spawn=0; spawn< 5; spawn++)
 		{
 			Mob newMob = new Chicken();
 			newMob.position.x = 55*32+(spawn*33); newMob.position.y = 65*32;
 			spawnMob(newMob, map0);
 		}
+		*/
 		
 		while (true)
 		{
@@ -375,8 +366,8 @@ public class Server extends Listener {
 	
 	public static void spawnMob(Mob mob, Map map)
 	{
-		map.mobs.put(mobCount, mob);
-		mobCount++;
+		//map.mobs.put(mobCount, mob);
+		//mobCount++;
 		
 	}
 }

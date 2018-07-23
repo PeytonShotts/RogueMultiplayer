@@ -33,6 +33,7 @@ public class Network extends Listener {
 		client.getKryo().register(PacketUpdatePlayerSprite.class);
 		client.getKryo().register(PacketPlayerLeaveMap.class);
 		client.getKryo().register(PacketPlayerEnterMap.class);
+		client.getKryo().register(PacketPlayerHit.class);
 		client.getKryo().register(Mob.class);
 		client.getKryo().register(PacketAddMob.class);
 		client.getKryo().register(PacketRemoveMob.class);
@@ -156,6 +157,12 @@ public class Network extends Listener {
 		}else if(o instanceof PacketPlayerEnterMap){
 			PacketPlayerEnterMap packet = (PacketPlayerEnterMap) o;
 			Main.currentMap.players.put(packet.id, packet.newPlayer);
+			
+		}else if(o instanceof PacketPlayerHit){
+			PacketPlayerHit packet = (PacketPlayerHit) o;
+			Main.player.health += -packet.damage;
+			Main.player.addX = packet.hitVector.x*10;
+			Main.player.addY = packet.hitVector.y*10;
 			
 		}
 		

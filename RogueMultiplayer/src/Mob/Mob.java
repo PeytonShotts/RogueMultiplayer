@@ -13,9 +13,11 @@ import org.newdawn.slick.Image;
 import Client.Main;
 import Client.Util;
 import Map.Map;
+import Packet.PacketPlayerHit;
 import Packet.PacketUpdateMobHealth;
 import Player.Player;
 import Projectile.Projectile;
+import Server.Server;
 import Vector.Vector;
 
 public class Mob implements java.io.Serializable{
@@ -23,8 +25,8 @@ public class Mob implements java.io.Serializable{
 	public Vector position = new Vector();
 	public Vector networkPosition = new Vector();
 	
-	public int width = 32;
-	public int height = 32;
+	public int width = 26;
+	public int height = 26;
 	
 	public float addX;
 	public float addY;
@@ -51,11 +53,12 @@ public class Mob implements java.io.Serializable{
 	public int networkHealth;
 	public int maxHealth;
 	
-	public float speed = (float) 0.9;
+	public float speed = (float) 2.2;
 	
 	List<Integer> collisionList = new ArrayList<>(Arrays.asList(16, 226));
 	
 	Random rand = new Random();
+	private int damage = 5;
 	
 	public Mob()
 	{
@@ -74,7 +77,7 @@ public class Mob implements java.io.Serializable{
 	{
 			
 		
-			if (Math.abs(momentum.x+momentum.y) < 0.01)
+			if (Math.abs(targetX)+Math.abs(targetY) == 0)
 			{
 				if (isHit == true)
 				{
@@ -87,7 +90,7 @@ public class Mob implements java.io.Serializable{
 					randomMove();
 				}
 			}
-			else if (Math.abs(momentum.x + momentum.y) > 0.1 && isHit == false)
+			else if (Math.abs(momentum.x + momentum.y) > 0)
 			{	//up right down left
 				walkTimer++;
 				if (walkTimer == 10)
@@ -145,6 +148,8 @@ public class Mob implements java.io.Serializable{
 			{
 				if (this.isCollidingWithPlayer(player))
 				{
+					PacketPlayerHit packet = new PacketPlayerHit(damage, Util.getDirectionVector(this, player));
+					Server.server.sendToTCP(player.connectionID, packet);
 					this.position.x -= this.addX + this.targetX;
 				}
 			}
@@ -167,6 +172,8 @@ public class Mob implements java.io.Serializable{
 			{
 				if (this.isCollidingWithPlayer(player))
 				{
+					PacketPlayerHit packet = new PacketPlayerHit(damage, Util.getDirectionVector(this, player));
+					Server.server.sendToTCP(player.connectionID, packet);
 					this.position.y -= this.addY + this.targetY;
 				}
 			}
@@ -184,6 +191,13 @@ public class Mob implements java.io.Serializable{
 			{
 				this.targetX = (float) (-Util.getDirectionVector(playerInRange, this).x*this.speed);
 				this.targetY = (float) (-Util.getDirectionVector(playerInRange, this).y*this.speed);
+				
+				if (momentum.total() < 0.1)
+				{
+						//targetX += (float) (-Util.getDirectionVector(playerInRange, this).x*this.speed)*5;
+						//targetY += (float) (-Util.getDirectionVector(playerInRange, this).y*this.speed)*5;
+
+				}
 			}
 			
 			
@@ -311,7 +325,6 @@ public class Mob implements java.io.Serializable{
 				this.position.x + this.width > player.x &&
 				this.position.y < player.y + player.height &&
 				this.height + this.position.y > player.y) {
-			
 				    return true;
 				}
 		return false;

@@ -15,5 +15,11 @@ public class Vector implements java.io.Serializable{
 		this.x = x;
 		this.y = y;
 	}
+	
+	public float total()
+	{
+		float total = Math.abs(this.x) + Math.abs(this.y);
+		return total;
+	}
 
 }

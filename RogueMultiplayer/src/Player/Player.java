@@ -43,7 +43,7 @@ public class Player implements java.io.Serializable{
 	
 	public int hitTimer = 0;
 	
-	public int health = 100;
+	public float health = 100;
 	public int maxHealth = 100;
 	
 	public int connectionID;

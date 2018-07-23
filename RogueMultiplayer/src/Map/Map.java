@@ -28,7 +28,6 @@ public class Map implements java.io.Serializable{
 	public layer[] layers;
 	public Vector spawnPoint = new Vector(42*32, 42*32);
 	
-	public List<Mob> mobList = new ArrayList<Mob>();
 	public List<Projectile> projectileList = new ArrayList<Projectile>();
 
 	public String tileset;

@@ -13,8 +13,8 @@ public class Projectile implements java.io.Serializable{
 	public int time;
 	
 	public int speed;
-	public int knockback = 2;
-	public short damage = 5;
+	public int knockback = 8;
+	public short damage = 3;
 	
 	public void update()
 	{

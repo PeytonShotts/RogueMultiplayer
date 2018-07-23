@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import Map.*;
+import Mob.*;
 import Vector.Vector;
 
 public class MapGen {
@@ -17,6 +18,8 @@ public class MapGen {
 		Map newMap = new Map(mapWidth, mapHeight, mapLayers);
 		
 		Random rand = new Random();
+		
+		int mobCount = 0;
 		
 		for (int roomI=0; roomI<mapHeight*mapWidth; roomI++)
 		{
@@ -62,6 +65,17 @@ public class MapGen {
 										if (roomCount == 1)
 										{
 											newMap.spawnPoint = new Vector((mapX*32)+((roomX/2)*32), (mapY*32)+((roomY/2)*32));
+										}
+										
+										//mob spawn
+										int  r2 = rand.nextInt(25) + 0;
+										if (r2 == 1 && roomCount > 1)
+										{
+											Mob newMob = new Chicken();
+											newMob.position.x = (mapX+roomX)*32;
+											newMob.position.y = (mapY+roomY)*32;
+											newMap.mobs.put(mobCount, newMob);
+											mobCount++;
 										}
 								}
 							}
