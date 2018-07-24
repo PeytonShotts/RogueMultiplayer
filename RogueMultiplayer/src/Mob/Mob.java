@@ -9,6 +9,7 @@ import java.util.Random;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.util.pathfinding.Path;
 
 import Client.Main;
 import Client.Util;
@@ -20,13 +21,15 @@ import Projectile.Projectile;
 import Server.Server;
 import Vector.Vector;
 
+import PathFinding.*;
+
 public class Mob implements java.io.Serializable{
 	
 	public Vector position = new Vector();
 	public Vector networkPosition = new Vector();
 	
-	public int width = 26;
-	public int height = 26;
+	public int width = 25;
+	public int height = 25;
 	
 	public float addX;
 	public float addY;
@@ -42,6 +45,11 @@ public class Mob implements java.io.Serializable{
 	
 	boolean isInRange;
 	Player playerInRange;
+	Path pathToPlayer;
+	int stepX, stepY;
+	int step;
+	
+	int startX, startY;
 	
 	public static Image spriteSheet;
 	public int spriteCount;
@@ -136,6 +144,7 @@ public class Mob implements java.io.Serializable{
 			if (this.isCollidingWithMap(map))
 			{
 				this.position.x -= this.addX + this.targetX;
+
 			}
 			for (Mob mob : map.mobs.values())
 			{
@@ -160,6 +169,7 @@ public class Mob implements java.io.Serializable{
 			if (this.isCollidingWithMap(map))
 			{
 				this.position.y -= this.addY + this.targetY;
+
 			}
 			for (Mob mob : map.mobs.values())
 			{
@@ -189,15 +199,80 @@ public class Mob implements java.io.Serializable{
 			
 			if (playerInRange != null && this.isInRange)
 			{
-				this.targetX = (float) (-Util.getDirectionVector(playerInRange, this).x*this.speed);
-				this.targetY = (float) (-Util.getDirectionVector(playerInRange, this).y*this.speed);
+				//this.targetX = (float) Math.signum(-Util.getDirectionVector(playerInRange, this).x*this.speed);
+				//this.targetY = (float) Math.signum(-Util.getDirectionVector(playerInRange, this).y*this.speed);
 				
-				if (momentum.total() < 0.1)
+				
+				int MobBlockX = 0, MobBlockY = 0;
+				int PlayerBlockX = 0, PlayerBlockY = 0;
+				if (pathToPlayer == null)
 				{
-						//targetX += (float) (-Util.getDirectionVector(playerInRange, this).x*this.speed)*5;
-						//targetY += (float) (-Util.getDirectionVector(playerInRange, this).y*this.speed)*5;
-
+					TileMap surroundings = new TileMap();
+					startX = (int) ((this.position.x/32) - 4);
+					startY = (int) ((this.position.y/32) - 4);
+					for (int tileY = (int) ((this.position.y/32) - 4); tileY < (this.position.y/32) + 5; tileY++)
+					{
+						for (int tileX = (int) ((this.position.x/32) - 4); tileX < (this.position.x/32) + 5; tileX++)
+						{
+							if (map.layers[0].data[tileX][tileY] == 16)
+							{
+								surroundings.MAP[tileX - startX][tileY - startY] = 1;
+							}
+							else
+							{
+								surroundings.MAP[tileX - startX][tileY - startY] = 0;
+							}
+							
+							if (tileX == (int) ((playerInRange.x+16)/32) && tileY == (int) ((playerInRange.y+16)/32))
+							{
+								PlayerBlockX = tileX - startX;
+								PlayerBlockY = tileY - startY;
+							}
+							
+							if (tileX == (int) ((this.position.x+16)/32) && tileY == (int) ((this.position.y+16)/32))
+							{
+								MobBlockX = tileX - startX;
+								MobBlockY = tileY - startY;
+							}
+							
+						}
+					}
+					if (MobBlockX == PlayerBlockX && MobBlockY == PlayerBlockY)
+					{
+						
+					}
+					else
+					{
+						pathToPlayer = AStar.getPath(surroundings, MobBlockX, MobBlockY, PlayerBlockX, PlayerBlockY);
+					}
+					
+					step = 0;
+					
 				}
+				else
+				{
+					if (pathToPlayer.getStep(step) != null)
+					{
+						if ((int)position.x != startX+pathToPlayer.getStep(step).getX())
+						{
+							targetX = (startX+pathToPlayer.getStep(step).getX()) - position.x;
+						}
+						if ((int)position.y != startY+pathToPlayer.getStep(step).getY())
+						{
+							targetY = (startY+pathToPlayer.getStep(step).getY()) - position.y;
+						}
+						
+						if ((int)position.x == startX+pathToPlayer.getStep(step).getX() && (int)position.y == startY+pathToPlayer.getStep(step).getY())
+						{
+							if (step < pathToPlayer.getLength())
+							{
+								step++;
+							}
+						}
+					}
+						
+				}
+				
 			}
 			
 			
@@ -255,7 +330,7 @@ public class Mob implements java.io.Serializable{
 
 	public Player checkPlayerDistance(Player player)
 	{
-		if (Util.getDistance(player, this) < 8*32)
+		if (Util.getDistance(player, this) < 4*32)
 		{
 			this.isInRange = true;
 			return player;

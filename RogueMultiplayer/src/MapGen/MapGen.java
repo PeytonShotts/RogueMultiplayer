@@ -28,7 +28,7 @@ public class MapGen {
 				if (newMap.layers[0].data[mapX][mapY] == 0)
 				{
 					
-					int  r = rand.nextInt(200) + 0;
+					int  r = rand.nextInt(175) + 0;
 					if (r == 50 && mapX < mapWidth-10 && mapY < mapHeight-10 && mapX > 2 && mapY > 2)
 					{
 						//generate room parameters
