@@ -9,7 +9,7 @@ import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
 public class AStar {
 
-    private static final int MAX_PATH_LENGTH = 100;
+    private static final int MAX_PATH_LENGTH = 25;
 
     
     public static void main(String[] args) {
@@ -41,12 +41,15 @@ public class AStar {
         AStarPathFinder pathFinder = new AStarPathFinder(map, MAX_PATH_LENGTH, false);
         Path path = pathFinder.findPath(null, startX, startY, goalX, goalY);
 
-        int length = path.getLength();
-        
-        System.out.println("Found path of length: " + length + ".");
+        if (path != null)
+        {
+            int length = path.getLength();
+            
+            System.out.println("Found path of length: " + length + ".");
 
-        for(int i = 0; i < length; i++) {
-            System.out.println("Move to: " + path.getX(i) + "," + path.getY(i) + ".");
+            for(int i = 0; i < length; i++) {
+                System.out.println("Move to: " + path.getX(i) + "," + path.getY(i) + ".");
+            }
         }
         
 		return path;

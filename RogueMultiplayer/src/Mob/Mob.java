@@ -11,7 +11,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.util.pathfinding.Path;
 
-import Client.Main;
 import Client.Util;
 import Map.Map;
 import Packet.PacketPlayerHit;
@@ -39,6 +38,7 @@ public class Mob implements java.io.Serializable{
 	Vector momentum = new Vector();
 	
 	int moveCooldown;
+	int checkPlayerPositionCooldown;
 	
 	boolean isMoving;
 	boolean isHit;
@@ -243,7 +243,10 @@ public class Mob implements java.io.Serializable{
 					}
 					else
 					{
-						pathToPlayer = AStar.getPath(surroundings, MobBlockX, MobBlockY, PlayerBlockX, PlayerBlockY);
+						if (surroundings.MAP[MobBlockX][MobBlockY] == 0 && surroundings.MAP[PlayerBlockX][PlayerBlockY] == 0)
+						{
+							pathToPlayer = AStar.getPath(surroundings, MobBlockX, MobBlockY, PlayerBlockX, PlayerBlockY);
+						}
 					}
 					
 					step = 0;
@@ -251,25 +254,31 @@ public class Mob implements java.io.Serializable{
 				}
 				else
 				{
-					if (pathToPlayer.getStep(step) != null)
+					if (step < pathToPlayer.getLength())
 					{
-						if ((int)position.x != startX+pathToPlayer.getStep(step).getX())
+						
+						Vector targetVector = new Vector(((startX+pathToPlayer.getStep(step).getX()))*32 - position.x, ((startY+pathToPlayer.getStep(step).getY()))*32 - position.y );
+						if ((int)position.x != (startX+pathToPlayer.getStep(step).getX())*32)
 						{
-							targetX = (startX+pathToPlayer.getStep(step).getX()) - position.x;
+							targetX = (float) (targetVector.x / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)));
 						}
-						if ((int)position.y != startY+pathToPlayer.getStep(step).getY())
+						if ((int)position.y != (startY+pathToPlayer.getStep(step).getY())*32)
 						{
-							targetY = (startY+pathToPlayer.getStep(step).getY()) - position.y;
+							targetY = (float) (targetVector.y / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)));
 						}
 						
-						if ((int)position.x == startX+pathToPlayer.getStep(step).getX() && (int)position.y == startY+pathToPlayer.getStep(step).getY())
+						if ((int)position.x == (startX+pathToPlayer.getStep(step).getX())*32 && (int)position.y == (startY+pathToPlayer.getStep(step).getY())*32)
 						{
-							if (step < pathToPlayer.getLength())
-							{
 								step++;
-							}
+								if (checkPlayerPositionCooldown > 60)
+								{
+									pathToPlayer = null;
+									checkPlayerPositionCooldown = 0;
+								}
 						}
 					}
+					checkPlayerPositionCooldown++;
+
 						
 				}
 				
@@ -330,7 +339,7 @@ public class Mob implements java.io.Serializable{
 
 	public Player checkPlayerDistance(Player player)
 	{
-		if (Util.getDistance(player, this) < 4*32)
+		if (Util.getDistance(player, this) < 5*32)
 		{
 			this.isInRange = true;
 			return player;
