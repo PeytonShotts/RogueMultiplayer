@@ -99,6 +99,11 @@ public class Server extends Listener {
 				updateMobs(map);
 				updateProjectiles(map);
 			}
+			
+			for (Player player : connectedPlayers.values())
+			{
+				player.serverUpdate();
+			}
 		}
 		
 	}

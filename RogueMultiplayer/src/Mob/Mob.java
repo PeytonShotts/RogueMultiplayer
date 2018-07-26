@@ -150,15 +150,19 @@ public class Mob implements java.io.Serializable{
 			{
 				if (mob != this && this.isCollidingWithMob(mob))
 				{
-					this.position.x -= this.addX + this.targetX;
+					//this.position.x -= this.addX + this.targetX;
 				}
 			}
 			for (Player player : map.players.values())
 			{
 				if (this.isCollidingWithPlayer(player))
 				{
-					PacketPlayerHit packet = new PacketPlayerHit(damage, Util.getDirectionVector(this, player));
-					Server.server.sendToTCP(player.connectionID, packet);
+					if (Server.connectedPlayers.get(player.connectionID).hitCooldown == 0)
+					{
+						PacketPlayerHit packet = new PacketPlayerHit(damage, Util.getDirectionVector(this, player));
+						Server.server.sendToTCP(player.connectionID, packet);
+						Server.connectedPlayers.get(player.connectionID).hitCooldown = 60;
+					};
 					this.position.x -= this.addX + this.targetX;
 				}
 			}
@@ -175,15 +179,19 @@ public class Mob implements java.io.Serializable{
 			{
 				if (mob != this && this.isCollidingWithMob(mob))
 				{
-					this.position.y -= this.addY + this.targetY;
+					//this.position.y -= this.addY + this.targetY;
 				}
 			}
 			for (Player player : map.players.values())
 			{
 				if (this.isCollidingWithPlayer(player))
 				{
-					PacketPlayerHit packet = new PacketPlayerHit(damage, Util.getDirectionVector(this, player));
-					Server.server.sendToTCP(player.connectionID, packet);
+					if (Server.connectedPlayers.get(player.connectionID).hitCooldown == 0)
+					{
+						PacketPlayerHit packet = new PacketPlayerHit(damage, Util.getDirectionVector(this, player));
+						Server.server.sendToTCP(player.connectionID, packet);
+						Server.connectedPlayers.get(player.connectionID).hitCooldown = 60;
+					}
 					this.position.y -= this.addY + this.targetY;
 				}
 			}
@@ -258,24 +266,29 @@ public class Mob implements java.io.Serializable{
 					{
 						
 						Vector targetVector = new Vector(((startX+pathToPlayer.getStep(step).getX()))*32 - position.x, ((startY+pathToPlayer.getStep(step).getY()))*32 - position.y );
-						if ((int)position.x != (startX+pathToPlayer.getStep(step).getX())*32)
+						if (!((int)position.x > ((startX+pathToPlayer.getStep(step).getX())*32)-3
+								&& (int)position.x < ((startX+pathToPlayer.getStep(step).getX())*32)+3))
 						{
-							targetX = (float) (targetVector.x / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)));
+							targetX = (float) ((float) (targetVector.x / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)))*2.7);
 						}
-						if ((int)position.y != (startY+pathToPlayer.getStep(step).getY())*32)
+						if (!((int)position.y > ((startY+pathToPlayer.getStep(step).getY())*32)-3
+								&& (int)position.y < ((startY+pathToPlayer.getStep(step).getY())*32)+3))
 						{
-							targetY = (float) (targetVector.y / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)));
+							targetY = (float) ((float) (targetVector.y / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)))*2.7);
 						}
 						
-						if ((int)position.x == (startX+pathToPlayer.getStep(step).getX())*32 && (int)position.y == (startY+pathToPlayer.getStep(step).getY())*32)
+						if (((int)position.y > ((startY+pathToPlayer.getStep(step).getY())*32)-3
+						  && (int)position.y < ((startY+pathToPlayer.getStep(step).getY())*32)+3)
+						  && ((int)position.x > ((startX+pathToPlayer.getStep(step).getX())*32)-3
+						  && (int)position.x < ((startX+pathToPlayer.getStep(step).getX())*32)+3))
 						{
 								step++;
-								if (checkPlayerPositionCooldown > 60)
-								{
-									pathToPlayer = null;
-									checkPlayerPositionCooldown = 0;
-								}
 						}
+					}
+					if (checkPlayerPositionCooldown > 60)
+					{
+						pathToPlayer = null;
+						checkPlayerPositionCooldown = 0;
 					}
 					checkPlayerPositionCooldown++;
 
@@ -339,7 +352,7 @@ public class Mob implements java.io.Serializable{
 
 	public Player checkPlayerDistance(Player player)
 	{
-		if (Util.getDistance(player, this) < 5*32)
+		if (Util.getDistance(player, this) < 8*32)
 		{
 			this.isInRange = true;
 			return player;

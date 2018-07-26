@@ -42,6 +42,7 @@ public class Player implements java.io.Serializable{
 	public int height = 30;
 	
 	public int hitTimer = 0;
+	public int hitCooldown;
 	
 	public float health = 100;
 	public int maxHealth = 100;
@@ -171,5 +172,13 @@ public class Player implements java.io.Serializable{
 			}
 		}
 		
+	}
+	
+	public void serverUpdate()
+	{
+		if (hitCooldown != 0)
+		{
+			hitCooldown += -1;
+		}
 	}
 }

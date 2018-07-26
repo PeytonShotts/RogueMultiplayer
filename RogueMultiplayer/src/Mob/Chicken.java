@@ -12,8 +12,8 @@ public class Chicken extends Mob{
 	
 	public Chicken()
 	{
-		maxHealth = 15;
-		health = 15;
+		maxHealth = 50;
+		health = 50;
 		spriteCount = 3;
 		spriteX = 0;
 		spriteY = 0;

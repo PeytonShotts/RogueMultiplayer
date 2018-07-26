@@ -185,7 +185,7 @@ public class Main extends BasicGame
 		packet.projectile = newProjectile;
 		network.client.sendUDP(packet);
 		
-		player.attackTimer = 40;
+		player.attackTimer = 50;
 	}
 	
 	private void updateProjectiles() {
