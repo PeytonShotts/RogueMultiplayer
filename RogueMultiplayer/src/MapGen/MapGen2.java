@@ -3,14 +3,19 @@ package MapGen;
 import java.util.LinkedList;
 import java.util.Random;
 
+import org.newdawn.slick.util.pathfinding.Path;
+
 import Map.*;
 import Mob.*;
+import PathFinding.*;
 import Vector.Vector;
 
-public class MapGen {
+public class MapGen2 {
 	
 	public static LinkedList<Room> roomList = new LinkedList<Room>();
 	public static int roomCount = 0;
+	
+	static Path connectPath;
 
 	public static Map create(int mapWidth, int mapHeight, int mapLayers)
 	{
@@ -99,20 +104,20 @@ public class MapGen {
 								Point point1 = new Point(roomOne.x + (roomOne.width/2), roomOne.y + (roomOne.height/2));
 								Point point2 = new Point(roomTwo.x + (roomTwo.width/2), roomTwo.y + (roomTwo.height/2));
 								
-								int xdistance = point2.x - point1.x;
-								int ydistance = point2.y - point1.y;
 								
-								while (point1.y != point2.y)
+								TileMap map = new TileMap();
+								
+								for (int y = 0; y<newMap.height; y++)
 								{
-									point1.y += Math.signum(ydistance);
-									newMap.layers[0].data[point1.x][point1.y] = 18;
+									for (int x = 0; x<newMap.width; x++)
+									{
+										
+									}
 								}
 								
-								while (point1.x != point2.x)
-								{
-									point1.x += Math.signum(xdistance);
-									newMap.layers[0].data[point1.x][point1.y] = 18;
-								}
+								connectPath = AStar.getPath(map, point1.x, point1.y, point2.x, point2.y);
+								
+								
 								
 							}
 							

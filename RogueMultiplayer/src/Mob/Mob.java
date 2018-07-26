@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -140,6 +141,9 @@ public class Mob implements java.io.Serializable{
 				spriteX = 1;
 			}
 			
+			
+			
+			
 			this.position.x += this.addX + this.targetX;
 			if (this.isCollidingWithMap(map))
 			{
@@ -264,34 +268,41 @@ public class Mob implements java.io.Serializable{
 				{
 					if (step < pathToPlayer.getLength())
 					{
-						
+						checkPlayerPositionCooldown++;
 						Vector targetVector = new Vector(((startX+pathToPlayer.getStep(step).getX()))*32 - position.x, ((startY+pathToPlayer.getStep(step).getY()))*32 - position.y );
-						if (!((int)position.x > ((startX+pathToPlayer.getStep(step).getX())*32)-3
-								&& (int)position.x < ((startX+pathToPlayer.getStep(step).getX())*32)+3))
+						if (!((int)position.x > ((startX+pathToPlayer.getStep(step).getX())*32)-8
+								&& (int)position.x < ((startX+pathToPlayer.getStep(step).getX())*32)+8))
 						{
-							targetX = (float) ((float) (targetVector.x / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)))*2.7);
+							targetX = (float) ((float) (targetVector.x / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)))*2);
 						}
-						if (!((int)position.y > ((startY+pathToPlayer.getStep(step).getY())*32)-3
-								&& (int)position.y < ((startY+pathToPlayer.getStep(step).getY())*32)+3))
+						if (!((int)position.y > ((startY+pathToPlayer.getStep(step).getY())*32)-8
+								&& (int)position.y < ((startY+pathToPlayer.getStep(step).getY())*32)+8))
 						{
-							targetY = (float) ((float) (targetVector.y / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)))*2.7);
+							targetY = (float) ((float) (targetVector.y / Math.sqrt((targetVector.x*targetVector.x) + (targetVector.y*targetVector.y)))*2);
 						}
 						
-						if (((int)position.y > ((startY+pathToPlayer.getStep(step).getY())*32)-3
-						  && (int)position.y < ((startY+pathToPlayer.getStep(step).getY())*32)+3)
-						  && ((int)position.x > ((startX+pathToPlayer.getStep(step).getX())*32)-3
-						  && (int)position.x < ((startX+pathToPlayer.getStep(step).getX())*32)+3))
-						{
-								step++;
-						}
 					}
-					if (checkPlayerPositionCooldown > 60)
-					{
-						pathToPlayer = null;
-						checkPlayerPositionCooldown = 0;
-					}
-					checkPlayerPositionCooldown++;
-
+					if (((int)position.y > ((startY+pathToPlayer.getStep(step).getY())*32)-8
+							  && (int)position.y < ((startY+pathToPlayer.getStep(step).getY())*32)+8)
+							  && ((int)position.x > ((startX+pathToPlayer.getStep(step).getX())*32)-8
+							  && (int)position.x < ((startX+pathToPlayer.getStep(step).getX())*32)+8))
+							{
+								if (step == pathToPlayer.getLength()-1)
+								{
+									pathToPlayer = null;
+									checkPlayerPositionCooldown = 0;
+								}
+								else
+								{
+									step++;
+								}
+								
+								if (checkPlayerPositionCooldown > 150)
+								{
+									pathToPlayer = null;
+									checkPlayerPositionCooldown = 0;
+								}	
+							}
 						
 				}
 				
