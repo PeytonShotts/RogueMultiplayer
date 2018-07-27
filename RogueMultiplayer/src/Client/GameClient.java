@@ -32,7 +32,7 @@ import ParticleCode.CircleExplosion;
 import ParticleCode.Particle;
 import Player.*;
 
-public class Main extends BasicGame
+public class GameClient extends BasicGame
 {
 	public static Map currentMap;
 	public static Image currentTileset;
@@ -95,7 +95,7 @@ public class Main extends BasicGame
 	public static Item[] items = new Item[24];
 	
 	
-	public Main(String gamename)
+	public GameClient(String gamename)
 	{
 		super(gamename);
 	}
@@ -401,9 +401,9 @@ public class Main extends BasicGame
 		
 		}
 		
+		g.setColor(new Color(50, 50, 50, 200));
+		g.fillRect( (int)((player.x+16)/32)*32 + Math.round(offsetX), (int)((player.y+16)/32)*32 + Math.round(offsetY), 32, 32);
 		
-
-
 		
 		gui.draw(gc, g);
 
@@ -445,7 +445,7 @@ public class Main extends BasicGame
 		try
 		{
 			AppGameContainer appgc;
-			appgc = new AppGameContainer(new Main("Slick2d Window"));
+			appgc = new AppGameContainer(new GameClient("Slick2d Window"));
 			appgc.setDisplayMode(1280, 720, false);
 			appgc.setTargetFrameRate(60);
 			appgc.setVSync(true);
@@ -460,7 +460,7 @@ public class Main extends BasicGame
 		}
 		catch (SlickException ex)
 		{
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(GameClient.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 }

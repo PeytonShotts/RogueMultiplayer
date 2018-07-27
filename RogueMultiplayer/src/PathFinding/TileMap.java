@@ -3,7 +3,7 @@ package PathFinding;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
-public class TileMap implements TileBasedMap {
+public class TileMap implements TileBasedMap, java.io.Serializable {
     private static final int WIDTH = 10;
     private static final int HEIGHT = 10;
 

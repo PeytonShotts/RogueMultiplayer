@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.esotericsoftware.kryonet.Connection;
 
-import Client.Main;
+import Client.GameClient;
 import Map.Map;
 import Packet.*;
 
@@ -90,20 +90,20 @@ public class Player implements java.io.Serializable{
 				packet.x = (int) this.x;
 				packet.y = (int) this.y;
 				
-				Main.network.client.sendUDP(packet);
+				GameClient.network.client.sendUDP(packet);
 				
 			}
 			
 			
 			this.x += this.addX;
-			if (this.isColliding(Main.currentMap))
+			if (this.isColliding(GameClient.currentMap))
 			{
 				this.x -= this.addX;
 			}
 			this.addX *= 0.8;
 			
 			this.y += this.addY;
-			if (this.isColliding(Main.currentMap))
+			if (this.isColliding(GameClient.currentMap))
 			{
 				this.y -= this.addY;
 			}
@@ -142,33 +142,33 @@ public class Player implements java.io.Serializable{
 			packet.spriteX = (byte) this.spriteX;
 			packet.spriteY = (byte) this.spriteY;
 			
-			Main.network.client.sendUDP(packet);
+			GameClient.network.client.sendUDP(packet);
 
 		}
 		
-		if (Main.mouseOne)
+		if (GameClient.mouseOne)
 		{
-			if (Math.abs(Main.aimX) > Math.abs(Main.aimY))
+			if (Math.abs(GameClient.aimX) > Math.abs(GameClient.aimY))
 			{
-				if (Main.aimX < 0) { Main.player.spriteY = 1; }
-				else if (Main.aimX > 0) { Main.player.spriteY = 2; }
+				if (GameClient.aimX < 0) { GameClient.player.spriteY = 1; }
+				else if (GameClient.aimX > 0) { GameClient.player.spriteY = 2; }
 				
 				PacketUpdatePlayerSprite packet = new PacketUpdatePlayerSprite();
 				packet.spriteX = (byte) this.spriteX;
 				packet.spriteY = (byte) this.spriteY;
 				
-				Main.network.client.sendUDP(packet);
+				GameClient.network.client.sendUDP(packet);
 			}
 			else
 			{
-				if (Main.aimY < 0) { Main.player.spriteY = 3; }
-				else if (Main.aimY > 0) { Main.player.spriteY = 0; }
+				if (GameClient.aimY < 0) { GameClient.player.spriteY = 3; }
+				else if (GameClient.aimY > 0) { GameClient.player.spriteY = 0; }
 				
 				PacketUpdatePlayerSprite packet = new PacketUpdatePlayerSprite();
 				packet.spriteX = (byte) this.spriteX;
 				packet.spriteY = (byte) this.spriteY;
 				
-				Main.network.client.sendUDP(packet);
+				GameClient.network.client.sendUDP(packet);
 			}
 		}
 		

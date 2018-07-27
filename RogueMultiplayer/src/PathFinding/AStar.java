@@ -38,7 +38,7 @@ public class AStar {
         }
         
         
-        AStarPathFinder pathFinder = new AStarPathFinder(map, MAX_PATH_LENGTH, false);
+        AStarPathFinder pathFinder = new AStarPathFinder(map, MAX_PATH_LENGTH, true);
         Path path = pathFinder.findPath(null, startX, startY, goalX, goalY);
 
         if (path != null)

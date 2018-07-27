@@ -1,6 +1,6 @@
 package ParticleCode;
 
-import Client.Main;
+import Client.GameClient;
 import Vector.Vector;
 
 public class CircleExplosion {

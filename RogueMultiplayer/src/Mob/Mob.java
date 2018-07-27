@@ -62,6 +62,8 @@ public class Mob implements java.io.Serializable{
 	public int networkHealth;
 	public int maxHealth;
 	
+	TileMap surroundings = new TileMap();
+	
 	public float speed = (float) 2.2;
 	
 	List<Integer> collisionList = new ArrayList<>(Arrays.asList(16, 226));
@@ -219,50 +221,57 @@ public class Mob implements java.io.Serializable{
 				int PlayerBlockX = 0, PlayerBlockY = 0;
 				if (pathToPlayer == null)
 				{
-					TileMap surroundings = new TileMap();
-					startX = (int) ((this.position.x/32) - 4);
-					startY = (int) ((this.position.y/32) - 4);
-					for (int tileY = (int) ((this.position.y/32) - 4); tileY < (this.position.y/32) + 5; tileY++)
+					startX = (int) (((this.position.x+16)/32) - 4);
+					startY = (int) (((this.position.y+16)/32) - 4);
+					
+					PlayerBlockX = (int) ((playerInRange.x+16)/32) - startX;
+					PlayerBlockY = (int) ((playerInRange.y+16)/32) - startY;
+					
+					MobBlockX = (int) ((this.position.x+16)/32) - startX;
+					MobBlockY = (int) ((this.position.y+16)/32) - startY;
+					
+					boolean valid = true;
+					if (map.layers[0].data[PlayerBlockX][PlayerBlockY] == 1)
 					{
-						for (int tileX = (int) ((this.position.x/32) - 4); tileX < (this.position.x/32) + 5; tileX++)
-						{
-							if (map.layers[0].data[tileX][tileY] == 16)
-							{
-								surroundings.MAP[tileX - startX][tileY - startY] = 1;
-							}
-							else
-							{
-								surroundings.MAP[tileX - startX][tileY - startY] = 0;
-							}
-							
-							if (tileX == (int) ((playerInRange.x+16)/32) && tileY == (int) ((playerInRange.y+16)/32))
-							{
-								PlayerBlockX = tileX - startX;
-								PlayerBlockY = tileY - startY;
-							}
-							
-							if (tileX == (int) ((this.position.x+16)/32) && tileY == (int) ((this.position.y+16)/32))
-							{
-								MobBlockX = tileX - startX;
-								MobBlockY = tileY - startY;
-							}
-							
-						}
+						valid = false;
 					}
-					if (MobBlockX == PlayerBlockX && MobBlockY == PlayerBlockY)
+					else if (map.layers[0].data[MobBlockX][MobBlockY] == 1)
 					{
+						valid = false;
+					}
+					
+					if (valid == true)
+					{
+						System.out.println("valid");
+						for (int tileY = 0; tileY < 10; tileY++)
+						{
+							for (int tileX = 0; tileX < 10; tileX++)
+							{
+								if (map.layers[0].data[startX + tileX][startY + tileY] == 16)
+								{
+									surroundings.MAP[tileX][tileY] = 1;
+								}
+								else
+								{
+									surroundings.MAP[tileX][tileY] = 0;
+								}
+								
+							}
+						}
+						if (MobBlockX == PlayerBlockX && MobBlockY == PlayerBlockY)
+						{
+							System.out.println("no path");
+						}
+						else
+						{
+								pathToPlayer = AStar.getPath(surroundings, MobBlockX, MobBlockY, PlayerBlockX, PlayerBlockY);
+	
+								System.out.println("path 2");
+						}
 						
-					}
-					else
-					{
-						if (surroundings.MAP[MobBlockX][MobBlockY] == 0 && surroundings.MAP[PlayerBlockX][PlayerBlockY] == 0)
-						{
-							pathToPlayer = AStar.getPath(surroundings, MobBlockX, MobBlockY, PlayerBlockX, PlayerBlockY);
-						}
-					}
+						step = 0;
 					
-					step = 0;
-					
+					}
 				}
 				else
 				{
@@ -304,6 +313,14 @@ public class Mob implements java.io.Serializable{
 								}	
 							}
 						
+				}
+				
+				if (Math.hypot(position.x - playerInRange.x, position.y - playerInRange.y) > 4*32)
+				{
+					isInRange = false;
+					playerInRange = null;
+					targetX = 0;
+					targetY = 0;
 				}
 				
 			}
@@ -363,7 +380,7 @@ public class Mob implements java.io.Serializable{
 
 	public Player checkPlayerDistance(Player player)
 	{
-		if (Util.getDistance(player, this) < 8*32)
+		if (Util.getDistance(player, this) < 4*32)
 		{
 			this.isInRange = true;
 			return player;

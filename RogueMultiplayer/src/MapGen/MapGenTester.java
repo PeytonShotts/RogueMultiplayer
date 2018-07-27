@@ -19,7 +19,7 @@ public class MapGenTester extends BasicGame
 {
 	int mapWidth = 250;
 	int mapHeight = 250;
-	Map newMap = MapGen2.create(mapWidth, mapHeight, 1);
+	Map newMap = MapGen.create(mapWidth, mapHeight, 1);
 	int r = 2;
 	
 	public MapGenTester(String gamename)

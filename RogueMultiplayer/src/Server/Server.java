@@ -176,48 +176,60 @@ public class Server extends Listener {
 	{	
 		for (Entry<Integer, Mob> mob : map.mobs.entrySet())
 		{
-			mob.getValue().update(map, map.projectiles);
-			if (mob.getValue().health <= 0)
+			boolean playerNearby = false;
+			for (Player player : connectedPlayers.values())
 			{
-				map.mobs.remove(mob.getKey());
-				PacketRemoveMob mobRemove = new PacketRemoveMob();
-				mobRemove.id = mob.getKey();
-				
-				for (Player player : map.players.values())
+				if (Math.hypot(mob.getValue().position.x - player.x, mob.getValue().position.y - player.y) < 320)
 				{
-					server.sendToTCP(player.connectionID, mobRemove);
+					playerNearby = true;
+					break;
 				}
 			}
-			else if (mob.getValue().health != mob.getValue().networkHealth)
+			if (playerNearby == true)
 			{
-				PacketUpdateMobHealth packet = new PacketUpdateMobHealth();
-				packet.id = mob.getKey();
-				packet.health = mob.getValue().health;
-				for (Player player : map.players.values())
+				mob.getValue().update(map, map.projectiles);
+				if (mob.getValue().health <= 0)
 				{
-					server.sendToTCP(player.connectionID, packet);
+					map.mobs.remove(mob.getKey());
+					PacketRemoveMob mobRemove = new PacketRemoveMob();
+					mobRemove.id = mob.getKey();
+					
+					for (Player player : map.players.values())
+					{
+						server.sendToTCP(player.connectionID, mobRemove);
+					}
 				}
-				
-				mob.getValue().networkHealth = mob.getValue().health;
-				
-			}
-			else if (mob.getValue().position.x != mob.getValue().networkPosition.x |
-				mob.getValue().position.y != mob.getValue().networkPosition.y)
-			{
-				PacketUpdateMob mobUpdate = new PacketUpdateMob();
-				mobUpdate.id = mob.getKey();
-				mobUpdate.position.x = mob.getValue().position.x;
-				mobUpdate.position.y = mob.getValue().position.y;
-				mobUpdate.spriteX = (byte) mob.getValue().spriteX;
-				mobUpdate.spriteY = (byte) mob.getValue().spriteY;
-				
-				for (Player player : map.players.values())
+				else if (mob.getValue().health != mob.getValue().networkHealth)
 				{
-					server.sendToUDP(player.connectionID, mobUpdate);
+					PacketUpdateMobHealth packet = new PacketUpdateMobHealth();
+					packet.id = mob.getKey();
+					packet.health = mob.getValue().health;
+					for (Player player : map.players.values())
+					{
+						server.sendToTCP(player.connectionID, packet);
+					}
+					
+					mob.getValue().networkHealth = mob.getValue().health;
+					
 				}
-				
-				mob.getValue().networkPosition.x = mob.getValue().position.x;
-				mob.getValue().networkPosition.y = mob.getValue().position.y;
+				else if (mob.getValue().position.x != mob.getValue().networkPosition.x |
+					mob.getValue().position.y != mob.getValue().networkPosition.y)
+				{
+					PacketUpdateMob mobUpdate = new PacketUpdateMob();
+					mobUpdate.id = mob.getKey();
+					mobUpdate.position.x = mob.getValue().position.x;
+					mobUpdate.position.y = mob.getValue().position.y;
+					mobUpdate.spriteX = (byte) mob.getValue().spriteX;
+					mobUpdate.spriteY = (byte) mob.getValue().spriteY;
+					
+					for (Player player : map.players.values())
+					{
+						server.sendToUDP(player.connectionID, mobUpdate);
+					}
+					
+					mob.getValue().networkPosition.x = mob.getValue().position.x;
+					mob.getValue().networkPosition.y = mob.getValue().position.y;
+				}
 			}
 		}
 		
