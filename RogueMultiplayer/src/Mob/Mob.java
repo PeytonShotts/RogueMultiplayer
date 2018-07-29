@@ -208,7 +208,11 @@ public class Mob implements java.io.Serializable{
 			
 			for (Player player : map.players.values())
 			{
-				playerInRange = checkPlayerDistance(player);
+				if (checkPlayerDistance(player) != null)
+				{
+					playerInRange = checkPlayerDistance(player);
+					break;
+				}
 			}
 			
 			if (playerInRange != null && this.isInRange)

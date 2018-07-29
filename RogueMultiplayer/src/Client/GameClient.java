@@ -397,6 +397,9 @@ public class GameClient extends BasicGame
 		{
 			g.setColor(new Color(80, 80, 80, projectile.time*20 ));
 			g.fillOval(projectile.position.x - 2 + offsetX, projectile.position.y - 2 + offsetY, projectile.size, projectile.size);
+			
+			g.setColor(new Color(250, 250, 250, projectile.time*20 ));
+			g.drawOval(projectile.position.x - 2 + offsetX, projectile.position.y - 2 + offsetY, projectile.size, projectile.size);
 		}
 		
 		}
