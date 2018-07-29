@@ -402,7 +402,6 @@ public class GameClient extends BasicGame
 		}
 		
 		g.setColor(new Color(50, 50, 50, 200));
-		g.fillRect( (int)((player.x+16)/32)*32 + Math.round(offsetX), (int)((player.y+16)/32)*32 + Math.round(offsetY), 32, 32);
 		
 		
 		gui.draw(gc, g);

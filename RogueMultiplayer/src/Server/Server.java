@@ -34,7 +34,7 @@ public class Server extends Listener {
 	
 	public static void main(String[] args) throws IOException, InterruptedException{
 
-		Map map0 = JsonConverter.convert("C:/Users/p05119/git/RogueMultiplayer/RogueMultiplayer/src/maps/courtyard_1.0.2.json");
+		Map map0 = JsonConverter.convert("C:/Users/peyton/git/RogueMultiplayer/RogueMultiplayer/src/maps/courtyard_1.0.3.json");
 		map0.spawnPoint.x = 60*32;
 		map0.spawnPoint.y = 71*32;
 		map0.tileset = "castle";
@@ -146,7 +146,7 @@ public class Server extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 1);
+					Thread.sleep((long) 3);
 			}
 			
 			
