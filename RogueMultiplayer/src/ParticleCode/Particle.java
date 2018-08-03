@@ -26,7 +26,7 @@ public class Particle {
 	public void draw(Graphics g)
 	{
 		g.setColor(new Color(180,90,50,time*5));
-		g.drawRect(position.x, position.y, 1, 1);
+		g.drawRect(position.x + Client.GameClient.offsetX, position.y + Client.GameClient.offsetY, 1, 1);
 	}
 
 	public void update() {

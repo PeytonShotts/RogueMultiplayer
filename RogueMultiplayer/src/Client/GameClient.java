@@ -192,8 +192,9 @@ public class GameClient extends BasicGame
 		
 		for (Projectile projectile : currentMap.projectiles.values())
 		{
-			if (projectile.time == 0)
+			if (projectile.time <= 0)
 			{
+				CircleExplosion a = new CircleExplosion(new Vector(projectile.position.x, projectile.position.y), 500, 2, 100);
 				currentMap.projectiles.remove(projectile.id);
 			}
 			projectile.update();
@@ -406,8 +407,12 @@ public class GameClient extends BasicGame
 		
 		g.setColor(new Color(50, 50, 50, 200));
 		
-		
 		gui.draw(gc, g);
+		
+		for (Particle particle : particles)
+		{
+			particle.draw(g);
+		}
 
 		
 	}
