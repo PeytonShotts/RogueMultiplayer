@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -25,7 +26,7 @@ public class Server extends Listener {
 	static final int port = 7777;
 	
 	public static List<Map> maps = new ArrayList<Map>();
-	public static java.util.Map<Integer, Player> connectedPlayers = new HashMap<Integer, Player>();
+	public static java.util.Map<Integer, Player> connectedPlayers = new ConcurrentHashMap<Integer, Player>();
 	
 	public static int tick = 0;
 	
@@ -54,6 +55,8 @@ public class Server extends Listener {
 		server.getKryo().register(PacketPlayerLeaveMap.class);
 		server.getKryo().register(PacketPlayerEnterMap.class);
 		server.getKryo().register(PacketPlayerHit.class);
+		server.getKryo().register(PacketGetPlayerName.class);
+		server.getKryo().register(PacketSetPlayerName.class);
 		server.getKryo().register(Mob.class);
 		server.getKryo().register(PacketAddMob.class);
 		server.getKryo().register(PacketRemoveMob.class);
@@ -146,7 +149,7 @@ public class Server extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 3);
+					Thread.sleep((long) 5);
 			}
 			
 			
@@ -243,13 +246,6 @@ public class Server extends Listener {
 		player.y = maps.get(defaultMap).spawnPoint.y;
 		player.connectionID = c.getID();
 		
-		//send new player data to other connected clients
-		PacketAddPlayer newPlayerPacket = new PacketAddPlayer();
-		newPlayerPacket.id = c.getID();
-		newPlayerPacket.x = (int) maps.get(defaultMap).spawnPoint.x;
-		newPlayerPacket.y = (int) maps.get(defaultMap).spawnPoint.y;
-		server.sendToAllExceptTCP(c.getID(), newPlayerPacket);
-		
 		//send map to new player
 		sendMap(c, maps.get(defaultMap));
 		
@@ -259,6 +255,15 @@ public class Server extends Listener {
 		//add new player to server's player array
 		connectedPlayers.put(c.getID(), player);
 		connectedPlayers.get(c.getID()).mapID = defaultMap;
+		
+		
+		//send new player data to other connected clients
+		PacketAddPlayer newPlayerPacket = new PacketAddPlayer();
+		newPlayerPacket.id = c.getID();
+		newPlayerPacket.x = (int) maps.get(defaultMap).spawnPoint.x;
+		newPlayerPacket.y = (int) maps.get(defaultMap).spawnPoint.y;
+		newPlayerPacket.name = connectedPlayers.get(c.getID()).name;
+		server.sendToAllExceptTCP(c.getID(), newPlayerPacket);
 		
 		/*
 		//send mobs to new player
@@ -274,6 +279,10 @@ public class Server extends Listener {
 			c.sendTCP(mobPacket);
 		}
 		*/
+		
+		//get player name
+		PacketGetPlayerName getName = new PacketGetPlayerName();
+		server.sendToTCP(c.getID(), getName);
 		
 		System.out.println("Connection received." + c.getID());
 
@@ -360,6 +369,17 @@ public class Server extends Listener {
 					}
 			}
 		}
+		else if (o instanceof PacketGetPlayerName)
+		{
+			PacketGetPlayerName packet = (PacketGetPlayerName) o;
+			connectedPlayers.get(c.getID()).name = packet.name;
+			
+			PacketSetPlayerName packet2 = new PacketSetPlayerName();
+			packet2.id = c.getID();
+			packet2.name = packet.name;
+			server.sendToAllExceptTCP(c.getID(), packet2);
+		}
+		
 		
 	}
 	

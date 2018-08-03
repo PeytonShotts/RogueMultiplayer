@@ -1,5 +1,6 @@
 package Client;
 
+import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -21,6 +22,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.TrueTypeFont;
 
 import Item.*;
 import Map.*;
@@ -94,6 +96,9 @@ public class GameClient extends BasicGame
 	
 	public static Item[] items = new Item[24];
 	
+	Font font;
+	TrueTypeFont ttf;
+	
 	
 	public GameClient(String gamename)
 	{
@@ -117,6 +122,9 @@ public class GameClient extends BasicGame
 			items[i] = new TestItem();
 		}
 		items[20] = new Apple();
+		
+		font = new Font("Arial", Font.BOLD, 10);
+		ttf = new TrueTypeFont(font, true);
 	}
 
 	@Override
@@ -201,6 +209,7 @@ public class GameClient extends BasicGame
 		}
 		
 	}
+	
 
 	private void updateViewOffset() {
 		
@@ -328,6 +337,7 @@ public class GameClient extends BasicGame
 						tileX = (int) (tile - (tileY*16));
 						if (tile >= 0)
 						{
+							
 							g.drawImage(currentTileset, drawX*32 + Math.round(offsetX), drawY*32 + Math.round(offsetY), (drawX*32) + 32 + Math.round(offsetX), (drawY*32) + 32 + Math.round(offsetY), tileX*32, tileY*32, (tileX*32) + 32, (tileY*32) + 32);
 						}
 						
@@ -340,10 +350,25 @@ public class GameClient extends BasicGame
 		//draw player
 		g.drawImage(spriteset, player.x + offsetX, player.y + offsetY, player.x+32 + offsetX, player.y+32 + offsetY, (int)player.spriteX*32, (int)player.spriteY*32, ((int)player.spriteX*32) + 32, ((int)player.spriteY*32) + 32, new Color(255,255,255));
 		
+		//draw player name
+		g.setColor(new Color(80, 80, 80, 180));
+		g.fillRect((player.x+offsetX+16) - (float)ttf.getWidth(player.name)/2, player.y+offsetY-12, ttf.getWidth(player.name), 10);
+		g.setColor(new Color(250, 250, 250));
+		ttf.drawString((player.x+offsetX+16) - (float)ttf.getWidth(player.name)/2, player.y+offsetY-15, player.name);
+		
 		//draw other players
 		for(Player mpPlayer : currentMap.players.values())
 		{
-			g.drawImage(spriteset, (int)mpPlayer.x + offsetX, (int)mpPlayer.y + offsetY, (int)mpPlayer.x+32 + offsetX, (int)mpPlayer.y+32 + offsetY, (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
+			g.drawImage(spriteset, mpPlayer.x + Math.round(offsetX), mpPlayer.y + Math.round(offsetY), mpPlayer.x+32 + Math.round(offsetX), mpPlayer.y+32 + Math.round(offsetY), (int)mpPlayer.spriteX*32, (int)mpPlayer.spriteY*32, ((int)mpPlayer.spriteX*32) + 32, ((int)mpPlayer.spriteY*32) + 32, new Color(255,255,255));
+			
+			if (mpPlayer.name != null)
+			{
+				g.setColor(new Color(80, 80, 80, 130));
+				g.fillRect((mpPlayer.x+(int)offsetX+16) - (float)ttf.getWidth(mpPlayer.name)/2, mpPlayer.y+(int)offsetY-12, ttf.getWidth(mpPlayer.name), 10);
+				g.setColor(new Color(250, 250, 250));
+				ttf.drawString((mpPlayer.x+Math.round(offsetX)+16) - (float)ttf.getWidth(mpPlayer.name)/2, mpPlayer.y+Math.round(offsetY)-15, mpPlayer.name);
+			}
+
 		}
 		
 		//draw mobs (new)
@@ -448,6 +473,8 @@ public class GameClient extends BasicGame
 	
 	public static void main(String[] args)
 	{
+		String playerName = args[0];
+		player.name = playerName;
 		
 		try
 		{
@@ -461,6 +488,7 @@ public class GameClient extends BasicGame
 			appgc.setAlwaysRender(true);
 
 			network.connect();
+			
 			
 			appgc.start();
 

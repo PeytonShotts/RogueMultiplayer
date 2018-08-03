@@ -34,6 +34,8 @@ public class Network extends Listener {
 		client.getKryo().register(PacketPlayerLeaveMap.class);
 		client.getKryo().register(PacketPlayerEnterMap.class);
 		client.getKryo().register(PacketPlayerHit.class);
+		client.getKryo().register(PacketGetPlayerName.class);
+		client.getKryo().register(PacketSetPlayerName.class);
 		client.getKryo().register(Mob.class);
 		client.getKryo().register(PacketAddMob.class);
 		client.getKryo().register(PacketRemoveMob.class);
@@ -82,9 +84,7 @@ public class Network extends Listener {
 					GameClient.currentTileset = GameClient.tileset_castle;
 				}
 				
-				
 				GameClient.mapLoaded = true;
-				
 				
 				System.out.println("map loaded");
 			}
@@ -96,6 +96,7 @@ public class Network extends Listener {
 			Player newPlayer = new Player();
 			newPlayer.x = packet.x;
 			newPlayer.y = packet.y;
+			newPlayer.name = packet.name;
 			GameClient.currentMap.players.put(packet.id, newPlayer);
 			
 			System.out.println("new player joined");
@@ -164,7 +165,18 @@ public class Network extends Listener {
 			GameClient.player.addX = packet.hitVector.x*10;
 			GameClient.player.addY = packet.hitVector.y*10;
 			
+		}else if(o instanceof PacketGetPlayerName){
+			PacketGetPlayerName sendName = new PacketGetPlayerName();
+			sendName.name = GameClient.player.name;
+			client.sendTCP(sendName);
+			
+		}else if(o instanceof PacketSetPlayerName){
+			PacketSetPlayerName packet = (PacketSetPlayerName) o;
+			
+			GameClient.currentMap.players.get(packet.id).name = packet.name;
+			
 		}
+		
 		
 	}
 }

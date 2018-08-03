@@ -18,6 +18,8 @@ public class Player implements java.io.Serializable{
 	public float x;
 	public float y;
 	
+	public String name;
+	
 	public double addX;
 	public double addY;
 	

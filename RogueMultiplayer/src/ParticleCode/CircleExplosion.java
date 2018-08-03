@@ -18,7 +18,6 @@ public class CircleExplosion {
 		for (double i=0; i<(2*Math.PI); i+=interval)
 		{
 			Client.GameClient.particles.add(new Particle(position, new Vector((float) Math.cos(i), (float) Math.sin(i)), speed, time));
-			System.out.println((2*Math.PI));
 		}
 	}
 
