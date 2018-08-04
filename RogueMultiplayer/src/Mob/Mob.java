@@ -10,6 +10,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.util.pathfinding.Path;
 
 import Client.Util;
@@ -30,6 +31,9 @@ public class Mob implements java.io.Serializable{
 	
 	public int width = 25;
 	public int height = 25;
+	
+	public int spriteWidth;
+	public int spriteHeight;
 	
 	public float addX;
 	public float addY;
@@ -52,7 +56,9 @@ public class Mob implements java.io.Serializable{
 	
 	int startX, startY;
 	
-	public static Image spriteSheet;
+	public String spriteSheetPath;
+	public Image spriteSheet = null;
+	
 	public int spriteCount;
 	public int spriteX;
 	public int spriteY;
@@ -78,10 +84,19 @@ public class Mob implements java.io.Serializable{
 	
 	public void draw(GameContainer gc, Graphics g, float offsetX, float offsetY)
 	{
+		if (spriteSheet == null)
+		{
+			try {
+				spriteSheet = new Image(this.spriteSheetPath);
+			} catch (SlickException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		float drawX = position.x + offsetX;
 		float drawY = position.y + offsetY;
 		
-		spriteSheet.draw(drawX, drawY, drawX+32, drawY+32, spriteX*32, spriteY*32, (spriteX*32)+32, (spriteY*32)+32);
+		spriteSheet.draw(drawX, drawY, drawX+spriteWidth, drawY+spriteHeight, spriteX*spriteWidth, spriteY*spriteHeight, (spriteX*spriteWidth)+spriteWidth, (spriteY*spriteHeight)+spriteHeight);
 	}
 	
 	public void update(Map map, java.util.Map<Integer, Projectile> projectiles)
@@ -229,8 +244,8 @@ public class Mob implements java.io.Serializable{
 				int PlayerBlockX = 0, PlayerBlockY = 0;
 				if (pathToPlayer == null)
 				{
-					startX = (int) (((this.position.x+16)/32) - 4);
-					startY = (int) (((this.position.y+16)/32) - 4);
+					startX = (int) (((this.position.x+16)/32) - 8);
+					startY = (int) (((this.position.y+16)/32) - 8);
 					
 					PlayerBlockX = (int) ((playerInRange.x+16)/32) - startX;
 					PlayerBlockY = (int) ((playerInRange.y+16)/32) - startY;
@@ -251,9 +266,9 @@ public class Mob implements java.io.Serializable{
 					if (valid == true)
 					{
 						System.out.println("valid");
-						for (int tileY = 0; tileY < 10; tileY++)
+						for (int tileY = 0; tileY < 20; tileY++)
 						{
-							for (int tileX = 0; tileX < 10; tileX++)
+							for (int tileX = 0; tileX < 20; tileX++)
 							{
 								if (map.layers[0].data[startX + tileX][startY + tileY] == 16)
 								{
@@ -323,7 +338,7 @@ public class Mob implements java.io.Serializable{
 						
 				}
 				
-				if (Math.hypot(position.x - playerInRange.x, position.y - playerInRange.y) > 4*32)
+				if (Math.hypot(position.x - playerInRange.x, position.y - playerInRange.y) > 6*32)
 				{
 					isInRange = false;
 					playerInRange = null;
@@ -393,7 +408,7 @@ public class Mob implements java.io.Serializable{
 
 	public Player checkPlayerDistance(Player player)
 	{
-		if (Util.getDistance(player, this) < 4*32)
+		if (Util.getDistance(player, this) < 6*32)
 		{
 			this.isInRange = true;
 			return player;

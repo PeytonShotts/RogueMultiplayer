@@ -5,18 +5,18 @@ import org.newdawn.slick.SlickException;
 
 public class Chicken extends Mob{
 	
-	public static void init() throws SlickException
-	{
-		spriteSheet = new Image("res/chicken.png");
-	}
-	
+
 	public Chicken()
 	{
+		spriteSheetPath = "res/chicken.png";
 		maxHealth = 50;
 		health = 50;
 		spriteCount = 3;
 		spriteX = 0;
 		spriteY = 0;
+		
+		spriteWidth = 32;
+		spriteHeight = 32;
 	}
 
 }

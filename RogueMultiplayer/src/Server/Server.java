@@ -149,7 +149,7 @@ public class Server extends Listener {
 					remainingData += -packetSize;
 					bytePosition += packetSize;
 					
-					Thread.sleep((long) 5);
+					Thread.sleep((long) 3);
 			}
 			
 			

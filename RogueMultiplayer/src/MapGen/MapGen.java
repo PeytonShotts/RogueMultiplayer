@@ -68,8 +68,15 @@ public class MapGen {
 										}
 										
 										//mob spawn
-										int  r2 = rand.nextInt(25) + 0;
+										int  r2 = rand.nextInt(40) + 0;
 										if (r2 == 1 && roomCount > 1)
+										{
+											Mob newMob = new Skeleton();
+											newMob.position.x = (mapX+roomX)*32;
+											newMob.position.y = (mapY+roomY)*32;
+											newMap.mobs.put(mobCount, newMob);
+											mobCount++;
+										} else if (r2 == 2 && roomCount > 1)
 										{
 											Mob newMob = new Chicken();
 											newMob.position.x = (mapX+roomX)*32;

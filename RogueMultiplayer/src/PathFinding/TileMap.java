@@ -4,21 +4,10 @@ import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
 public class TileMap implements TileBasedMap, java.io.Serializable {
-    private static final int WIDTH = 10;
-    private static final int HEIGHT = 10;
+    private static final int WIDTH = 20;
+    private static final int HEIGHT = 20;
 
-    public int[][] MAP = {
-        {1,1,1,1,1,1,1,1,1,1},
-        {1,0,0,0,0,0,1,1,1,1},
-        {1,0,1,1,1,0,1,1,1,1},
-        {1,0,1,1,1,0,0,0,1,1},
-        {1,0,0,0,1,1,1,0,1,1},
-        {1,1,1,0,1,1,1,0,0,0},
-        {1,0,1,0,0,0,0,0,1,0},
-        {1,0,1,1,1,1,1,1,1,0},
-        {1,0,0,0,0,0,0,0,0,0},
-        {1,1,1,1,1,1,1,1,1,0}
-    };
+    public int[][] MAP = new int[WIDTH][HEIGHT];
 
     @Override
     public boolean blocked(PathFindingContext ctx, int x, int y) {

@@ -109,13 +109,11 @@ public class GameClient extends BasicGame
 	public void init(GameContainer gc) throws SlickException
 	{
 		gui.init();
-		
+
 		tileset_castle = new Image("res/castle.png");
 		tileset_owlish = new Image("res/owlishmedia_pixel_tiles.png");
 		
 		spriteset = new Image("res/spriteset.png");
-		
-		Chicken.init();
 		
 		for (int i=0; i<24; i++)
 		{
@@ -202,7 +200,6 @@ public class GameClient extends BasicGame
 		{
 			if (projectile.time <= 0)
 			{
-				CircleExplosion a = new CircleExplosion(new Vector(projectile.position.x, projectile.position.y), 500, 2, 100);
 				currentMap.projectiles.remove(projectile.id);
 			}
 			projectile.update();
@@ -375,6 +372,7 @@ public class GameClient extends BasicGame
 		for(Mob mob : currentMap.mobs.values())
 		{
 			mob.draw(gc, g, offsetX, offsetY);
+
 			
 			//draw mob health bars (new)
 			if (mob.health < mob.maxHealth)
