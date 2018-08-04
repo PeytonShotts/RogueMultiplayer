@@ -161,13 +161,40 @@ public class Server extends Listener {
 	public static void updateProjectiles(Map map) {
 		
 		for (Projectile projectile : map.projectiles.values())
-		{
+		{	
+			for (int colX = (int) ((projectile.position.x/32) - 1); colX < (projectile.position.x/32) + 2; colX++)
+			{
+				for (int colY = (int) ((projectile.position.y/32) - 1); colY < (projectile.position.y/32) + 2; colY++)
+				{
+					if (colX > 0 && colX < map.width &&
+							colY > 0 && colY < map.height)
+					{
+						for (int type : Mob.collisionList)
+						{
+							if ( map.layers[0].data[colX][colY] == type)
+							{
+								if (projectile.position.x < colX*32 + 32 &&
+									projectile.position.x + projectile.size > colX*32 &&
+									projectile.position.y < colY*32 + 32 &&
+									projectile.size + projectile.position.y > colY*32) 
+								{
+									PacketRemoveProjectile packet = new PacketRemoveProjectile();
+									packet.id = projectile.id;
+									server.sendToAllUDP(packet);
+									map.projectiles.remove(projectile.id);
+								}
+							}
+						}
+
+					}
+				}
+			}
+			
 			if (projectile.time == 0)
 			{
 				PacketRemoveProjectile packet = new PacketRemoveProjectile();
 				packet.id = projectile.id;
 				server.sendToAllUDP(packet);
-				
 				map.projectiles.remove(projectile.id);
 			}
 			projectile.update();

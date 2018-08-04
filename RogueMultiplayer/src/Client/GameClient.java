@@ -185,7 +185,7 @@ public class GameClient extends BasicGame
 		
 		newProjectile.direction.x = (float) aimX;
 		newProjectile.direction.y = (float) aimY;
-		newProjectile.time = 80;
+		newProjectile.time = 40;
 		
 		newProjectile.speed = 4;
 		

@@ -66,7 +66,7 @@ public class Mob implements java.io.Serializable{
 	
 	public float speed = (float) 2.2;
 	
-	List<Integer> collisionList = new ArrayList<>(Arrays.asList(16, 226));
+	public static List<Integer> collisionList = new ArrayList<>(Arrays.asList(16, 226));
 	
 	Random rand = new Random();
 	private int damage = 5;
@@ -213,6 +213,10 @@ public class Mob implements java.io.Serializable{
 					playerInRange = checkPlayerDistance(player);
 					break;
 				}
+				else
+				{
+					playerInRange = null;
+				}
 			}
 			
 			if (playerInRange != null && this.isInRange)
@@ -327,6 +331,11 @@ public class Mob implements java.io.Serializable{
 					targetY = 0;
 				}
 				
+			}
+			else
+			{
+				targetX = 0;
+				targetY = 0;
 			}
 			
 			
